@@ -92,7 +92,7 @@ export default function GalleryPage() {
   return (
     <div className="bg-offwhite min-h-screen text-charcoal">
       {/* Header Banner with Fabric Canvas Weave (FLUSH TO TOP UNDER NAV) */}
-      <section className="pt-32 pb-24 sm:pt-40 sm:pb-36 bg-charcoal text-white relative overflow-hidden bg-fabric-canvas-dark">
+      <section className="pt-28 pb-16 sm:pt-32 sm:pb-20 bg-charcoal text-white relative overflow-hidden bg-fabric-canvas-dark">
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/90 to-charcoal/60" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
@@ -105,9 +105,6 @@ export default function GalleryPage() {
                 Documented.
               </span>
             </h1>
-            <div className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-beige border-l-2 border-orange pl-3">
-              LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.
-            </div>
             <p className="text-base sm:text-lg text-beige-light leading-relaxed font-light pt-2">
               Explore authentic photography from our garment assembly lines, precision loom workshops, Heidelberg offset printing presses, and luxury packaging ateliers in Bangladesh.
             </p>
@@ -299,7 +296,7 @@ export default function GalleryPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="border-2 border-dashed border-white/20 p-8 sm:p-14 rounded-sm bg-charcoal/80 backdrop-blur-sm text-center space-y-6">
             <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-              LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.
+              Authentic Production Samples
             </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">
               Inspired By What You See?

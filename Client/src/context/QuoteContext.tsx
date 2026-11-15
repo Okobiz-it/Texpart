@@ -1,13 +1,21 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Product, GalleryItem } from "@/types";
+import { Product } from "@/types";
+
+export interface QuoteProductInfo {
+  name: string;
+  category: string;
+  id?: string;
+  isGeneral?: boolean;
+}
 
 interface QuoteContextType {
   // Quote Modal State
   isQuoteOpen: boolean;
-  quoteProduct: { name: string; category: string; id?: string } | null;
-  openQuote: (name?: string, category?: string, id?: string) => void;
+  quoteProduct: QuoteProductInfo | null;
+  openQuote: (name?: string, category?: string, id?: string, isGeneral?: boolean) => void;
+  openGeneralQuote: () => void;
   closeQuote: () => void;
 
   // Product Modal State
@@ -32,7 +40,7 @@ const QuoteContext = createContext<QuoteContextType | undefined>(undefined);
 
 export function QuoteProvider({ children }: { children: ReactNode }) {
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
-  const [quoteProduct, setQuoteProduct] = useState<{ name: string; category: string; id?: string } | null>(null);
+  const [quoteProduct, setQuoteProduct] = useState<QuoteProductInfo | null>(null);
 
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -42,12 +50,31 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
 
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
-  const openQuote = (name?: string, category?: string, id?: string) => {
+  const openQuote = (name?: string, category?: string, id?: string, isGeneral?: boolean) => {
     if (name) {
-      setQuoteProduct({ name, category: category || "Bespoke Production", id });
+      setQuoteProduct({
+        name,
+        category: category || "Apparel Accessories & Packaging",
+        id,
+        isGeneral: !!isGeneral,
+      });
     } else {
-      setQuoteProduct(null);
+      setQuoteProduct({
+        name: "",
+        category: category || "",
+        id,
+        isGeneral: true,
+      });
     }
+    setIsQuoteOpen(true);
+  };
+
+  const openGeneralQuote = () => {
+    setQuoteProduct({
+      name: "",
+      category: "",
+      isGeneral: true,
+    });
     setIsQuoteOpen(true);
   };
 
@@ -82,6 +109,7 @@ export function QuoteProvider({ children }: { children: ReactNode }) {
         isQuoteOpen,
         quoteProduct,
         openQuote,
+        openGeneralQuote,
         closeQuote,
         isProductModalOpen,
         selectedProduct,
@@ -108,4 +136,3 @@ export function useQuote() {
   }
   return context;
 }
-

@@ -76,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
 
           <button
-            onClick={() => openQuote(product.name, product.collection, product.id)}
+            onClick={() => openQuote(product.name, product.category, product.id)}
             className="text-[11px] font-heading font-bold uppercase tracking-wider bg-orange/10 hover:bg-orange text-orange hover:text-white px-3.5 py-1.5 rounded-sm transition-all shadow-sm"
           >
             Get Quote

@@ -45,7 +45,7 @@ export default function ContactPage() {
   return (
     <div className="bg-offwhite min-h-screen text-charcoal">
       {/* Header Banner with Fabric Twill Weave (FLUSH TO TOP UNDER NAV) */}
-      <section className="pt-32 pb-24 sm:pt-40 sm:pb-36 bg-charcoal text-white relative overflow-hidden bg-fabric-twill-dark">
+      <section className="pt-28 pb-16 sm:pt-32 sm:pb-20 bg-charcoal text-white relative overflow-hidden bg-fabric-twill-dark">
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/90 to-charcoal/60" />
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
@@ -58,9 +58,6 @@ export default function ContactPage() {
                 Your Next Project.
               </span>
             </h1>
-            <div className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-beige border-l-2 border-orange pl-3">
-              LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.
-            </div>
             <p className="text-base sm:text-lg text-beige-light leading-relaxed font-light pt-2">
               &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo; &mdash; Our Motijheel merchandising and engineering teams are ready to fulfill your orders.
             </p>

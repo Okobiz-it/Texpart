@@ -139,10 +139,11 @@ export default function HomePage() {
       {/* =================================================================
           SECTION 1: HERO — CINEMATIC INTERACTIVE SLIDER
           TEXT STAYS STILL, IMAGES UNDERNEATH CHANGE ONLY, TYPING ANIMATION
+          FULL VIEW ON DESKTOP CONTAINS HERO & BOTTOM MARQUEE IN ONE VIEWPORT
           (TEXTURE VARIANT: DIAGONAL TWILL / DENIM WEAVE)
           ================================================================= */}
       <section
-        className="relative min-h-[92vh] sm:min-h-screen flex items-center bg-charcoal text-white pt-24 pb-20 overflow-hidden bg-fabric-twill-dark"
+        className="relative min-h-screen lg:h-screen lg:max-h-screen flex flex-col justify-between bg-charcoal text-white pt-24 sm:pt-28 pb-0 overflow-hidden bg-fabric-twill-dark"
         onMouseEnter={() => setIsSliderPaused(true)}
         onMouseLeave={() => setIsSliderPaused(false)}
       >
@@ -172,24 +173,19 @@ export default function HomePage() {
         </div>
 
         {/* Hero Content (Static Title + Dynamic Typewriter Products) */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto py-6 sm:py-8">
           <div className="max-w-4xl space-y-6">
             {/* Split Character-Style Animated Headline */}
             <div className="space-y-2 anim-fade-up">
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-heading font-black uppercase tracking-tight leading-[0.95] text-white">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-heading font-black uppercase tracking-tight leading-[0.98] text-white">
                 <span className="block">
                   FROM CONCEPT TO CREATION.
                 </span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white inline-block mt-3 text-2xl sm:text-4xl lg:text-5xl xl:text-6xl tracking-wide min-h-[1.3em]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white inline-block mt-3 text-xl sm:text-3xl lg:text-4xl xl:text-5xl tracking-wide min-h-[1.3em]">
                   {displayText}
                   <span className="inline-block w-[3px] sm:w-[4px] lg:w-[5px] h-[0.78em] bg-orange ml-2 align-baseline animate-pulse shadow-[0_0_8px_#E58B48]" />
                 </span>
               </h1>
-            </div>
-
-            {/* Official Slogan from Brochure */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-sm bg-white/10 border border-white/15 text-orange font-heading text-xs font-extrabold uppercase tracking-widest backdrop-blur-sm">
-              <span>LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.</span>
             </div>
 
             {/* Subtitle & Description */}
@@ -205,7 +201,7 @@ export default function HomePage() {
             {/* Dynamic CTAs */}
             <div className="pt-4 flex flex-wrap items-center gap-4">
               <Link
-                href="/services"
+                href="/services/private-jobs"
                 className="bg-orange hover:bg-orange-hover text-white px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:shadow-orange/30 hover:-translate-y-0.5"
               >
                 <span>Explore Our Services</span>
@@ -221,36 +217,35 @@ export default function HomePage() {
           </div>
         </div>
 
-      </section>
-
-      {/* =================================================================
-          INFINITE RUNNING MARQUEE (CAPABILITIES & SLOGAN TICKER)
-          ================================================================= */}
-      <section className="bg-charcoal-surface border-y border-white/10 py-3.5 overflow-hidden text-offwhite">
-        <div className="flex whitespace-nowrap animate-marquee">
-          <div className="flex items-center gap-8 text-xs font-heading font-extrabold uppercase tracking-widest text-beige-light/80">
-            <span>&bull; iNTEGRITY &bull; iNNOVATIVE &bull; iN-DEPTH</span>
-            <span className="text-orange">&bull; LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.</span>
-            <span>&bull; FROM CONCEPT TO DELIVERY</span>
-            <span className="text-orange">&bull; SWISS HIGH-SPEED DAMASK WEAVING</span>
-            <span>&bull; AQL 1.5 EXPORT AUDIT</span>
-            <span className="text-orange">&bull; GRS RECYCLED POLYESTER</span>
-            <span>&bull; HEIDELBERG 6-COLOR SPEEDMASTER</span>
-            <span className="text-orange">&bull; SOLID BRASS OUTERWEAR ZIPPERS</span>
-            <span>&bull; FSC RECYCLED KRAFT PACKAGING</span>
-            <span className="text-orange">&bull; 263, FAKIRAPOOL, MOTIJHEEL, DHAKA</span>
-          </div>
-          <div className="flex items-center gap-8 text-xs font-heading font-extrabold uppercase tracking-widest text-beige-light/80 ml-8">
-            <span>&bull; iNTEGRITY &bull; iNNOVATIVE &bull; iN-DEPTH</span>
-            <span className="text-orange">&bull; LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.</span>
-            <span>&bull; FROM CONCEPT TO DELIVERY</span>
-            <span className="text-orange">&bull; SWISS HIGH-SPEED DAMASK WEAVING</span>
-            <span>&bull; AQL 1.5 EXPORT AUDIT</span>
-            <span className="text-orange">&bull; GRS RECYCLED POLYESTER</span>
-            <span>&bull; HEIDELBERG 6-COLOR SPEEDMASTER</span>
-            <span className="text-orange">&bull; SOLID BRASS OUTERWEAR ZIPPERS</span>
-            <span>&bull; FSC RECYCLED KRAFT PACKAGING</span>
-            <span className="text-orange">&bull; 263, FAKIRAPOOL, MOTIJHEEL, DHAKA</span>
+        {/* =================================================================
+            INFINITE RUNNING MARQUEE (EMBEDDED IN HERO AT BOTTOM TO SHOW IN ONE GO ON DESKTOP)
+            ================================================================= */}
+        <div className="relative z-10 w-full bg-charcoal-surface/95 border-t border-white/10 py-3.5 overflow-hidden text-offwhite flex-shrink-0 backdrop-blur-sm">
+          <div className="flex whitespace-nowrap animate-marquee">
+            <div className="flex items-center gap-8 text-xs font-heading font-extrabold uppercase tracking-widest text-beige-light/80">
+              <span>&bull; iNTEGRITY &bull; iNNOVATIVE &bull; iN-DEPTH</span>
+              <span className="text-orange">&bull; QUALITY &bull; INNOVATION &bull; RELIABILITY</span>
+              <span>&bull; FROM CONCEPT TO DELIVERY</span>
+              <span className="text-orange">&bull; SWISS HIGH-SPEED DAMASK WEAVING</span>
+              <span>&bull; AQL 1.5 EXPORT AUDIT</span>
+              <span className="text-orange">&bull; GRS RECYCLED POLYESTER</span>
+              <span>&bull; HEIDELBERG 6-COLOR SPEEDMASTER</span>
+              <span className="text-orange">&bull; SOLID BRASS OUTERWEAR ZIPPERS</span>
+              <span>&bull; FSC RECYCLED KRAFT PACKAGING</span>
+              <span className="text-orange">&bull; 263, FAKIRAPOOL, MOTIJHEEL, DHAKA</span>
+            </div>
+            <div className="flex items-center gap-8 text-xs font-heading font-extrabold uppercase tracking-widest text-beige-light/80 ml-8">
+              <span>&bull; iNTEGRITY &bull; iNNOVATIVE &bull; iN-DEPTH</span>
+              <span className="text-orange">&bull; QUALITY &bull; INNOVATION &bull; RELIABILITY</span>
+              <span>&bull; FROM CONCEPT TO DELIVERY</span>
+              <span className="text-orange">&bull; SWISS HIGH-SPEED DAMASK WEAVING</span>
+              <span>&bull; AQL 1.5 EXPORT AUDIT</span>
+              <span className="text-orange">&bull; GRS RECYCLED POLYESTER</span>
+              <span>&bull; HEIDELBERG 6-COLOR SPEEDMASTER</span>
+              <span className="text-orange">&bull; SOLID BRASS OUTERWEAR ZIPPERS</span>
+              <span>&bull; FSC RECYCLED KRAFT PACKAGING</span>
+              <span className="text-orange">&bull; 263, FAKIRAPOOL, MOTIJHEEL, DHAKA</span>
+            </div>
           </div>
         </div>
       </section>
@@ -264,10 +259,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
           <div className="max-w-3xl space-y-3 mb-16 anim-fade-up">
-            <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-              Two Major Business Solutions &bull; Core Capabilities
-            </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
               Engineered For Modern Brands.
             </h2>
@@ -330,7 +321,7 @@ export default function HomePage() {
               </div>
 
               {/* Action Footer */}
-              <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-4 border-t border-charcoal/10 flex flex-wrap items-center justify-between gap-4">
+              <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-4 border-t border-charcoal/10 flex items-center justify-between">
                 <Link
                   href="/services/private-jobs"
                   className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal group-hover:text-orange transition-colors"
@@ -338,13 +329,6 @@ export default function HomePage() {
                   <span>Explore Private Jobs</span>
                   <ChevronRight className="w-4 h-4" />
                 </Link>
-
-                <button
-                  onClick={() => openQuote("Private Jobs Apparel Manufacturing", "Private Jobs")}
-                  className="text-xs font-heading font-bold uppercase tracking-wider bg-orange hover:bg-orange-hover text-white px-6 py-3 rounded-sm transition-colors shadow-md hover:shadow-orange/30"
-                >
-                  Consult Tech Pack
-                </button>
               </div>
             </div>
 
@@ -400,7 +384,7 @@ export default function HomePage() {
               </div>
 
               {/* Action Footer */}
-              <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-4 border-t border-charcoal/10 flex flex-wrap items-center justify-between gap-4">
+              <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-4 border-t border-charcoal/10 flex items-center justify-between">
                 <Link
                   href="/services/commercial-jobs"
                   className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal group-hover:text-forest transition-colors"
@@ -408,13 +392,6 @@ export default function HomePage() {
                   <span>Explore Commercial Jobs</span>
                   <ChevronRight className="w-4 h-4" />
                 </Link>
-
-                <button
-                  onClick={() => openQuote("Commercial Printing Solutions", "Commercial Jobs")}
-                  className="text-xs font-heading font-bold uppercase tracking-wider bg-forest hover:bg-forest-light text-white px-6 py-3 rounded-sm transition-colors shadow-md hover:shadow-forest/30"
-                >
-                  Request Print Quote
-                </button>
               </div>
             </div>
           </div>
@@ -456,13 +433,6 @@ export default function HomePage() {
                   <span>Discover Our Story &amp; Philosophy</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
-                <span className="text-grey-light">&bull;</span>
-                <Link
-                  href="/services"
-                  className="text-xs font-heading font-bold uppercase tracking-widest text-orange hover:underline"
-                >
-                  View All Capabilities
-                </Link>
               </div>
             </div>
 
@@ -503,10 +473,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3 anim-fade-up">
-            <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-              The 3-i Manufacturing Philosophy
-            </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
               THE THREE PILLARS OF EXCELLENCE.
             </h2>
@@ -544,18 +510,6 @@ export default function HomePage() {
                   Transparent open-book BOM costings, compliant factories, and ethical labor standards across every apparel cut and printed label run.
                 </p>
               </div>
-
-              {/* Verified Feature Bullets */}
-              <ul className="space-y-2.5 text-xs text-charcoal font-medium pt-6 border-t border-charcoal/10 mt-6">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Transparent costing &amp; BOM breakdown</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Ethical labor &amp; compliant facilities</span>
-                </li>
-              </ul>
             </div>
 
             {/* 2. iNNOVATIVE */}
@@ -585,18 +539,6 @@ export default function HomePage() {
                   Leveraging computer-aided design, 3D prototype draping, GRS recycled yarn innovations, and eco-friendly soy printing technologies.
                 </p>
               </div>
-
-              {/* Verified Feature Bullets */}
-              <ul className="space-y-2.5 text-xs text-charcoal font-medium pt-6 border-t border-charcoal/10 mt-6">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>CAD tech pack engineering &amp; 3D prototyping</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Recycled GRS fibers &amp; bio packaging</span>
-                </li>
-              </ul>
             </div>
 
             {/* 3. iN-DEPTH */}
@@ -626,18 +568,6 @@ export default function HomePage() {
                   End-to-end multi-stage inspection, yarn density audits under magnification, needle detection, and AQL 1.5 international export clearance.
                 </p>
               </div>
-
-              {/* Verified Feature Bullets */}
-              <ul className="space-y-2.5 text-xs text-charcoal font-medium pt-6 border-t border-charcoal/10 mt-6">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>AQL 1.5 strict multi-point inspection</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Micrometer dieline cutting &amp; needle check</span>
-                </li>
-              </ul>
             </div>
           </div>
         </div>
@@ -652,15 +582,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3 anim-fade-up">
-            <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-              Seamless Manufacturing Pipeline &bull; Official Workflow
-            </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">
               FROM CONCEPT TO DELIVERY.
             </h2>
             <p className="text-sm sm:text-base text-beige-light font-light leading-relaxed">
-              &ldquo;LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.&rdquo; &mdash; A disciplined five-stage production framework engineered for international fashion brands.
+              A disciplined five-stage production framework engineered for international fashion brands.
             </p>
           </div>
 
@@ -685,9 +611,6 @@ export default function HomePage() {
                   Tailored style guidelines, CAD tech pack consultation, and structural dieline engineering for products and packaging.
                 </p>
               </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Initial Design Review
-              </div>
             </div>
 
             {/* STEP 2: DEVELOP */}
@@ -708,9 +631,6 @@ export default function HomePage() {
                 <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
                   Physical proto sampling, lab dip color matching under D65, size grading, and wet proofs on actual production paper.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Pre-Production Approval
               </div>
             </div>
 
@@ -733,9 +653,6 @@ export default function HomePage() {
                   Automated computer cutting, dedicated assembly stitching lines, Heidelberg offset press runs, and 100% in-line QC.
                 </p>
               </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; AQL 1.5 In-Line QC
-              </div>
             </div>
 
             {/* STEP 4: PACK */}
@@ -756,9 +673,6 @@ export default function HomePage() {
                 <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
                   Retail polybagging, hangtag attachment, silica desiccant insertion, and heavy-duty corrugated export master carton packing.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Ocean-Proof Protection
               </div>
             </div>
 
@@ -781,9 +695,6 @@ export default function HomePage() {
                   Container consolidation, FOB Chittagong Port ocean export, or express air dispatch through Dhaka Shahjalal Airport.
                 </p>
               </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Global Port Clearance
-              </div>
             </div>
           </div>
         </div>
@@ -797,10 +708,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header (No tabs, clean editorial headline) */}
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3 anim-fade-up">
-            <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-              Comprehensive Product Portfolio
-            </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
               WHAT WE CREATE.
             </h2>
@@ -822,49 +729,9 @@ export default function HomePage() {
               href="/services"
               className="bg-charcoal hover:bg-orange text-white px-10 py-5 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:shadow-orange/30 hover:-translate-y-0.5"
             >
-              <span>View All Brochure Products</span>
+              <span>View All Products</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 7: FABRIC TEXTURED B2B LABEL & PACKAGING CTA BANNER
-          (TEXTURE VARIANT: OXFORD / BASKETWEAVE DARK WITH STITCH BORDER)
-          ================================================================= */}
-      <section className="py-20 sm:py-28 bg-charcoal text-white relative overflow-hidden bg-fabric-oxford-dark">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Inner Dashed Stitch Border Box */}
-          <div className="border-2 border-dashed border-white/20 p-8 sm:p-14 rounded-sm bg-charcoal/85 backdrop-blur-sm text-center space-y-6 shadow-2xl">
-            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-              APPAREL ACCESSORIES &bull; MINIMUM ORDER QUANTITY CONSULTATION
-            </span>
-
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">
-              Need Some Labels, Trims or Packaging?
-            </h2>
-
-            <p className="text-sm sm:text-base text-beige-light/90 max-w-2xl mx-auto font-light leading-relaxed">
-              Whether you are a garment startup launching your very first collection or a large international corporation seeking massive volume fulfillment, we have the capability and capacity to fulfill your orders. Our MOQ is flexible to help budding designers and startups give professional branding to their garments.
-            </p>
-
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-              <button
-                onClick={() => openQuote("Custom Garment Labels & Accessories")}
-                className="bg-orange hover:bg-orange-hover text-white px-9 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:shadow-orange/30 hover:scale-105"
-              >
-                <span>Contact Now &bull; Get a Quote</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <Link
-                href="/products/labels"
-                className="bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 transition-all"
-              >
-                Inspect Label Specifications
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -989,10 +856,6 @@ export default function HomePage() {
       <section className="py-24 sm:py-32 bg-charcoal text-offwhite">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16 space-y-4">
-            <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-              Inside Our Facilities &bull; Dhaka
-            </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">
               Precision in Every Detail.
             </h2>
@@ -1086,10 +949,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-                Visual Archives &bull; Factory Floor
-              </span>
               <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
                 Manufacturing in Action.
               </h2>
@@ -1142,13 +1001,8 @@ export default function HomePage() {
           SECTION 11: FINAL HIGH-IMPACT CTA WITH OFFICIAL CONTACT DATA
           (TEXTURE VARIANT: OXFORD / BASKETWEAVE DARK)
           ================================================================= */}
-      <section className="py-24 sm:py-32 bg-charcoal text-white relative overflow-hidden bg-fabric-oxford-dark">
+      <section className="pt-20 sm:pt-28 pb-8 sm:pb-10 bg-charcoal text-white relative overflow-hidden bg-fabric-oxford-dark">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-            Start Your Next Production Run
-          </span>
-
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-heading font-black uppercase tracking-tight text-white leading-tight">
             Ready to Create Something <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white">
@@ -1177,7 +1031,7 @@ export default function HomePage() {
           </div>
 
           {/* Official Brochure Contact Strip */}
-          <div className="pt-12 mt-12 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs text-grey-light font-light text-center">
+          <div className="pt-8 mt-10 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs text-grey-light font-light text-center">
             <div>
               <span className="font-heading font-bold text-beige uppercase tracking-wider block">
                 Office &amp; Factory

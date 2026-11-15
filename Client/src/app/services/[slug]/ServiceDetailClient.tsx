@@ -1,58 +1,59 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ServiceDetail } from "@/data/services";
+import { PRODUCTS } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
 import { useQuote } from "@/context/QuoteContext";
 import {
-  Play,
   ArrowRight,
   CheckCircle2,
   ChevronRight,
-  ShieldCheck,
-  Cpu,
-  Clock,
-  Sparkles,
-  Maximize2,
-  X,
-  FileCheck,
+  ChevronLeft,
 } from "lucide-react";
 
 interface ServiceDetailClientProps {
   service: ServiceDetail;
 }
 
+const ITEMS_PER_PAGE = 9;
+
 export default function ServiceDetailClient({ service }: ServiceDetailClientProps) {
-  const { openQuote, openLightbox } = useQuote();
-  const [activeMediaTab, setActiveMediaTab] = useState<"all" | "photos" | "videos">("all");
-  const [playingVideo, setPlayingVideo] = useState<{
-    title: string;
-    caption: string;
-    thumbnail: string;
-  } | null>(null);
+  const { openQuote } = useQuote();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const isPrivate = service.slug === "private-jobs";
+
+  // Filter products specifically belonging to this service division
+  const divisionProducts = PRODUCTS.filter((p) =>
+    isPrivate ? p.collectionId === "accessories" : p.collectionId === "commercial"
+  );
+
+  // Pagination calculation
+  const totalPages = Math.ceil(divisionProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = divisionProducts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    const section = document.getElementById("products");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="bg-offwhite min-h-screen text-charcoal">
       {/* =================================================================
-          1. BANNER: CINEMATIC EDITORIAL HERO WITH FABRIC TWILL WEAVE
+          1. BANNER: CLEAN DARK TWILL WEAVE HERO WITH NO IMAGES
           (FLUSH TO TOP UNDER NAV WITH ZERO GAP)
           ================================================================= */}
-      <section className="relative pt-32 pb-24 sm:pt-40 sm:pb-36 bg-charcoal text-white overflow-hidden bg-fabric-twill-dark">
-        {/* Background Image with Layered Fabric Overlay */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={service.heroImage}
-            alt={service.title}
-            fill
-            className="object-cover opacity-25 scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/80 to-charcoal/50" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-forest/30 via-transparent to-transparent opacity-60" />
-        </div>
+      <section className="relative pt-28 pb-14 sm:pt-32 sm:pb-18 bg-charcoal text-white overflow-hidden bg-fabric-twill-dark">
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/90 to-charcoal/70" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-forest/30 via-transparent to-transparent opacity-60" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb Navigation */}
@@ -61,53 +62,61 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
               Home
             </Link>
             <ChevronRight className="w-3.5 h-3.5 text-grey" />
-            <Link href="/services" className="hover:text-white transition-colors">
+            <span className="hover:text-white transition-colors">
               Services
-            </Link>
+            </span>
             <ChevronRight className="w-3.5 h-3.5 text-grey" />
-            <span className="text-orange">{service.divisionLabel}</span>
+            <span className="text-orange">{isPrivate ? "Private Jobs" : "Commercial Jobs"}</span>
           </nav>
 
           <div className="max-w-4xl space-y-6">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-sm text-xs font-heading font-extrabold uppercase tracking-widest ${
-                isPrivate ? "bg-orange text-white" : "bg-cyan text-white"
-              }`}>
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                {service.divisionLabel}
-              </span>
-              <span className="text-xs font-heading uppercase tracking-widest text-beige border border-white/15 px-3 py-1 rounded-sm backdrop-blur-md">
-                {service.badge}
-              </span>
-            </div>
-
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black uppercase tracking-tight text-white leading-tight">
-              {service.headline}
+              {isPrivate ? (
+                <>
+                  YOUR COMPLETE PARTNER <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white">
+                    FOR APPAREL ACCESSORIES &amp; PACKAGING.
+                  </span>
+                </>
+              ) : (
+                <>
+                  YOUR COMPLETE PARTNER <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white">
+                    FOR COMMERCIAL PRINTING &amp; PROMOTION.
+                  </span>
+                </>
+              )}
             </h1>
 
             <p className="text-base sm:text-xl text-beige-light/90 max-w-3xl font-light leading-relaxed">
-              {service.subtitle} &mdash; {service.description}
+              {isPrivate
+                ? "End-to-end apparel development, custom trim engineering, and export packaging solutions built from scratch under one roof in Dhaka, Bangladesh."
+                : "High-precision commercial offset printing, corporate stationery, luxury rigid packaging, and customized promotional products for modern brands."}
             </p>
 
-            {/* Quick CTAs */}
+            {/* Quick Action CTAs */}
             <div className="pt-4 flex flex-wrap items-center gap-4">
               <button
-                onClick={() => openQuote(service.title, service.divisionLabel)}
-                className={`px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:-translate-y-0.5 text-white ${
-                  isPrivate
-                    ? "bg-orange hover:bg-orange-hover shadow-orange/20"
-                    : "bg-cyan hover:bg-blue shadow-cyan/20"
-                }`}
+                onClick={() =>
+                  openQuote(
+                    isPrivate
+                      ? "Private Jobs (Apparel Accessories & Packaging)"
+                      : "Commercial Jobs (Commercial Printing & Packaging)",
+                    isPrivate ? "Private Jobs" : "Commercial Jobs"
+                  )
+                }
+                className="px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:-translate-y-0.5 text-white bg-orange hover:bg-orange-hover shadow-orange/20"
               >
-                Request Quotation For {service.divisionLabel}
+                Request Custom Quotation
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <a
-                href="#media-gallery"
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-6 py-4 rounded-sm font-heading text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-all"
+                href="#products"
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-7 py-4 rounded-sm font-heading text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-all"
               >
-                View Factory Photos &amp; Videos
+                <span>Explore Products ({divisionProducts.length})</span>
+                <ChevronRight className="w-3.5 h-3.5 text-orange" />
               </a>
             </div>
           </div>
@@ -115,244 +124,122 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
       </section>
 
       {/* =================================================================
-          2. PHOTOS & VIDEOS SECTION: FACTORY FLOOR TELEMETRY
-          (As requested: "first few photoes and videos of that services")
+          2. SERVICE DESCRIPTION & CORE PHILOSOPHY (FULL-WIDTH CLEAN FLOW)
           ================================================================= */}
-      <section id="media-gallery" className="py-20 sm:py-28 bg-offwhite border-b border-charcoal/10 relative">
+      <section className="py-20 sm:py-28 bg-white border-b border-charcoal/10 bg-fabric-linen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block mb-2">
-                Production Floor Documentation
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-heading font-black uppercase tracking-tight text-charcoal">
-                Photos &amp; Video Demonstrations.
-              </h2>
-              <p className="text-sm text-grey-dark max-w-xl mt-2 font-light">
-                Inspect authentic visual footage and high-definition photography capturing machinery in action, seam construction, color management, and packaging workflows.
-              </p>
-            </div>
-
-            {/* Filter Pills */}
-            <div className="flex gap-2 bg-charcoal/5 p-1 rounded-sm self-start md:self-auto">
-              <button
-                onClick={() => setActiveMediaTab("all")}
-                className={`px-4 py-2 rounded-sm text-xs font-heading font-bold uppercase tracking-wider transition-all ${
-                  activeMediaTab === "all"
-                    ? "bg-charcoal text-white shadow-sm"
-                    : "text-grey-dark hover:text-charcoal"
-                }`}
-              >
-                All Media ({service.videos.length + service.photos.length})
-              </button>
-              <button
-                onClick={() => setActiveMediaTab("videos")}
-                className={`px-4 py-2 rounded-sm text-xs font-heading font-bold uppercase tracking-wider transition-all ${
-                  activeMediaTab === "videos"
-                    ? "bg-charcoal text-white shadow-sm"
-                    : "text-grey-dark hover:text-charcoal"
-                }`}
-              >
-                Video Feeds ({service.videos.length})
-              </button>
-              <button
-                onClick={() => setActiveMediaTab("photos")}
-                className={`px-4 py-2 rounded-sm text-xs font-heading font-bold uppercase tracking-wider transition-all ${
-                  activeMediaTab === "photos"
-                    ? "bg-charcoal text-white shadow-sm"
-                    : "text-grey-dark hover:text-charcoal"
-                }`}
-              >
-                Photo Gallery ({service.photos.length})
-              </button>
-            </div>
+          {/* Section Heading at Top */}
+          <div className="mb-12 max-w-4xl">
+            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal leading-tight">
+              {isPrivate ? (
+                <>
+                  WE CREATE SOLUTIONS <br className="hidden sm:inline" />
+                  <span className="text-orange">FROM SCRATCH TO FINISHED PRODUCT.</span>
+                </>
+              ) : (
+                <>
+                  YOUR DESIGN. <br className="hidden sm:inline" />
+                  <span className="text-orange">OUR COMMERCIAL PRINTING EXPERTISE.</span>
+                </>
+              )}
+            </h2>
           </div>
 
-          {/* Videos Grid */}
-          {(activeMediaTab === "all" || activeMediaTab === "videos") && (
-            <div className="mb-14">
-              <div className="flex items-center gap-2 mb-6">
-                <span className="w-2.5 h-2.5 rounded-full bg-orange animate-pulse" />
-                <h3 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal">
-                  Featured Video Footage &bull; Machinery In Action
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {service.videos.map((vid, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setPlayingVideo(vid)}
-                    className="group relative bg-charcoal rounded-sm overflow-hidden shadow-lg border border-charcoal/10 cursor-pointer hover:border-orange transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <div className="relative aspect-[16/10] w-full overflow-hidden">
-                      <Image
-                        src={vid.thumbnail}
-                        alt={vid.title}
-                        fill
-                        className="object-cover opacity-80 group-hover:scale-105 group-hover:opacity-95 transition-all duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-90" />
-
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-14 h-14 rounded-full bg-orange text-white flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:bg-orange-hover transition-transform duration-300">
-                          <Play className="w-6 h-6 fill-current translate-x-0.5" />
-                        </div>
-                      </div>
-
-                      {/* Duration Tag */}
-                      <div className="absolute top-3 right-3 bg-charcoal/90 text-white text-[11px] font-mono px-2 py-0.5 rounded-sm">
-                        {vid.duration}
-                      </div>
-
-                      {/* Video Category Badge */}
-                      <div className="absolute top-3 left-3 bg-white/20 backdrop-blur-md text-white text-[10px] font-heading font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-sm">
-                        {vid.videoType}
-                      </div>
-                    </div>
-
-                    <div className="p-5">
-                      <h4 className="text-base font-heading font-black uppercase text-white group-hover:text-orange transition-colors">
-                        {vid.title}
-                      </h4>
-                      <p className="text-xs text-grey-light mt-1.5 leading-relaxed line-clamp-2">
-                        {vid.caption}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Full-Width Narrative Details & 5 Brochure Pillars */}
+          <div className="space-y-10">
+            <div className="space-y-5 text-base sm:text-lg text-grey-dark leading-relaxed font-light max-w-5xl">
+              {isPrivate ? (
+                <>
+                  <p className="text-lg sm:text-xl text-charcoal font-normal leading-relaxed">
+                    In our <strong>Private Jobs Division</strong>, we deliver complete, end-to-end product development and manufacturing. Rather than simply supplying individual loose items, we take complete ownership of your requirements from scratch.
+                  </p>
+                  <p>
+                    Consider a custom metal zipper: our engineers draft the CAD technical specifications, custom-cast the branded alloy pullers and sliders, weave high-tensile polyester tape, assemble the teeth with micro tolerances, execute rigorous seam tensile and wash-fastness testing, and deliver an export-ready packaged component ready for garment production lines.
+                  </p>
+                  <p>
+                    From Swiss-loom woven labels, architectural paperboard hangtags, jacquard elastics, and cords to heavy-duty export poly bags and corrugated cartons, our Dhaka production hub handles the entire spectrum under one unified roof.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-lg sm:text-xl text-charcoal font-normal leading-relaxed">
+                    In our <strong>Commercial Jobs Division</strong>, we provide high-precision commercial printing and promotional packaging. Whether you are launching a global corporate campaign, outfitting retail stores, or producing luxury brand gift sets, we have the machinery and craftsmanship to fulfill your orders.
+                  </p>
+                  <p>
+                    <strong>Flexible Design Options:</strong> You can provide your own print-ready files (PDF, AI, InDesign) with specific Pantone color profiles, or our in-house creative design team can develop custom layouts, typography, and structural packaging dielines tailored specifically to your brand identity.
+                  </p>
+                  <p>
+                    Utilizing high-speed multi-color Heidelberg speedmaster presses, automatic foil stamping, spot UV curing, and computer-guided die-cutting, we guarantee vibrant ink density, sharp registration, and immaculate tactile finishes across all commercial print runs.
+                  </p>
+                </>
+              )}
             </div>
-          )}
 
-          {/* Photos Grid */}
-          {(activeMediaTab === "all" || activeMediaTab === "photos") && (
-            <div>
-              <div className="flex items-center gap-2 mb-6">
-                <span className="w-2.5 h-2.5 rounded-full bg-forest" />
-                <h3 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal">
-                  High-Resolution Facility Photography
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {service.photos.map((photo, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() =>
-                      openLightbox({
-                        src: photo.url,
-                        title: photo.title,
-                        meta: `${service.title} • ${photo.tag}`,
-                      })
-                    }
-                    className="group relative aspect-[4/3] rounded-sm overflow-hidden bg-charcoal cursor-pointer border border-charcoal/10 hover:border-orange shadow-sm transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <Image
-                      src={photo.url}
-                      alt={photo.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 flex flex-col justify-end text-white">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-heading font-extrabold uppercase tracking-widest text-orange">
-                          {photo.tag}
-                        </span>
-                        <Maximize2 className="w-4 h-4 text-white/80" />
-                      </div>
-                      <h4 className="text-base font-heading font-bold uppercase leading-tight text-white">
-                        {photo.title}
-                      </h4>
-                      <p className="text-xs text-grey-light mt-1 line-clamp-2">
-                        {photo.caption}
-                      </p>
-                    </div>
-
-                    <div className="absolute top-3 left-3 bg-charcoal/80 text-white text-[10px] font-heading font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
-                      {photo.tag}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* =================================================================
-          3. TEXTS: DETAILED SERVICE EXPLANATION & CAPABILITIES
-          (As requested: "then texts")
-          ================================================================= */}
-      <section className="py-20 sm:py-28 bg-white border-b border-charcoal/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            {/* Left Narrative Text (7 cols) */}
-            <div className="lg:col-span-7 space-y-6">
-              <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-                Manufacturing Philosophy &amp; Scope
+            {/* The 5 Pillars from Official PDF Brochure */}
+            <div className="pt-8 border-t border-charcoal/10">
+              <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal block mb-6">
+                Five Core Manufacturing Standards (Official Brochure)
               </span>
-              <h2 className="text-3xl sm:text-4xl font-heading font-black uppercase tracking-tight text-charcoal">
-                How We Deliver Perfection At Scale.
-              </h2>
-
-              <div className="space-y-4 text-base text-grey-dark leading-relaxed font-light">
-                {service.longDescription.map((p, idx) => (
-                  <p key={idx}>{p}</p>
-                ))}
-              </div>
-
-              {/* 4 Core Pillars */}
-              <div className="pt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-charcoal/10">
-                {service.capabilities.map((cap, idx) => (
-                  <div key={idx} className="bg-offwhite p-5 rounded-sm border border-charcoal/10 space-y-2">
-                    {cap.metric && (
-                      <span className="text-xs font-mono font-bold text-orange block">
-                        CAPACITY: {cap.metric}
-                      </span>
-                    )}
-                    <h4 className="text-base font-heading font-black uppercase text-charcoal">
-                      {cap.title}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="p-5 bg-offwhite rounded-sm border border-charcoal/10 flex items-start gap-3.5">
+                  <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-heading font-bold uppercase text-charcoal">
+                      Customized Solutions
                     </h4>
-                    <p className="text-xs text-grey-dark leading-relaxed">
-                      {cap.description}
+                    <p className="text-[11px] text-grey-dark mt-1 font-light leading-relaxed">
+                      Tailored specs, bespoke molds, and structural packaging dielines.
                     </p>
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            {/* Right Technical Specs Sidebar (5 cols) */}
-            <div className="lg:col-span-5 bg-offwhite p-8 rounded-sm border-2 border-charcoal/10 space-y-6">
-              <div className="flex items-center gap-2 border-b border-charcoal/10 pb-4">
-                <ShieldCheck className="w-5 h-5 text-orange" />
-                <h3 className="text-base font-heading font-extrabold uppercase tracking-wider text-charcoal">
-                  Technical Specifications
-                </h3>
-              </div>
-
-              <dl className="space-y-4 text-xs">
-                {service.specifications.map((spec, idx) => (
-                  <div key={idx} className="border-b border-charcoal/10 pb-3">
-                    <dt className="text-grey-dark font-medium uppercase tracking-wider block mb-1">
-                      {spec.label}
-                    </dt>
-                    <dd className="text-charcoal font-heading font-bold text-sm">
-                      {spec.value}
-                    </dd>
+                <div className="p-5 bg-offwhite rounded-sm border border-charcoal/10 flex items-start gap-3.5">
+                  <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-heading font-bold uppercase text-charcoal">
+                      Consistent Quality
+                    </h4>
+                    <p className="text-[11px] text-grey-dark mt-1 font-light leading-relaxed">
+                      OEKO-TEX Class I, GRS certified materials, and Heidelberg press accuracy.
+                    </p>
                   </div>
-                ))}
-              </dl>
+                </div>
 
-              <div className="pt-2">
-                <button
-                  onClick={() => openQuote(service.title, service.divisionLabel)}
-                  className="w-full bg-charcoal hover:bg-forest text-white py-3.5 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest text-center transition-colors"
-                >
-                  Consult Specifications Team
-                </button>
+                <div className="p-5 bg-offwhite rounded-sm border border-charcoal/10 flex items-start gap-3.5">
+                  <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-heading font-bold uppercase text-charcoal">
+                      Competitive Pricing
+                    </h4>
+                    <p className="text-[11px] text-grey-dark mt-1 font-light leading-relaxed">
+                      Direct manufacturing advantage from Bangladesh with zero middleman markups.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-5 bg-offwhite rounded-sm border border-charcoal/10 flex items-start gap-3.5">
+                  <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-heading font-bold uppercase text-charcoal">
+                      Reliable Delivery
+                    </h4>
+                    <p className="text-[11px] text-grey-dark mt-1 font-light leading-relaxed">
+                      FOB Chittagong port consolidation or rapid express air dispatch from Dhaka.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-5 bg-offwhite rounded-sm border border-charcoal/10 flex items-start gap-3.5 sm:col-span-2 lg:col-span-2">
+                  <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-heading font-bold uppercase text-charcoal">
+                      Professional Service
+                    </h4>
+                    <p className="text-[11px] text-grey-dark mt-1 font-light leading-relaxed">
+                      Dedicated bilingual technical merchandisers providing end-to-end milestone updates throughout production.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -360,131 +247,118 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
       </section>
 
       {/* =================================================================
-          4. WORKFLOW PROCESS PIPELINE (6-STEP TIMELINE)
+          3. PRODUCTS OFFERED BY THIS SERVICE DIVISION (9 PER PAGE + PAGINATION)
           ================================================================= */}
-      <section className="py-20 sm:py-28 bg-offwhite border-b border-charcoal/10">
+      <section id="products" className="py-20 sm:py-32 bg-offwhite text-charcoal scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-14 space-y-3">
-            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-              Step-by-Step Execution
+          {/* Section Header */}
+          <div className="max-w-3xl mb-14">
+            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block mb-2">
+              Official Brochure Portfolio ({divisionProducts.length} Product Categories)
             </span>
-            <h2 className="text-3xl sm:text-4xl font-heading font-black uppercase tracking-tight text-charcoal">
-              Production Lifecycle &amp; Milestones.
+            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
+              {isPrivate ? "Apparel Accessories & Packaging Range." : "Commercial Print & Promotional Products."}
             </h2>
-            <p className="text-sm text-grey-dark font-light">
-              Every order follows this disciplined, milestone-driven workflow ensuring transparency, sample precision, and zero defect leakage before shipping.
+            <p className="text-sm sm:text-base text-grey-dark mt-3 font-light leading-relaxed">
+              {isPrivate
+                ? "Authentic garment trim categories directly from our Apparel Accessories brochure. Click any product category for comprehensive technical tolerances and quotation."
+                : "Authentic commercial printing and branding items straight from our Commercial Printing brochure. Choose your products and request instant customized pricing."}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {service.workflowSteps.map((step, idx) => (
-              <div
-                key={idx}
-                className="bg-white p-7 rounded-sm border border-charcoal/10 shadow-sm space-y-4 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-mono font-extrabold text-orange">
-                      STAGE {step.step}
-                    </span>
-                    <span className="w-7 h-7 rounded-full bg-charcoal/5 text-charcoal text-xs font-heading font-bold flex items-center justify-center">
-                      {step.step}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-heading font-black uppercase text-charcoal">
-                    {step.name}
-                  </h3>
-                  <p className="text-xs text-grey-dark leading-relaxed mt-2">
-                    {step.summary}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-charcoal/10">
-                  <span className="text-[10px] font-heading font-extrabold uppercase tracking-wider text-grey block mb-2">
-                    Key Deliverables:
-                  </span>
-                  <ul className="space-y-1.5 text-xs text-charcoal/90">
-                    {step.deliverables.map((deliv, dIdx) => (
-                      <li key={dIdx} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-forest flex-shrink-0" />
-                        <span>{deliv}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+          {/* Product Cards Grid (9 items per page) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {paginatedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="mt-14 pt-8 border-t border-charcoal/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-xs text-grey-dark font-mono">
+                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} &ndash;{" "}
+                {Math.min(currentPage * ITEMS_PER_PAGE, divisionProducts.length)} of {divisionProducts.length} Products
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border border-charcoal/15 rounded-sm text-xs font-heading font-bold uppercase tracking-wider text-charcoal hover:bg-charcoal hover:text-white transition-colors disabled:opacity-30 disabled:pointer-events-none inline-flex items-center gap-1.5"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Previous</span>
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-9 h-9 rounded-sm text-xs font-heading font-bold transition-all ${
+                        currentPage === page
+                          ? "bg-orange text-white shadow-sm"
+                          : "border border-charcoal/10 text-charcoal hover:bg-charcoal/5"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(Math.min(currentPage + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border border-charcoal/15 rounded-sm text-xs font-heading font-bold uppercase tracking-wider text-charcoal hover:bg-charcoal hover:text-white transition-colors disabled:opacity-30 disabled:pointer-events-none inline-flex items-center gap-1.5"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* =================================================================
-          5. FAQS
-          ================================================================= */}
-      <section className="py-20 sm:py-24 bg-white border-b border-charcoal/10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-              Clear Answers
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight text-charcoal">
-              Frequently Asked Questions
-            </h2>
-          </div>
-
-          <div className="space-y-4">
-            {service.faqs.map((faq, idx) => (
-              <div key={idx} className="bg-offwhite p-6 rounded-sm border border-charcoal/10">
-                <h4 className="text-base font-heading font-bold uppercase text-charcoal mb-2">
-                  {faq.q}
-                </h4>
-                <p className="text-sm text-grey-dark leading-relaxed font-light">
-                  {faq.a}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          6. PROMINENT QUOTATION BUTTON / HIGH-IMPACT QUOTATION BANNER
+          4. PROMINENT QUOTATION BANNER
           (TEXTURE VARIANT: OXFORD BASKETWEAVE DARK WITH STITCH BORDER)
           ================================================================= */}
       <section className="py-20 sm:py-32 bg-charcoal text-white relative overflow-hidden bg-fabric-oxford-dark">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Inner Dashed Stitch Border Container (Matching the user's reference image!) */}
-          <div className="border-2 border-dashed border-white/20 p-8 sm:p-14 lg:p-16 rounded-sm bg-charcoal/80 backdrop-blur-sm text-center space-y-6 shadow-2xl">
+          <div className="border-2 border-dashed border-white/20 p-8 sm:p-12 lg:p-14 rounded-sm bg-charcoal/80 backdrop-blur-sm text-center space-y-5 shadow-2xl">
             <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
               <span className="w-2 h-2 rounded-full bg-orange animate-pulse" />
-              LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.
+              Direct Factory Partnership &bull; Motijheel, Dhaka
             </span>
 
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white leading-tight">
-              Ready to Produce With {service.divisionLabel}?
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black uppercase tracking-tight text-white leading-tight">
+              Ready to Produce With {isPrivate ? "Private Jobs" : "Commercial Jobs"}?
             </h2>
 
-            <p className="text-sm sm:text-lg text-beige-light/90 max-w-2xl mx-auto font-light leading-relaxed">
-              &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo; &mdash; Our Motijheel, Dhaka manufacturing team is equipped to fulfill your requirements.
+            <p className="text-xs sm:text-sm text-beige-light/90 max-w-2xl mx-auto font-light leading-relaxed">
+              &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo; &mdash; Our Motijheel, Dhaka manufacturing team is equipped to fulfill your volume requirements.
             </p>
 
             {/* Prominent Quotation Button */}
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
-                onClick={() => openQuote(service.title, service.divisionLabel)}
-                className={`w-full sm:w-auto px-10 py-5 rounded-sm font-heading text-sm font-black uppercase tracking-widest inline-flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:scale-105 text-white ${
-                  isPrivate
-                    ? "bg-orange hover:bg-orange-hover shadow-orange/30"
-                    : "bg-cyan hover:bg-blue shadow-cyan/30"
-                }`}
+                onClick={() =>
+                  openQuote(
+                    isPrivate ? "Private Jobs Division Consultation" : "Commercial Print Division Consultation",
+                    isPrivate ? "Apparel Accessories & Packaging" : "Commercial Printing & Promotion"
+                  )
+                }
+                className="w-full sm:w-auto px-9 py-4 rounded-sm font-heading text-xs sm:text-sm font-black uppercase tracking-widest inline-flex items-center justify-center gap-3 transition-all duration-300 shadow-2xl hover:scale-105 text-white bg-orange hover:bg-orange-hover shadow-orange/30"
               >
-                <span>Request Quotation For {service.title.split("—")[0].trim()}</span>
-                <ArrowRight className="w-5 h-5" />
+                <span>Request Quotation For {isPrivate ? "Private Jobs" : "Commercial Jobs"}</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
 
               <Link
                 href="/contact"
-                className="w-full sm:w-auto bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-5 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center justify-center gap-2 transition-all"
+                className="w-full sm:w-auto bg-transparent hover:bg-white/10 text-white border border-white/30 px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center justify-center gap-2 transition-all"
               >
                 Contact Sales Team Directly
               </Link>
@@ -498,68 +372,6 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
           </div>
         </div>
       </section>
-
-      {/* Video Playback Modal (Simulated Video Experience) */}
-      {playingVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md">
-          <div className="relative w-full max-w-4xl bg-charcoal rounded-sm overflow-hidden border border-white/10 shadow-2xl">
-            {/* Top Bar */}
-            <div className="p-4 bg-charcoal border-b border-white/10 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-heading font-extrabold uppercase tracking-widest text-orange block">
-                  Production Telemetry Feed
-                </span>
-                <h4 className="text-sm font-heading font-bold text-white uppercase">
-                  {playingVideo.title}
-                </h4>
-              </div>
-              <button
-                onClick={() => setPlayingVideo(null)}
-                className="text-white hover:text-orange p-1"
-                aria-label="Close Video Player"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Video Player Display */}
-            <div className="relative aspect-video w-full bg-black flex items-center justify-center">
-              <Image
-                src={playingVideo.thumbnail}
-                alt={playingVideo.title}
-                fill
-                className="object-cover opacity-70"
-              />
-              <div className="relative z-10 text-center p-6 max-w-md space-y-4">
-                <div className="w-16 h-16 rounded-full bg-orange/90 text-white flex items-center justify-center mx-auto shadow-2xl animate-pulse">
-                  <Play className="w-8 h-8 fill-current translate-x-0.5" />
-                </div>
-                <p className="text-xs text-beige-light leading-relaxed">
-                  {playingVideo.caption}
-                </p>
-                <span className="inline-block text-[10px] font-mono uppercase tracking-widest text-orange bg-charcoal/80 px-3 py-1 rounded-sm border border-white/10">
-                  Direct Factory Machine Footage &bull; Dhaka Facilities
-                </span>
-              </div>
-            </div>
-
-            {/* Bottom Bar */}
-            <div className="p-4 bg-charcoal border-t border-white/10 flex items-center justify-between text-xs text-grey-light">
-              <span>Industrial Telemetry &bull; Ultra-HD 60FPS</span>
-              <button
-                onClick={() => {
-                  setPlayingVideo(null);
-                  openQuote(playingVideo.title, service.divisionLabel);
-                }}
-                className="bg-orange hover:bg-orange-hover text-white text-[11px] font-heading font-bold uppercase tracking-wider px-4 py-2 rounded-sm transition-colors"
-              >
-                Inquire About This Process
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-

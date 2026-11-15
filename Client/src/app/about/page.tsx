@@ -38,7 +38,7 @@ export default function AboutPage() {
           HERO: EDITORIAL WITH DIAGONAL TWILL CLOTH THREAD TEXTURE
           (FLUSH TO TOP WITH ZERO GAP UNDER NAV)
           ================================================================= */}
-      <section className="relative pt-32 pb-24 sm:pt-40 sm:pb-36 bg-charcoal text-white overflow-hidden bg-fabric-twill-dark">
+      <section className="relative pt-28 pb-16 sm:pt-32 sm:pb-20 bg-charcoal text-white overflow-hidden bg-fabric-twill-dark">
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/90 to-charcoal/60" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-forest/30 via-transparent to-transparent opacity-60" />
 
@@ -51,11 +51,6 @@ export default function AboutPage() {
               </span>
             </h1>
 
-            {/* Official Slogan from PDF Brochure */}
-            <div className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange border-l-2 border-orange pl-3">
-              LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.
-            </div>
-
             <p className="text-base sm:text-lg text-beige-light leading-relaxed font-light pt-2">
               &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo; &mdash; Operating from our Motijheel, Dhaka headquarters to serve international fashion houses and corporations worldwide.
             </p>
@@ -64,51 +59,57 @@ export default function AboutPage() {
       </section>
 
       {/* =================================================================
-          1. COMPANY INTRODUCTION — ABOUT US (REWRITTEN CLEANLY)
+          1. COMPANY INTRODUCTION — ABOUT US (CLEAN FULL-WIDTH EDITORIAL)
           (TEXTURE VARIANT: LINEN WEAVE)
           ================================================================= */}
-      <section className="py-20 sm:py-28 bg-offwhite text-charcoal bg-fabric-linen">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-8">
-            <div>
-              <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block mb-2">
-                About Us
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
-                About Texpart.
-              </h2>
-            </div>
+      <section className="py-20 sm:py-28 bg-offwhite text-charcoal bg-fabric-linen border-b border-charcoal/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Top Heading */}
+          <div className="max-w-3xl mb-12">
+            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block mb-2">
+              Company Overview
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal leading-none">
+              ABOUT TEXPART.
+            </h2>
+          </div>
 
-            <div className="text-base sm:text-lg text-grey-dark leading-relaxed font-light space-y-6">
+          {/* Full-Width Narrative Spanning Design Width */}
+          <div className="space-y-6 text-base sm:text-lg text-grey-dark leading-relaxed font-light">
+            <p className="text-lg sm:text-xl text-charcoal font-normal leading-relaxed">
+              Headquartered at <strong>263, Fakirapool, Motijheel, Dhaka</strong>, Texpart is an international manufacturing and production partner bridging fashion innovation with industrial excellence in Bangladesh. Established to serve global fashion brands, independent fashion labels, and multinational corporations, we unite complete apparel manufacturing with precision commercial printing and luxury packaging under one integrated roof.
+            </p>
+
+            <p>
+              Our operations are organized into two dedicated, world-class divisions designed to address the full product lifecycle:
+            </p>
+
+            <div className="border-l-4 border-orange pl-6 py-4 space-y-4 text-sm sm:text-base bg-white/60 p-6 rounded-r-sm">
               <p>
-                Headquartered at <strong>263, Fakirapool, Motijheel, Dhaka</strong>, Texpart is an international manufacturing and production partner bridging fashion innovation with industrial excellence in Bangladesh. Established to serve global fashion brands, independent fashion labels, and multinational corporations, we unite complete apparel manufacturing with precision commercial printing and luxury packaging under one integrated roof.
+                <strong className="text-charcoal font-heading uppercase text-xs tracking-wider block mb-1">
+                  Private Jobs &mdash; End-to-End Apparel Manufacturing:
+                </strong>
+                We take complete ownership from initial tech pack interpretation to finished, retail-ready garments. Our technical merchandisers and CAD pattern engineers manage prototype draping, physical fit sampling, lab-dip color formulation under strict D65 lighting standards, high-density computer-aided cutting, automated assembly stitching lines, seam sealing, and export carton consolidation across knitwear, activewear, and technical outerwear.
               </p>
-
               <p>
-                Our operations are organized into two dedicated, world-class divisions designed to address the full product lifecycle:
-              </p>
-
-              <div className="border-l-2 border-orange pl-6 py-2 space-y-4 text-sm sm:text-base">
-                <p>
-                  <strong>Private Jobs &mdash; End-to-End Apparel Manufacturing:</strong> We take complete ownership from initial tech pack interpretation to finished, retail-ready garments. Our technical merchandisers and CAD pattern engineers manage prototype draping, physical fit sampling, lab-dip color formulation under strict D65 lighting standards, high-density computer-aided cutting, automated assembly stitching lines, seam sealing, and export carton consolidation across knitwear, activewear, and technical outerwear.
-                </p>
-                <p>
-                  <strong>Commercial Jobs &mdash; Printing &amp; Brand Accessories:</strong> From initial brand concept to physical touchpoint, our commercial print division produces Swiss-loom high-density damask woven labels, FSC-certified hangtags, custom-cast metal zippers, jacquard elastics, luxury rigid presentation boxes with magnetic closures, folding retail cartons, and corporate print collateral on high-speed Heidelberg multi-color speedmaster presses.
-                </p>
-              </div>
-
-              <p>
-                At Texpart, quality is not a final checkpoint &mdash; it is engineered into every stage of the manufacturing process. Every production run undergoes rigorous multi-point in-line quality control adhering to <strong>AQL 1.5 standard export inspection</strong> benchmarks. We employ calibrated optical micrometer die-cutting, 100% industrial needle detection, seam tensile testing, and wash-fastness verification to ensure zero-defect compliance for international markets.
-              </p>
-
-              <p>
-                We believe in ethical manufacturing, environmental sustainability, and responsible sourcing. Our materials comply with <strong>OEKO-TEX® Standard 100</strong> and <strong>GRS (Global Recycled Standard)</strong> criteria, utilizing recycled polyester fibers, organic cotton tapes, non-toxic soy-based printing inks, and responsibly harvested FSC paperboards.
-              </p>
-
-              <p>
-                Guided by our foundational 3-i philosophy &mdash; <strong>iNTEGRITY</strong>, <strong>iNNOVATIVE</strong>, and <strong>iN-DEPTH</strong> &mdash; we eliminate intermediary brokerage markups with transparent bill-of-materials pricing, flexible minimum order quantities (MOQ) for emerging startups, and reliable on-time global logistics dispatch via FOB Chittagong Port or express air from Dhaka Shahjalal International Airport.
+                <strong className="text-charcoal font-heading uppercase text-xs tracking-wider block mb-1">
+                  Commercial Jobs &mdash; Printing &amp; Brand Accessories:
+                </strong>
+                From initial brand concept to physical touchpoint, our commercial print division produces Swiss-loom high-density damask woven labels, FSC-certified hangtags, custom-cast metal zippers, jacquard elastics, luxury rigid presentation boxes with magnetic closures, folding retail cartons, and corporate print collateral on high-speed Heidelberg multi-color speedmaster presses.
               </p>
             </div>
+
+            <p>
+              At Texpart, quality is not a final checkpoint &mdash; it is engineered into every stage of the manufacturing process. Every production run undergoes rigorous multi-point in-line quality control adhering to <strong>AQL 1.5 standard export inspection</strong> benchmarks. We employ calibrated optical micrometer die-cutting, 100% industrial needle detection, seam tensile testing, and wash-fastness verification to ensure zero-defect compliance for international markets.
+            </p>
+
+            <p>
+              We believe in ethical manufacturing, environmental sustainability, and responsible sourcing. Our materials comply with <strong>OEKO-TEX® Standard 100</strong> and <strong>GRS (Global Recycled Standard)</strong> criteria, utilizing recycled polyester fibers, organic cotton tapes, non-toxic soy-based printing inks, and responsibly harvested FSC paperboards.
+            </p>
+
+            <p>
+              Guided by our foundational 3-i philosophy &mdash; <strong>iNTEGRITY</strong>, <strong>iNNOVATIVE</strong>, and <strong>iN-DEPTH</strong> &mdash; we eliminate intermediary brokerage markups with transparent bill-of-materials pricing, flexible minimum order quantities (MOQ) for emerging startups, and reliable on-time global logistics dispatch via FOB Chittagong Port or express air from Dhaka Shahjalal International Airport.
+            </p>
           </div>
         </div>
       </section>
@@ -120,10 +121,6 @@ export default function AboutPage() {
       <section className="py-20 sm:py-28 bg-offwhite border-y border-charcoal/10 relative bg-fabric-oxford">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-              The 3-i Manufacturing Philosophy
-            </span>
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
               THE THREE PILLARS OF EXCELLENCE.
             </h2>
@@ -160,17 +157,6 @@ export default function AboutPage() {
                   Transparent open-book BOM costings, compliant factories, and ethical labor standards across every apparel cut and printed label run.
                 </p>
               </div>
-
-              <div className="text-xs text-charcoal font-medium space-y-2 pt-6 border-t border-charcoal/10 mt-6">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Honest material composition grading</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Transparent delivery milestones</span>
-                </div>
-              </div>
             </div>
 
             {/* 2. iNNOVATIVE */}
@@ -200,17 +186,6 @@ export default function AboutPage() {
                   Leveraging computer-aided design, 3D prototype draping, GRS recycled yarn innovations, and eco-friendly soy printing technologies.
                 </p>
               </div>
-
-              <div className="text-xs text-charcoal font-medium space-y-2 pt-6 border-t border-charcoal/10 mt-6">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Structural packaging dielines</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Specialized trim embellishments</span>
-                </div>
-              </div>
             </div>
 
             {/* 3. iN-DEPTH */}
@@ -239,17 +214,6 @@ export default function AboutPage() {
                 <p className="text-xs text-grey-dark leading-relaxed font-light mt-2">
                   End-to-end multi-stage inspection, yarn density audits under magnification, needle detection, and AQL 1.5 international export clearance.
                 </p>
-              </div>
-
-              <div className="text-xs text-charcoal font-medium space-y-2 pt-6 border-t border-charcoal/10 mt-6">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>AQL 1.5 strict multi-point inspection</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-forest flex-shrink-0" />
-                  <span>Needle detection &amp; wash fastness audits</span>
-                </div>
               </div>
             </div>
           </div>
@@ -296,9 +260,6 @@ export default function AboutPage() {
                   Tailored style guidelines, CAD tech pack consultation, and structural dieline engineering for products and packaging.
                 </p>
               </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Initial Design Review
-              </div>
             </div>
 
             {/* STAGE 02: DEVELOP */}
@@ -319,9 +280,6 @@ export default function AboutPage() {
                 <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
                   Physical proto sampling, lab dip color matching under D65, size grading, and wet proofs on actual production paper.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Pre-Production Approval
               </div>
             </div>
 
@@ -344,9 +302,6 @@ export default function AboutPage() {
                   Automated computer cutting, dedicated assembly stitching lines, Heidelberg offset press runs, and 100% in-line QC.
                 </p>
               </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; AQL 1.5 In-Line QC
-              </div>
             </div>
 
             {/* STAGE 04: PACK */}
@@ -368,9 +323,6 @@ export default function AboutPage() {
                   Retail polybagging, hangtag attachment, silica desiccant insertion, and heavy-duty corrugated export master carton packing.
                 </p>
               </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Ocean-Proof Protection
-              </div>
             </div>
 
             {/* STAGE 05: DELIVER */}
@@ -391,9 +343,6 @@ export default function AboutPage() {
                 <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
                   Container consolidation, FOB Chittagong Port ocean export, or express air dispatch through Dhaka Shahjalal Airport.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-[11px] text-grey-light font-mono mt-6">
-                &bull; Global Port Clearance
               </div>
             </div>
           </div>
@@ -607,7 +556,7 @@ export default function AboutPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="border-2 border-dashed border-white/20 p-8 sm:p-14 rounded-sm bg-charcoal/85 backdrop-blur-sm text-center space-y-6 shadow-2xl">
             <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-              LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.
+              Direct B2B Manufacturing Partnership
             </span>
 
             <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">

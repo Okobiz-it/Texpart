@@ -29,7 +29,7 @@ export default function ProductDetailsModal() {
     const prod = selectedProduct;
     closeProductModal();
     setTimeout(() => {
-      openQuote(prod.name, prod.collection, prod.id);
+      openQuote(prod.name, prod.category, prod.id);
     }, 150);
   };
 
