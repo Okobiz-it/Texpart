@@ -40,7 +40,7 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2 group">
           <div className="relative w-44 h-11 transition-transform duration-300 group-hover:scale-105">
             <Image
-              src="/logo-white.svg"
+              src="/nav-logo.png"
               alt="Texpart — Design & Packaging Solutions"
               fill
               className="object-contain"
@@ -81,28 +81,40 @@ export default function Header() {
               <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" />
             </Link>
 
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 bg-charcoal border border-white/10 rounded-sm shadow-2xl py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto">
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-charcoal border border-white/10 rounded-sm shadow-2xl py-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto">
               <Link
-                href="/services#private-jobs"
-                className="block px-5 py-3 hover:bg-white/5 transition-colors group/item"
+                href="/services"
+                className="block px-5 py-2.5 hover:bg-white/5 transition-colors border-b border-white/5"
               >
-                <div className="text-xs font-heading font-extrabold uppercase tracking-wider text-orange group-hover/item:text-orange-hover">
-                  01. Private Jobs
+                <div className="text-[11px] font-heading font-black uppercase tracking-widest text-white">
+                  All Services &amp; Products
                 </div>
-                <div className="text-xs text-grey-light mt-0.5">
-                  End-to-End Apparel Product Development &amp; Manufacturing
+                <div className="text-[11px] text-grey-light">
+                  View complete product catalog for both divisions
                 </div>
               </Link>
-              <div className="border-t border-white/5 my-1"></div>
               <Link
-                href="/services#commercial-jobs"
+                href="/services/private-jobs"
                 className="block px-5 py-3 hover:bg-white/5 transition-colors group/item"
               >
-                <div className="text-xs font-heading font-extrabold uppercase tracking-wider text-cyan group-hover/item:text-orange">
-                  02. Commercial Jobs
+                <div className="text-xs font-heading font-extrabold uppercase tracking-wider text-orange group-hover/item:text-orange-hover flex items-center justify-between">
+                  <span>01. Private Jobs</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 bg-orange/20 rounded">PAGE</span>
                 </div>
                 <div className="text-xs text-grey-light mt-0.5">
-                  Commercial Printing &amp; Customized Promotional Products
+                  Apparel Product Development, Sampling &amp; Manufacturing
+                </div>
+              </Link>
+              <Link
+                href="/services/commercial-jobs"
+                className="block px-5 py-3 hover:bg-white/5 transition-colors group/item"
+              >
+                <div className="text-xs font-heading font-extrabold uppercase tracking-wider text-cyan group-hover/item:text-orange flex items-center justify-between">
+                  <span>02. Commercial Jobs</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 bg-cyan/20 rounded">PAGE</span>
+                </div>
+                <div className="text-xs text-grey-light mt-0.5">
+                  Commercial Printing &amp; Customized Promotional Packaging
                 </div>
               </Link>
             </div>
@@ -149,4 +161,3 @@ export default function Header() {
     </header>
   );
 }
-

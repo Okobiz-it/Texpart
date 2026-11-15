@@ -10,7 +10,7 @@ export default function Footer() {
   const { openQuote } = useQuote();
 
   return (
-    <footer className="bg-[#101211] text-grey-light border-t border-white/10 pt-16 pb-8">
+    <footer className="bg-[#101211] text-grey-light border-t border-white/10 pt-16 pb-8 bg-fabric-oxford-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
           {/* Col 1: Brand & Positioning */}
@@ -18,21 +18,21 @@ export default function Footer() {
             <Link href="/" className="inline-block">
               <div className="relative w-48 h-12">
                 <Image
-                  src="/logo-white.svg"
+                  src="/nav-logo.png"
                   alt="Texpart — Design & Packaging Solutions"
                   fill
                   className="object-contain"
                 />
               </div>
             </Link>
-            <p className="text-sm text-grey-light/90 leading-relaxed max-w-sm pt-2">
-              Premier garments manufacturing, apparel accessories, and high-precision commercial printing partner based in Dhaka, Bangladesh. Delivering craftsmanship and industrial scale to international fashion brands and corporate clients worldwide.
+            <p className="text-sm text-grey-light/90 leading-relaxed max-w-sm pt-2 font-light">
+              &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo;
             </p>
             <div className="pt-2 text-xs font-heading font-extrabold tracking-widest uppercase text-beige">
-              QUALITY • INNOVATION • RELIABILITY
+              iNTEGRITY • iNNOVATIVE • iN-DEPTH
             </div>
             <div className="text-xs text-orange font-semibold pt-1">
-              &ldquo;ONE PARTNER. MULTIPLE SOLUTIONS.&rdquo;
+              &ldquo;LET&apos;S CREATE. LET&apos;S DEVELOP. LET&apos;S DELIVER.&rdquo;
             </div>
           </div>
 
@@ -43,18 +43,23 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/services#private-jobs" className="hover:text-orange transition-colors">
-                  Private Jobs (Apparel Development)
+                <Link href="/services/private-jobs" className="hover:text-orange transition-colors">
+                  01. Private Jobs (Apparel Development)
                 </Link>
               </li>
               <li>
-                <Link href="/services#commercial-jobs" className="hover:text-orange transition-colors">
-                  Commercial Jobs (Printing &amp; Promo)
+                <Link href="/services/commercial-jobs" className="hover:text-orange transition-colors">
+                  02. Commercial Jobs (Printing &amp; Promo)
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="hover:text-orange transition-colors">
+                  All Services &amp; Products
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="hover:text-orange transition-colors">
-                  Our Story &amp; Philosophy
+                  Our 3 i Commitment &amp; Story
                 </Link>
               </li>
               <li>
@@ -77,39 +82,39 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <Link href="/#products" className="hover:text-orange transition-colors">
+                <Link href="/products/labels" className="hover:text-orange transition-colors">
                   Woven &amp; Printed Labels
                 </Link>
               </li>
               <li>
-                <Link href="/#products" className="hover:text-orange transition-colors">
+                <Link href="/products/hangtags" className="hover:text-orange transition-colors">
                   Architectural Hangtags
                 </Link>
               </li>
               <li>
-                <Link href="/#products" className="hover:text-orange transition-colors">
-                  Zippers, Pullers &amp; Metal Hardware
+                <Link href="/products/zippers" className="hover:text-orange transition-colors">
+                  Zippers &amp; Metal Hardware
                 </Link>
               </li>
               <li>
-                <Link href="/#products" className="hover:text-orange transition-colors">
-                  Brochures &amp; Product Catalogues
+                <Link href="/products/brochures-catalogues" className="hover:text-orange transition-colors">
+                  Brochures &amp; Catalogues
                 </Link>
               </li>
               <li>
-                <Link href="/#products" className="hover:text-orange transition-colors">
-                  Executive Diaries &amp; Notebooks
+                <Link href="/products/diaries-notebooks" className="hover:text-orange transition-colors">
+                  Executive Diaries &amp; Planners
                 </Link>
               </li>
               <li>
-                <Link href="/#products" className="hover:text-orange transition-colors">
+                <Link href="/products/gift-boxes-premium-packaging" className="hover:text-orange transition-colors">
                   Rigid Magnetic Gift Boxes
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Dhaka HQ & Inquiry */}
+          {/* Col 4: Dhaka HQ & Inquiry (Official from PDF Brochure) */}
           <div>
             <h4 className="font-heading text-xs uppercase tracking-widest font-extrabold text-offwhite mb-4">
               Dhaka Headquarters
@@ -117,19 +122,23 @@ export default function Footer() {
             <ul className="space-y-3 text-xs">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
-                <span>Tejgaon Industrial Area, Dhaka-1208, Bangladesh</span>
+                <span>263, Fakirapool, Motijheel, Dhaka, Bangladesh</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-orange flex-shrink-0" />
-                <span>+880 1712 345678 (Direct / WhatsApp)</span>
+                <span>+880 161 308 4465</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-orange flex-shrink-0" />
+                <span>+880 171 308 4465 (WhatsApp)</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-orange flex-shrink-0" />
-                <span>inquiry@texpart.com</span>
+                <span>texpartdesign@gmail.com</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Clock className="w-4 h-4 text-orange flex-shrink-0" />
-                <span>Sat &ndash; Thu: 9:00 AM &ndash; 7:00 PM (GMT+6)</span>
+                <span>Sat &ndash; Thu: 9:00 AM &ndash; 7:00 PM (BST)</span>
               </li>
             </ul>
 
@@ -164,4 +173,3 @@ export default function Footer() {
     </footer>
   );
 }
-

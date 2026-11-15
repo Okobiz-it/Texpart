@@ -132,6 +132,137 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     description: "Strict 4-point inspection system checking seam strength, measurement specs, needle detection, and clean finishing.",
     location: "Quality Assurance Hub, Dhaka Facility",
     meta: "AQL 1.5 Standard • Metal detection scanned"
+  },
+  {
+    id: "gal-13",
+    title: "Custom Cast Alloy Buckles & Metal Trims",
+    category: "apparel-accessories",
+    categoryLabel: "Apparel Accessories",
+    aspect: "square",
+    image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80",
+    description: "Solid brass and matte black electroplated metal buckles and hardware engineered for rugged technical apparel.",
+    location: "Metal Accessories Foundry, Dhaka",
+    meta: "Lead-Free Alloy • Anti-Corrosion Plating"
+  },
+  {
+    id: "gal-14",
+    title: "Organic Cotton Drawcords & Dipped Silicone Aglets",
+    category: "apparel-accessories",
+    categoryLabel: "Apparel Accessories",
+    aspect: "wide",
+    image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=1200&q=80",
+    description: "Braided 100% GOTS certified organic cotton drawstrings with custom transparent and matte colored silicone tips.",
+    location: "Cord & Braid Atelier, Dhaka",
+    meta: "OEKO-TEX 100 • Non-Toxic Dipping"
+  },
+  {
+    id: "gal-15",
+    title: "High-Gloss Spot UV Corporate Brochures & Catalogues",
+    category: "printing",
+    categoryLabel: "Printing",
+    aspect: "tall",
+    image: "https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?auto=format&fit=crop&w=1200&q=80",
+    description: "Precision multi-page stitch bound corporate collateral featuring velvet lamination and tactile raised spot UV accents.",
+    location: "Commercial Offset Division, Dhaka",
+    meta: "Velvet Soft-Touch • 350 GSM Cover"
+  },
+  {
+    id: "gal-16",
+    title: "Luxury Hinged Watch & Jewelry Packaging Box",
+    category: "packaging",
+    categoryLabel: "Packaging",
+    aspect: "square",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1200&q=80",
+    description: "Premium handcrafted gift box with hand-wrapped specialty art paper, magnetic snap closure, and micro-suede lining.",
+    location: "Rigid Packaging Atelier, Dhaka",
+    meta: "2.5mm Solid Kappa • Micro-Suede"
+  },
+  {
+    id: "gal-17",
+    title: "Heavyweight French Terry Streetwear Outerwear",
+    category: "finished-products",
+    categoryLabel: "Finished Products",
+    aspect: "tall",
+    image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=1200&q=80",
+    description: "Finished production run: 450 GSM custom dyed loopback cotton pullover hoodie with custom jacquard neck labels.",
+    location: "Apparel Assembly Hub, Dhaka",
+    meta: "450 GSM Terry • Pre-Shrunk Finish"
+  },
+  {
+    id: "gal-18",
+    title: "Automated Vacuum Multi-Ply Fabric Spreading Table",
+    category: "garment-production",
+    categoryLabel: "Garment Production",
+    aspect: "wide",
+    image: "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=1200&q=80",
+    description: "Precision tension-free spreading table with pneumatic hold-down for handling slippery technical fabrics and denim.",
+    location: "CAD Cutting Facility, Dhaka",
+    meta: "Tension-Free Spreading • Multi-Ply Vacuum"
+  },
+  {
+    id: "gal-19",
+    title: "Molded 3D High-Frequency Silicone Badges",
+    category: "apparel-accessories",
+    categoryLabel: "Apparel Accessories",
+    aspect: "square",
+    image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1200&q=80",
+    description: "Ultra-sharp relief silicone patches with heat-seal backing and sew-in perimeter groove for athletic apparel.",
+    location: "Molding Department, Dhaka",
+    meta: "Medical-Grade Silicone • Heat Seal Backing"
+  },
+  {
+    id: "gal-20",
+    title: "Executive Wire-O Bound Wall & Desk Calendars",
+    category: "printing",
+    categoryLabel: "Printing",
+    aspect: "wide",
+    image: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&w=1200&q=80",
+    description: "Custom date grids printed on archival 250 GSM FSC uncoated stock with sturdy easel stands and bronze wire binding.",
+    location: "Commercial Bindery Plant, Dhaka",
+    meta: "FSC Uncoated Board • Bronze Twin Wire"
+  },
+  {
+    id: "gal-21",
+    title: "Corrugated Export Master Cartons & Die-Cut Mailers",
+    category: "packaging",
+    categoryLabel: "Packaging",
+    aspect: "tall",
+    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
+    description: "Heavy-duty 5-ply corrugated export cartons with water-resistant outer liner and high burst factor for ocean freight.",
+    location: "Carton Converting Plant, Dhaka",
+    meta: "5-Ply Flute • Edge Crush Tested"
+  },
+  {
+    id: "gal-22",
+    title: "Performance Activewear & Moisture-Wicking Sets",
+    category: "finished-products",
+    categoryLabel: "Finished Products",
+    aspect: "square",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80",
+    description: "Private job execution: 4-way stretch polyester/spandex athletic activewear featuring flatlock comfort stitching.",
+    location: "Activewear Production Line, Dhaka",
+    meta: "Flatlock Seams • Quick-Dry 4-Way Stretch"
+  },
+  {
+    id: "gal-23",
+    title: "High-Speed Ultrasonic Garment Label Slitting",
+    category: "garment-production",
+    categoryLabel: "Garment Production",
+    aspect: "wide",
+    image: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=80",
+    description: "Automated ultrasonic cutting and center-folding line generating 12,000 labels per hour with ultra-soft scratch-free edges.",
+    location: "Weaving & Slitting Unit, Dhaka",
+    meta: "Ultrasonic Sealed Edge • Zero Fraying"
+  },
+  {
+    id: "gal-24",
+    title: "High-Density Satin Ribbon & Jacquard Weaving",
+    category: "apparel-accessories",
+    categoryLabel: "Apparel Accessories",
+    aspect: "tall",
+    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80",
+    description: "Custom dyed jacquard elastic waistbands and double-faced satin ribbons engineered for luxury fashion garments.",
+    location: "Narrow Fabrics Loom Unit, Dhaka",
+    meta: "High-Tensile Elastic • Colorfast Dyeing"
   }
 ];
-

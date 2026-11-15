@@ -11,6 +11,11 @@ import LightboxModal from "@/components/LightboxModal";
 export const metadata: Metadata = {
   title: "Texpart | Design & Packaging Solutions — Apparel Manufacturing & Commercial Printing",
   description: "Bangladesh-based premier apparel development, garments accessories, luxury packaging, and commercial printing partner. One partner, multiple solutions.",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
   keywords: [
     "Apparel Manufacturing Bangladesh",
     "Garment Accessories Dhaka",

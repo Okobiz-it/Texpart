@@ -49,6 +49,23 @@ const config: Config = {
         body: ["'Inter'", "'DM Sans'", "-apple-system", "sans-serif"],
         serif: ["'Playfair Display'", "Georgia", "serif"],
       },
+      animation: {
+        'marquee': 'marquee 30s linear infinite',
+        'float': 'float 4s ease-in-out infinite',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin 8s linear infinite',
+        'bounce-gentle': 'bounce 2s ease-in-out infinite',
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+      },
       boxShadow: {
         glow: "0 0 40px rgba(229, 139, 72, 0.2)",
         luxury: "0 20px 50px rgba(0, 0, 0, 0.4)",

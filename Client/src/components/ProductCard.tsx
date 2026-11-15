@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Product } from "@/types";
 import { useQuote } from "@/context/QuoteContext";
 import { ArrowRight } from "lucide-react";
@@ -11,26 +12,25 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { openProductModal, openQuote } = useQuote();
+  const { openQuote } = useQuote();
 
   return (
-    <div
-      onClick={() => openProductModal(product)}
-      className="group bg-white rounded-sm border border-charcoal/10 hover:border-orange overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
-    >
-      {/* Media */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-offwhite-alt">
+    <div className="group bg-white rounded-sm border border-charcoal/10 hover:border-orange overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl">
+      {/* Media with Clickable Link */}
+      <Link
+        href={`/products/${product.id}`}
+        className="relative aspect-[4/3] w-full overflow-hidden bg-offwhite-alt block"
+      >
         <Image
           src={product.image}
           alt={product.name}
           fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-700 group-hover:scale-108"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className="absolute top-3 left-3 bg-charcoal/85 backdrop-blur-sm text-offwhite text-[10px] font-heading font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-sm">
-          {product.heroBadge || product.category}
-        </div>
-      </div>
+        {/* Fabric Weave Overlay on Hover */}
+        <div className="absolute inset-0 bg-charcoal/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </Link>
 
       {/* Body */}
       <div className="p-6 flex flex-col flex-grow justify-between">
@@ -38,10 +38,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="text-[11px] font-heading font-extrabold uppercase tracking-widest text-orange block mb-1">
             {product.collection}
           </span>
-          <h3 className="text-xl font-heading font-black uppercase text-charcoal group-hover:text-orange transition-colors">
-            {product.name}
-          </h3>
-          <p className="text-xs text-grey-dark leading-relaxed mt-2 line-clamp-2">
+          <Link href={`/products/${product.id}`}>
+            <h3 className="text-xl font-heading font-black uppercase text-charcoal group-hover:text-orange transition-colors">
+              {product.name}
+            </h3>
+          </Link>
+          <p className="text-xs text-grey-dark leading-relaxed mt-2 line-clamp-2 font-light">
             {product.shortDesc}
           </p>
 
@@ -50,13 +52,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.subItems.slice(0, 3).map((sub, idx) => (
               <span
                 key={idx}
-                className="bg-offwhite-alt text-charcoal/80 text-[10px] font-medium px-2 py-0.5 rounded-sm"
+                className="bg-offwhite text-charcoal/80 text-[10px] font-medium px-2 py-0.5 rounded-sm border border-charcoal/5"
               >
                 {sub.split("(")[0].trim()}
               </span>
             ))}
             {product.subItems.length > 3 && (
-              <span className="bg-offwhite-alt text-grey text-[10px] font-medium px-1.5 py-0.5 rounded-sm">
+              <span className="bg-offwhite text-grey text-[10px] font-medium px-1.5 py-0.5 rounded-sm border border-charcoal/5">
                 +{product.subItems.length - 3}
               </span>
             )}
@@ -65,23 +67,22 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Footer Actions */}
         <div className="mt-6 pt-4 border-t border-charcoal/10 flex items-center justify-between">
-          <span className="inline-flex items-center gap-1 text-xs font-heading font-bold uppercase tracking-wider text-charcoal group-hover:text-orange transition-colors">
-            View Details
+          <Link
+            href={`/products/${product.id}`}
+            className="inline-flex items-center gap-1.5 text-xs font-heading font-bold uppercase tracking-wider text-charcoal hover:text-orange transition-colors"
+          >
+            <span>View Specifications</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </span>
+          </Link>
 
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              openQuote(product.name, product.collection, product.id);
-            }}
-            className="text-[11px] font-heading font-bold uppercase tracking-wider bg-orange/10 hover:bg-orange text-orange hover:text-white px-3 py-1.5 rounded-sm transition-colors"
+            onClick={() => openQuote(product.name, product.collection, product.id)}
+            className="text-[11px] font-heading font-bold uppercase tracking-wider bg-orange/10 hover:bg-orange text-orange hover:text-white px-3.5 py-1.5 rounded-sm transition-all shadow-sm"
           >
-            Request Quote
+            Get Quote
           </button>
         </div>
       </div>
     </div>
   );
 }
-
