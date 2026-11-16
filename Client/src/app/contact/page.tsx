@@ -1,33 +1,35 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   MapPin,
   Phone,
   Mail,
   Clock,
   Send,
-  UploadCloud,
   CheckCircle2,
-  FileText,
-  Loader2,
-  Globe,
 } from "lucide-react";
+import RichTextEditor from "@/components/RichTextEditor";
 
 export default function ContactPage() {
-  const [fullName, setFullName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [service, setService] = useState("Private Jobs — Apparel Manufacturing");
-  const [projectDetails, setProjectDetails] = useState("");
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [comment, setComment] = useState("");
+  const [commentError, setCommentError] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanComment = comment.replace(/<[^>]*>/g, "").trim();
+    if (!cleanComment) {
+      setCommentError(true);
+      return;
+    }
+    setCommentError(false);
     setIsSubmitting(true);
 
     setTimeout(() => {
@@ -36,214 +38,146 @@ export default function ContactPage() {
     }, 750);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFileName(e.target.files[0].name);
-    }
-  };
-
   return (
-    <div className="bg-offwhite min-h-screen text-charcoal">
-      {/* Header Banner with Fabric Twill Weave (FLUSH TO TOP UNDER NAV) */}
-      <section className="pt-28 pb-16 sm:pt-32 sm:pb-20 bg-charcoal text-white relative overflow-hidden bg-fabric-twill-dark">
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/90 to-charcoal/60" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-              Inquiry &bull; Motijheel, Dhaka Headquarters
-            </span>
-            <h1 className="text-4xl sm:text-6xl font-heading font-black uppercase tracking-tight text-white leading-tight">
+    <div className="bg-white text-[#0A2540]">
+      {/* Header Banner (Generous padding, zero squeezing) */}
+      <section className="pt-32 sm:pt-36 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white overflow-hidden border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-3xl space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black uppercase tracking-tight text-white leading-tight">
               Let&apos;s Discuss <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white">
+              <span className="text-blue-400">
                 Your Next Project.
               </span>
             </h1>
-            <p className="text-base sm:text-lg text-beige-light leading-relaxed font-light pt-2">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light pt-1">
               &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo; &mdash; Our Motijheel merchandising and engineering teams are ready to fulfill your orders.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Main Form and Location Split */}
-      <section className="py-20 sm:py-28 bg-offwhite text-charcoal">
+      {/* Main Get In Touch Section (Form on Left, Official Coordinates on Right) */}
+      <section className="py-8 sm:py-12 bg-white text-[#0A2540]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-            {/* Form Column (7 cols) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Left: GET IN TOUCH Form (7 cols) */}
             <div className="lg:col-span-7">
-              <div className="bg-white p-8 sm:p-12 rounded-sm border border-charcoal/10 shadow-lg">
-                <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block mb-2">
-                  B2B Partnership Inquiry
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-heading font-black uppercase tracking-tight text-charcoal mb-4">
-                  Request a Formal Proposal
-                </h2>
-                <p className="text-xs sm:text-sm text-grey-dark leading-relaxed mb-8 font-light">
-                  Share your project details, tech pack specs, or target quantities. A dedicated technical merchandiser will respond within 24 to 48 hours.
-                </p>
+              <div className="bg-white p-6 sm:p-8 rounded-[4px] border border-slate-200 shadow-sm">
+                <div className="mb-6 space-y-1">
+                  <h2 className="text-xl sm:text-2xl font-heading font-black uppercase tracking-tight text-[#0A2540]">
+                    Get In Touch
+                  </h2>
+                  <p className="text-xs text-slate-500 font-normal">
+                    Leave your project details and contact info below. Our team in Motijheel, Dhaka will contact you within 24 hours.
+                  </p>
+                </div>
 
                 {isSubmitted ? (
-                  <div className="p-8 bg-forest/10 border border-forest/30 rounded-sm text-center space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-forest text-white flex items-center justify-center mx-auto">
-                      <CheckCircle2 className="w-8 h-8" />
+                  <div className="p-6 bg-blue-50 border border-blue-200 rounded-[4px] text-center space-y-3">
+                    <div className="w-12 h-12 rounded-[4px] bg-[#0066CC] text-white flex items-center justify-center mx-auto shadow-md">
+                      <CheckCircle2 className="w-6 h-6" />
                     </div>
-                    <h3 className="text-2xl font-heading font-black uppercase text-forest-dark">
+                    <h3 className="text-base sm:text-lg font-heading font-bold uppercase text-[#0A2540]">
                       Inquiry Received Successfully
                     </h3>
-                    <p className="text-sm text-charcoal leading-relaxed max-w-md mx-auto">
-                      Thank you, <strong>{fullName || "valued partner"}</strong>. Your project brief has been routed to our technical merchandising team in Dhaka. We will review your requirements and reach out via <strong>{email}</strong> shortly.
+                    <p className="text-xs text-slate-600 leading-relaxed max-w-md mx-auto">
+                      Thank you, <strong>{name || "valued partner"}</strong>. Your message has been routed to our technical merchandising team in Dhaka. We will review your requirements and reach out via <strong>{email || phone}</strong> shortly.
                     </p>
                     <button
+                      type="button"
                       onClick={() => {
                         setIsSubmitted(false);
-                        setFullName("");
-                        setCompanyName("");
-                        setEmail("");
+                        setName("");
                         setPhone("");
-                        setProjectDetails("");
-                        setFileName(null);
+                        setEmail("");
+                        setComment("");
                       }}
-                      className="mt-4 bg-charcoal hover:bg-forest text-white px-6 py-2.5 rounded-sm font-heading text-xs font-bold uppercase tracking-wider transition-colors"
+                      className="px-5 py-2 rounded-[4px] bg-[#0066CC] text-white text-xs font-heading font-bold uppercase tracking-wider hover:bg-[#0052CC] transition-colors"
                     >
-                      Submit Another Inquiry
+                      Send Another Message
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                          Full Name *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="e.g., Alexandra Meyer"
-                          className="w-full bg-offwhite border border-charcoal/20 focus:border-orange focus:bg-white rounded-sm px-4 py-3 text-sm text-charcoal outline-none transition-colors font-medium"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                          Company / Brand Name *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={companyName}
-                          onChange={(e) => setCompanyName(e.target.value)}
-                          placeholder="e.g., Nordik Apparel Co."
-                          className="w-full bg-offwhite border border-charcoal/20 focus:border-orange focus:bg-white rounded-sm px-4 py-3 text-sm text-charcoal outline-none transition-colors font-medium"
-                        />
-                      </div>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
+                        Name <span className="text-[#0066CC]">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Your full name or company name"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] focus:ring-1 focus:ring-[#0066CC] transition-all"
+                      />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                          Work Email *
+                        <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
+                          Phone / WhatsApp <span className="text-[#0066CC]">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+880 161 308 4465"
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] focus:ring-1 focus:ring-[#0066CC] transition-all"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
+                          Email <span className="text-[#0066CC]">*</span>
                         </label>
                         <input
                           type="email"
                           required
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="name@company.com"
-                          className="w-full bg-offwhite border border-charcoal/20 focus:border-orange focus:bg-white rounded-sm px-4 py-3 text-sm text-charcoal outline-none transition-colors font-medium"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                          Phone / WhatsApp Number
-                        </label>
-                        <input
-                          type="tel"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+1 (555) 019-2834"
-                          className="w-full bg-offwhite border border-charcoal/20 focus:border-orange focus:bg-white rounded-sm px-4 py-3 text-sm text-charcoal outline-none transition-colors font-medium"
+                          placeholder="corporate@brand.com"
+                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] focus:ring-1 focus:ring-[#0066CC] transition-all"
                         />
                       </div>
                     </div>
 
+                    {/* Auto-growing Comment / Message with Rich Text Editor */}
                     <div>
-                      <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                        Area of Interest / Service Division *
+                      <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
+                        Comment / Message <span className="text-[#0066CC]">*</span>
                       </label>
-                      <select
-                        value={service}
-                        onChange={(e) => setService(e.target.value)}
-                        className="w-full bg-offwhite border border-charcoal/20 focus:border-orange focus:bg-white rounded-sm px-4 py-3 text-sm text-charcoal outline-none transition-colors font-medium"
-                      >
-                        <option value="Private Jobs — Apparel Manufacturing">
-                          Private Jobs — End-to-End Apparel Manufacturing &amp; Outerwear
-                        </option>
-                        <option value="Commercial Jobs — Printing & Promotional">
-                          Commercial Jobs — Commercial Printing, Publications &amp; Gifting
-                        </option>
-                        <option value="Apparel Accessories (Labels, Hangtags, Trims, Zippers)">
-                          Apparel Accessories (Labels, Hangtags, Trims, Zippers, Buttons)
-                        </option>
-                        <option value="Luxury Packaging (Gift Boxes, Paper Bags, Rigid Setup)">
-                          Luxury Packaging (Gift Boxes, Paper Bags, Rigid Setup)
-                        </option>
-                        <option value="Custom Prototyping & Sampling Run">
-                          Custom Prototyping &amp; Sampling Run
-                        </option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                        Project Specifications &amp; Requirements *
-                      </label>
-                      <textarea
-                        required
-                        rows={4}
-                        value={projectDetails}
-                        onChange={(e) => setProjectDetails(e.target.value)}
-                        placeholder="Please detail your required quantities, target delivery date, fabric composition, label density, or packaging specifications..."
-                        className="w-full bg-offwhite border border-charcoal/20 focus:border-orange focus:bg-white rounded-sm p-4 text-sm text-charcoal outline-none transition-colors font-medium resize-y"
+                      <RichTextEditor
+                        value={comment}
+                        onChange={(val) => {
+                          setComment(val);
+                          if (commentError && val.replace(/<[^>]*>/g, "").trim()) {
+                            setCommentError(false);
+                          }
+                        }}
+                        placeholder="Please describe your product requirement, target quantities, accessories specifications, or inquiry details..."
+                        minHeight="180px"
                       />
-                    </div>
-
-                    {/* Tech Pack / Artwork Attachment */}
-                    <div>
-                      <label className="block text-xs font-heading font-extrabold uppercase tracking-wider text-charcoal mb-1.5">
-                        Attach Tech Pack, Design or Artwork (Optional)
-                      </label>
-                      <label className="border-2 border-dashed border-charcoal/20 hover:border-orange rounded-sm p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-offwhite hover:bg-offwhite-alt/60">
-                        <UploadCloud className="w-8 h-8 text-orange mb-2" />
-                        <span className="text-xs font-heading font-bold text-charcoal">
-                          {fileName ? fileName : "Click to select tech pack or artwork file"}
-                        </span>
-                        <span className="text-[11px] text-grey mt-1">
-                          Accepts PDF, AI, ZIP, CAD, PNG, JPG (Max 50MB)
-                        </span>
-                        <input
-                          type="file"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          accept=".pdf,.ai,.zip,.png,.jpg,.jpeg,.dxf"
-                        />
-                      </label>
+                      {commentError && (
+                        <p className="text-[11px] text-red-500 mt-1">
+                          Please enter your message before sending.
+                        </p>
+                      )}
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-orange hover:bg-orange-hover text-white py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 transition-all duration-300 shadow-xl hover:shadow-orange/30 disabled:opacity-50"
+                      className="w-full py-3 rounded-[4px] bg-[#0066CC] hover:bg-[#0052CC] text-white font-heading text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Transmitting Project Brief...</span>
-                        </>
+                        <span>Sending Message...</span>
                       ) : (
                         <>
-                          <span>Transmit B2B Project Brief</span>
-                          <Send className="w-4 h-4" />
+                          <span>Send Message</span>
+                          <Send className="w-3.5 h-3.5" />
                         </>
                       )}
                     </button>
@@ -252,68 +186,48 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Dhaka Facilities & Telemetry Column (5 cols) */}
-            <div className="lg:col-span-5 space-y-8">
-              <div className="bg-charcoal text-offwhite p-8 rounded-sm shadow-xl space-y-6 border border-white/10 bg-fabric-oxford-dark">
-                <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-                  Official Brochure Contact Coordinates
-                </span>
-                <h3 className="text-2xl font-heading font-black uppercase text-white">
-                  Texpart Design &amp; Packaging
-                </h3>
+            {/* Right: Coordinates Card */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="bg-slate-50 border border-slate-200 p-6 sm:p-7 rounded-[4px] space-y-5 shadow-sm">
+                <div>
+                  <span className="text-[11px] font-heading font-bold uppercase tracking-widest text-[#0066CC] block mb-1">
+                    Direct Contact
+                  </span>
+                  <h3 className="text-base sm:text-lg font-heading font-black uppercase text-[#0A2540]">
+                    Office &amp; Factory Coordinates
+                  </h3>
+                </div>
 
-                <div className="space-y-4 text-xs text-beige-light border-t border-white/10 pt-6">
+                <div className="space-y-4 text-xs text-slate-600">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
+                    <MapPin className="w-4 h-4 text-[#0066CC] flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="block text-white uppercase font-heading">
-                        Head Office &amp; Facilities
-                      </strong>
-                      <span className="text-grey-light">
-                        263, Fakirapool, Motijheel, Dhaka, Bangladesh
-                      </span>
+                      <strong className="text-[#0A2540] block font-semibold">Office &amp; Factory</strong>
+                      <span>263, Fakirapool, Motijheel, Dhaka, Bangladesh</span>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Mail className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
+                    <Phone className="w-4 h-4 text-[#0066CC] flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="block text-white uppercase font-heading">
-                        Official Email
-                      </strong>
-                      <span className="text-grey-light">texpartdesign@gmail.com</span>
+                      <strong className="text-[#0A2540] block font-semibold">Direct Hotline</strong>
+                      <span>+880 161 308 4465 &bull; +880 171 308 4465</span>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Globe className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
+                    <Mail className="w-4 h-4 text-[#0066CC] flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="block text-white uppercase font-heading">
-                        Official Website
-                      </strong>
-                      <span className="text-grey-light">www.texpartdesign.com</span>
+                      <strong className="text-[#0A2540] block font-semibold">Email Correspondence</strong>
+                      <span>info@texpart.com &bull; texpart.bd@gmail.com</span>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Phone className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
+                    <Clock className="w-4 h-4 text-[#0066CC] flex-shrink-0 mt-0.5" />
                     <div>
-                      <strong className="block text-white uppercase font-heading">
-                        Phone &bull; WhatsApp Merchandising
-                      </strong>
-                      <span className="text-grey-light">+880 161 308 4465 / +880 171 308 4465</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-4 h-4 text-orange flex-shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="block text-white uppercase font-heading">
-                        Production Operating Hours
-                      </strong>
-                      <span className="text-grey-light">
-                        Saturday &ndash; Thursday: 08:30 &ndash; 18:30 (BST)
-                      </span>
+                      <strong className="text-[#0A2540] block font-semibold">Working Hours</strong>
+                      <span>Saturday &ndash; Thursday: 9:00 AM &ndash; 7:00 PM (BST)</span>
                     </div>
                   </div>
                 </div>

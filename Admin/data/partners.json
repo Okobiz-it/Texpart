@@ -1,0 +1,26 @@
+[
+  {
+    "id": "partner-1",
+    "name": "Kappa",
+    "logoUrl": "https://res.cloudinary.com/wpttnkjq/image/upload/v1794806630/Gemini_Generated_Image_bro3avbro3avbro3_wlmrho.jpg",
+    "category": "client",
+    "createdAt": "2026-11-16T08:57:46.926Z",
+    "updatedAt": "2026-11-16T08:57:46.926Z"
+  },
+  {
+    "id": "partner-2",
+    "name": "FILA",
+    "logoUrl": "https://res.cloudinary.com/wpttnkjq/image/upload/v1794806630/Ba_ir3ryv.jpg",
+    "category": "client",
+    "createdAt": "2026-11-16T08:57:46.926Z",
+    "updatedAt": "2026-11-16T08:57:46.926Z"
+  },
+  {
+    "id": "partner-3",
+    "name": "OEKO-TEX Certification",
+    "logoUrl": "https://res.cloudinary.com/wpttnkjq/image/upload/v1794806630/Gemini_Generated_Image_dxyq57dxyq57dxyq_iw5qst.jpg",
+    "category": "certification",
+    "createdAt": "2026-11-16T08:57:46.926Z",
+    "updatedAt": "2026-11-16T08:57:46.926Z"
+  }
+]

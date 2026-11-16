@@ -1,396 +1,620 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PRODUCTS } from "@/data/products";
-import { GALLERY_ITEMS } from "@/data/gallery";
-import ProductCard from "@/components/ProductCard";
 import { useQuote } from "@/context/QuoteContext";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
 import {
   ArrowRight,
-  Layers,
   ShieldCheck,
   Truck,
-  Scissors,
-  Printer,
+  Check,
   ChevronRight,
-  Box,
+  ChevronLeft,
+  Award,
+  Globe,
+  Shirt,
+  Pencil,
+  Layers,
+  Factory,
+  Package,
   Handshake,
   Lightbulb,
   Search,
-  Factory,
-  PenTool,
-  Check,
-  Video,
-  Sparkles,
+  CheckCircle2,
+  Loader2,
 } from "lucide-react";
 
-// Background Hero Carousel Slides (Images cross-fade smoothly while hero text stays still)
-const HERO_SLIDES = [
+// 3 Provided Hero Banners for Sliding Back & Forth
+const HERO_BANNERS = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=2000&q=85",
-    alt: "Garment Manufacturing & Apparel Cutting Assembly",
+    src: "/banners/banner-1.jpg",
+    alt: "Texpart Garment Accessories Manufacturing",
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=2000&q=85",
-    alt: "High-Definition Swiss Damask Looms & Woven Trims",
+    src: "/banners/banner-2.jpg",
+    alt: "Texpart Apparel Trims & Sourcing",
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=2000&q=85",
-    alt: "Commercial Offset Speedmaster Printing Presses",
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=2000&q=85",
-    alt: "Garment Craftsmanship & Quality Inspection",
+    src: "/banners/banner-3.jpg",
+    alt: "Texpart Packaging & Commercial Printing",
   },
 ];
 
-// Product categories from official brochures for dynamic typing animation
-const TYPED_PRODUCTS = [
-  "GARMENT ACCESSORIES",
-  "BUSINESS CARD & STATIONERY",
-  "HANG TAGS & PRICE TAGS",
-  "WOVEN & PRINTED LABELS",
-  "TRIMS, TAPES & RIBBONS",
-  "CORDS & DRAWSTRINGS",
-  "METAL & PLASTIC ZIPPERS",
-  "BUTTONS & BUCKLES",
-  "PATCHES & BADGES",
-  "COMMERCIAL PRINTING",
-  "LEAFLETS & FLYERS",
-  "BROCHURES & CATALOGUES",
-  "DIARIES & NOTEBOOKS",
-  "WALL & DESK CALENDARS",
-  "POSTERS & BANNERS",
-  "PAPER BAGS & PRINTED BOXES",
-  "GIFT BOXES & PREMIUM PACKAGING",
-  "POLY BAGS & TISSUE WRAPPING",
+// Row 1: Private Jobs Products (Apparel Accessories & Packaging)
+const PRIVATE_JOBS_RANGE = [
+  {
+    name: "Threads",
+    image: "/images/products/range-threads.jpg",
+    href: "/products/trims-tapes",
+  },
+  {
+    name: "Zippers",
+    image: "/images/products/range-zippers.jpg",
+    href: "/products/zippers",
+  },
+  {
+    name: "Buttons & Buckles",
+    image: "/images/products/range-buttons.jpg",
+    href: "/products/buttons",
+  },
+  {
+    name: "Labels & Tags",
+    image: "/images/products/range-labels.jpg",
+    href: "/products/labels",
+  },
+  {
+    name: "Elastic Tapes",
+    image: "/images/products/range-elastic.jpg",
+    href: "/products/trims-tapes",
+  },
+  {
+    name: "Cords & Drawstrings",
+    image: "/images/products/range-drawstrings.jpg",
+    href: "/products/cords-drawstrings",
+  },
+];
+
+// Row 2: Commercial Jobs Products (Commercial Printing & Promotional Products)
+const COMMERCIAL_JOBS_RANGE = [
+  {
+    name: "Brochures & Catalogues",
+    image: "/images/products/comm-brochures.jpg",
+    href: "/products/brochures-catalogues",
+  },
+  {
+    name: "Leaflets & Flyers",
+    image: "/images/products/comm-flyers.jpg",
+    href: "/products/leaflets-flyers",
+  },
+  {
+    name: "Business Cards & Stationery",
+    image: "/images/products/comm-stationery.jpg",
+    href: "/products/business-card-stationery",
+  },
+  {
+    name: "Diaries & Notebooks",
+    image: "/images/products/comm-notebooks.jpg",
+    href: "/products/diaries-notebooks",
+  },
+  {
+    name: "Wall & Desk Calendars",
+    image: "/images/products/comm-calendars.jpg",
+    href: "/products/wall-desk-calendars",
+  },
+  {
+    name: "Gift Boxes & Packaging",
+    image: "/images/products/comm-boxes.jpg",
+    href: "/products/gift-boxes-premium-packaging",
+  },
+];
+
+// Official Global Certifications
+const CERTIFICATIONS = [
+  {
+    id: "rcs-100",
+    name: "Recycled 100 Claim Standard",
+    image: "/images/certifications/rcs-100.png",
+  },
+  {
+    id: "rcs-blended",
+    name: "Recycled Blended Claim Standard",
+    image: "/images/certifications/rcs-blended.png",
+  },
+  {
+    id: "oeko-tex",
+    name: "OEKO-TEX Standard 100",
+    image: "/images/certifications/oeko-tex.png",
+  },
+  {
+    id: "fsc",
+    name: "FSC Certified (Forest Stewardship Council)",
+    image: "/images/certifications/fsc.png",
+  },
+];
+
+// Global Clients
+const CLIENTS = [
+  { name: "Kappa", image: "/images/clients/kappa.png" },
+  { name: "FILA", image: "/images/clients/fila.png" },
+  { name: "ellesse", image: "/images/clients/ellesse.png" },
+  { name: "Admiral", image: "/images/clients/admiral.png" },
+  { name: "arena", image: "/images/clients/arena.png" },
+  { name: "CONNOR", image: "/images/clients/connor.png" },
+  { name: "PETROL", image: "/images/clients/petrol.png" },
+  { name: "STEVE'S JEANS", image: "/images/clients/steves-jeans.png" },
+  { name: "CARRY", image: "/images/clients/carry.png" },
+  { name: "SALTROCK", image: "/images/clients/saltrock.png" },
+  { name: "CARNET", image: "/images/clients/carnet.png" },
+  { name: "Marcus:", image: "/images/clients/marcus.png" },
+  { name: "RIP CURL", image: "/images/clients/rip-curl.png" },
+  { name: "Engelbert Strauss", image: "/images/clients/engelbert-strauss.png" },
+  { name: "PRIMARK", image: "/images/clients/primark.png" },
 ];
 
 export default function HomePage() {
-  const { openQuote, openLightbox } = useQuote();
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [isSliderPaused, setIsSliderPaused] = useState(false);
+  const { openGeneralQuote } = useQuote();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [privateFeatured, setPrivateFeatured] = useState<any[]>([]);
+  const [commercialFeatured, setCommercialFeatured] = useState<any[]>([]);
+  const [dbClients, setDbClients] = useState<any[]>([]);
+  const [isLoadingFeatured, setIsLoadingFeatured] = useState(true);
+  const [isLoadingPartners, setIsLoadingPartners] = useState(true);
 
-  // Typewriter animation state for hero subtitle products
-  const [productIndex, setProductIndex] = useState(0);
-  const [displayText, setDisplayText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  // Scroll reveal observer
-  const containerRef = useRef<HTMLDivElement>(null);
-  const observe = useScrollReveal();
-
+  // Fetch up to 5 featured products per division and partners from MongoDB Atlas
   useEffect(() => {
-    if (containerRef.current) {
-      observe(containerRef.current);
+    let isMounted = true;
+    async function loadDynamicData() {
+      try {
+        const featRes = await fetch("/api/featured-products");
+        const featData = await featRes.json();
+        if (isMounted && featData.success) {
+          if (Array.isArray(featData.privateFeatured)) {
+            setPrivateFeatured(featData.privateFeatured.slice(0, 5));
+          }
+          if (Array.isArray(featData.commercialFeatured)) {
+            setCommercialFeatured(featData.commercialFeatured.slice(0, 5));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load featured products from database", err);
+      } finally {
+        if (isMounted) setIsLoadingFeatured(false);
+      }
+
+      try {
+        const clientRes = await fetch("/api/partners?category=client");
+        const clientData = await clientRes.json();
+        if (isMounted) {
+          if (clientData.success && Array.isArray(clientData.partners)) {
+            setDbClients(clientData.partners);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load client partners from database", err);
+      } finally {
+        if (isMounted) setIsLoadingPartners(false);
+      }
     }
-  }, [observe]);
+    loadDynamicData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-  // Hero auto-advance background image slider (images change, text stays still)
+  const displayPrivate = privateFeatured;
+  const displayCommercial = commercialFeatured;
+  const displayClients = dbClients;
+  const displayCertifications = CERTIFICATIONS;
+
+  // Auto-slide back and forth every 5 seconds
   useEffect(() => {
-    if (isSliderPaused) return;
+    if (isPaused) return;
     const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
+      setCurrentSlide((prev) => (prev + 1) % HERO_BANNERS.length);
+    }, 5000);
     return () => clearInterval(interval);
-  }, [isSliderPaused]);
+  }, [isPaused]);
 
-  // Typewriter effect cycling through brochure product categories
-  useEffect(() => {
-    const currentWord = TYPED_PRODUCTS[productIndex];
-    let timeout: NodeJS.Timeout;
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + HERO_BANNERS.length) % HERO_BANNERS.length);
+  };
 
-    if (!isDeleting) {
-      if (displayText.length < currentWord.length) {
-        timeout = setTimeout(() => {
-          setDisplayText(currentWord.slice(0, displayText.length + 1));
-        }, 70);
-      } else {
-        timeout = setTimeout(() => {
-          setIsDeleting(true);
-        }, 1800);
-      }
-    } else {
-      if (displayText.length > 0) {
-        timeout = setTimeout(() => {
-          setDisplayText(currentWord.slice(0, displayText.length - 1));
-        }, 35);
-      } else {
-        setIsDeleting(false);
-        setProductIndex((prev) => (prev + 1) % TYPED_PRODUCTS.length);
-      }
-    }
-
-    return () => clearTimeout(timeout);
-  }, [displayText, isDeleting, productIndex]);
-
-  // Take exactly 9 products for showcase as requested
-  const showcaseProducts = PRODUCTS.slice(0, 9);
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % HERO_BANNERS.length);
+  };
 
   return (
-    <div ref={containerRef} className="space-y-0 selection:bg-orange selection:text-white">
+    <div className="bg-white min-h-screen text-[#0A2540]">
       {/* =================================================================
-          SECTION 1: HERO — CINEMATIC INTERACTIVE SLIDER
-          TEXT STAYS STILL, IMAGES UNDERNEATH CHANGE ONLY, TYPING ANIMATION
-          FULL VIEW ON DESKTOP CONTAINS HERO & BOTTOM MARQUEE IN ONE VIEWPORT
-          (TEXTURE VARIANT: DIAGONAL TWILL / DENIM WEAVE)
+          1. HERO SLIDER SECTION (PRESERVES EXACT 3584x1184 RATIO ACROSS ALL SCREENS)
           ================================================================= */}
       <section
-        className="relative min-h-screen lg:h-screen lg:max-h-screen flex flex-col justify-between bg-charcoal text-white pt-24 sm:pt-28 pb-0 overflow-hidden bg-fabric-twill-dark"
-        onMouseEnter={() => setIsSliderPaused(true)}
-        onMouseLeave={() => setIsSliderPaused(false)}
+        className="relative pt-14 sm:pt-16 bg-white border-b border-slate-200 overflow-hidden group"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Carousel Background Images with Smooth Cross-Fade (Images change, text stays still) */}
-        <div className="absolute inset-0 z-0">
-          {HERO_SLIDES.map((slide, idx) => (
-            <div
-              key={slide.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                idx === activeSlide ? "opacity-35 scale-100" : "opacity-0 scale-105 pointer-events-none"
-              }`}
-              style={{ transition: "opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), transform 8s ease-out" }}
-            >
-              <Image
-                src={slide.image}
-                alt={slide.alt}
-                fill
-                className="object-cover"
-                priority={idx === 0}
+        <div className="relative w-full aspect-[3584/1184] overflow-hidden bg-slate-100 shadow-sm">
+          {/* Sliding Track */}
+          <div
+            className="flex h-full w-full transition-transform duration-700 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {HERO_BANNERS.map((banner, idx) => (
+              <div key={banner.id} className="w-full h-full flex-shrink-0 relative">
+                <Image
+                  src={banner.src}
+                  alt={banner.alt}
+                  fill
+                  className="object-contain sm:object-cover"
+                  priority={idx === 0}
+                  sizes="100vw"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Left Arrow Button */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            className="absolute left-1.5 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-10 sm:h-10 rounded-[4px] bg-black/40 hover:bg-[#0066CC] text-white flex items-center justify-center transition-all shadow-md backdrop-blur-sm opacity-80 group-hover:opacity-100"
+            aria-label="Previous Banner"
+          >
+            <ChevronLeft className="w-3.5 sm:w-5 h-3.5 sm:h-5" />
+          </button>
+
+          {/* Right Arrow Button */}
+          <button
+            type="button"
+            onClick={nextSlide}
+            className="absolute right-1.5 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-7 h-7 sm:w-10 sm:h-10 rounded-[4px] bg-black/40 hover:bg-[#0066CC] text-white flex items-center justify-center transition-all shadow-md backdrop-blur-sm opacity-80 group-hover:opacity-100"
+            aria-label="Next Banner"
+          >
+            <ChevronRight className="w-3.5 sm:w-5 h-3.5 sm:h-5" />
+          </button>
+
+          {/* Slider Dots Indicator */}
+          <div className="absolute bottom-1.5 sm:bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 sm:gap-2 bg-black/30 backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-[4px]">
+            {HERO_BANNERS.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-1.5 sm:h-2 rounded-[4px] transition-all duration-300 ${
+                  currentSlide === idx ? "w-4 sm:w-6 bg-[#0066CC]" : "w-1.5 sm:w-2 bg-white/70 hover:bg-white"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
               />
-            </div>
-          ))}
-
-          {/* Cinematic Vignette, Radial Light & Weave Pattern Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/60 to-charcoal/80" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-forest/35 via-transparent to-transparent opacity-70" />
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* Hero Content (Static Title + Dynamic Typewriter Products) */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto py-6 sm:py-8">
-          <div className="max-w-4xl space-y-6">
-            {/* Split Character-Style Animated Headline */}
-            <div className="space-y-2 anim-fade-up">
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-heading font-black uppercase tracking-tight leading-[0.98] text-white">
-                <span className="block">
-                  FROM CONCEPT TO CREATION.
+      {/* =================================================================
+          2. OUR PRODUCT RANGE (RESTORED TWO SECTIONS: PRIVATE JOBS & COMMERCIAL JOBS)
+          ================================================================= */}
+      <section id="product-range" className="py-8 sm:py-10 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          {/* Centered Section Header with Accent Lines */}
+          <div className="text-center max-w-2xl mx-auto space-y-1">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              <span>Our Product Range</span>
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+            </h2>
+            <p className="text-xs text-slate-500 font-normal">
+              A comprehensive range of garment accessories and commercial print solutions for your brand
+            </p>
+          </div>
+
+          {/* Part 1: Private Jobs (Up to 5 Featured Products) */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#0066CC] rounded-[2px]" />
+                <h3 className="text-sm sm:text-base font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                  Private Jobs
+                </h3>
+                <span className="text-xs text-slate-400 font-normal hidden sm:inline">
+                  &bull; Apparel Accessories &amp; Packaging
                 </span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white inline-block mt-3 text-xl sm:text-3xl lg:text-4xl xl:text-5xl tracking-wide min-h-[1.3em]">
-                  {displayText}
-                  <span className="inline-block w-[3px] sm:w-[4px] lg:w-[5px] h-[0.78em] bg-orange ml-2 align-baseline animate-pulse shadow-[0_0_8px_#E58B48]" />
-                </span>
-              </h1>
-            </div>
-
-            {/* Subtitle & Description */}
-            <div className="space-y-2 max-w-2xl">
-              <p className="text-sm sm:text-base font-heading font-bold text-beige uppercase tracking-wider">
-                End-to-End Apparel Development &bull; Garment Accessories &bull; Commercial Printing
-              </p>
-              <p className="text-base sm:text-xl text-beige-light/90 font-light leading-relaxed">
-                Your trusted manufacturing and production partner in Dhaka, Bangladesh. We take care of the complete journey from initial tech packs and material sourcing to finished, export-ready execution.
-              </p>
-            </div>
-
-            {/* Dynamic CTAs */}
-            <div className="pt-4 flex flex-wrap items-center gap-4">
+              </div>
               <Link
                 href="/services/private-jobs"
-                className="bg-orange hover:bg-orange-hover text-white px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:shadow-orange/30 hover:-translate-y-0.5"
+                className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
               >
-                <span>Explore Our Services</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>View All</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </Link>
-              <button
-                onClick={() => openQuote("Hero Inquiry")}
-                className="bg-transparent hover:bg-white/10 text-white border border-white/30 hover:border-white px-8 py-4 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 transition-all duration-300"
-              >
-                Request Custom Quote
-              </button>
             </div>
+
+            {/* 5 Cards for Private Jobs */}
+            {isLoadingFeatured ? (
+              <div className="py-12 bg-white rounded-[4px] border border-slate-200 flex flex-col items-center justify-center space-y-2">
+                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+                <span className="text-xs font-heading font-medium text-slate-500 uppercase tracking-wider">
+                  Loading Private Jobs...
+                </span>
+              </div>
+            ) : displayPrivate.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-[4px]">
+                No featured private products selected.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+                {displayPrivate.map((item, idx) => (
+                  <Link
+                    key={idx}
+                    href={item.href || `/products/${item.slug || item.id}`}
+                    className="group bg-white rounded-[4px] border border-slate-200 hover:border-[#0066CC] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-sm"
+                  >
+                    <div className="relative w-full aspect-square overflow-hidden bg-slate-100">
+                      <Image
+                        src={item.frontImage || item.image || item.logoUrl}
+                        alt={item.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="220px"
+                      />
+                    </div>
+                    <div className="p-2 sm:p-2.5 text-center bg-white border-t border-slate-100 flex-grow flex items-center justify-center">
+                      <h4 className="text-xs font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-tight">
+                        {item.name}
+                      </h4>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Part 2: Commercial Jobs (Up to 5 Featured Products) */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#0066CC] rounded-[2px]" />
+                <h3 className="text-sm sm:text-base font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                  Commercial Jobs
+                </h3>
+                <span className="text-xs text-slate-400 font-normal hidden sm:inline">
+                  &bull; Commercial Printing &amp; Promotional Products
+                </span>
+              </div>
+              <Link
+                href="/services/commercial-jobs"
+                className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
+              >
+                <span>View All</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* 5 Cards for Commercial Jobs */}
+            {isLoadingFeatured ? (
+              <div className="py-12 bg-white rounded-[4px] border border-slate-200 flex flex-col items-center justify-center space-y-2">
+                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+                <span className="text-xs font-heading font-medium text-slate-500 uppercase tracking-wider">
+                  Loading Commercial Jobs...
+                </span>
+              </div>
+            ) : displayCommercial.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-[4px]">
+                No featured commercial products selected.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+                {displayCommercial.map((item, idx) => (
+                  <Link
+                    key={idx}
+                    href={item.href || `/products/${item.slug || item.id}`}
+                    className="group bg-white rounded-[4px] border border-slate-200 hover:border-[#0066CC] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-sm"
+                  >
+                    <div className="relative w-full aspect-square overflow-hidden bg-slate-100">
+                      <Image
+                        src={item.frontImage || item.image || item.logoUrl}
+                        alt={item.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="220px"
+                      />
+                    </div>
+                    <div className="p-2 sm:p-2.5 text-center bg-white border-t border-slate-100 flex-grow flex items-center justify-center">
+                      <h4 className="text-xs font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-tight">
+                        {item.name}
+                      </h4>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
+      </section>
 
-        {/* =================================================================
-            INFINITE RUNNING MARQUEE (EMBEDDED IN HERO AT BOTTOM TO SHOW IN ONE GO ON DESKTOP)
-            ================================================================= */}
-        <div className="relative z-10 w-full bg-charcoal-surface/95 border-t border-white/10 py-3.5 overflow-hidden text-offwhite flex-shrink-0 backdrop-blur-sm">
-          <div className="flex whitespace-nowrap animate-marquee">
-            <div className="flex items-center gap-8 text-xs font-heading font-extrabold uppercase tracking-widest text-beige-light/80">
-              <span>&bull; iNTEGRITY &bull; iNNOVATIVE &bull; iN-DEPTH</span>
-              <span className="text-orange">&bull; QUALITY &bull; INNOVATION &bull; RELIABILITY</span>
-              <span>&bull; FROM CONCEPT TO DELIVERY</span>
-              <span className="text-orange">&bull; SWISS HIGH-SPEED DAMASK WEAVING</span>
-              <span>&bull; AQL 1.5 EXPORT AUDIT</span>
-              <span className="text-orange">&bull; GRS RECYCLED POLYESTER</span>
-              <span>&bull; HEIDELBERG 6-COLOR SPEEDMASTER</span>
-              <span className="text-orange">&bull; SOLID BRASS OUTERWEAR ZIPPERS</span>
-              <span>&bull; FSC RECYCLED KRAFT PACKAGING</span>
-              <span className="text-orange">&bull; 263, FAKIRAPOOL, MOTIJHEEL, DHAKA</span>
+      {/* =================================================================
+          3. ABOUT BUYING HOUSE SECTION WITH "WHY TEXPART?"
+          ================================================================= */}
+      <section className="py-8 sm:py-10 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Left Image (Factory Floor Crop) */}
+            <div className="lg:col-span-5">
+              <div className="relative aspect-[16/10] sm:aspect-[4/3] rounded-[4px] overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
+                <Image
+                  src="/images/about-texpart-factory.jpg"
+                  alt="Garment Accessories Factory Floor in Bangladesh"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-8 text-xs font-heading font-extrabold uppercase tracking-widest text-beige-light/80 ml-8">
-              <span>&bull; iNTEGRITY &bull; iNNOVATIVE &bull; iN-DEPTH</span>
-              <span className="text-orange">&bull; QUALITY &bull; INNOVATION &bull; RELIABILITY</span>
-              <span>&bull; FROM CONCEPT TO DELIVERY</span>
-              <span className="text-orange">&bull; SWISS HIGH-SPEED DAMASK WEAVING</span>
-              <span>&bull; AQL 1.5 EXPORT AUDIT</span>
-              <span className="text-orange">&bull; GRS RECYCLED POLYESTER</span>
-              <span>&bull; HEIDELBERG 6-COLOR SPEEDMASTER</span>
-              <span className="text-orange">&bull; SOLID BRASS OUTERWEAR ZIPPERS</span>
-              <span>&bull; FSC RECYCLED KRAFT PACKAGING</span>
-              <span className="text-orange">&bull; 263, FAKIRAPOOL, MOTIJHEEL, DHAKA</span>
+
+            {/* Right Narrative & Why Texpart Feature Box (White Theme & Blue Ticks) */}
+            <div className="lg:col-span-7 space-y-4">
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-heading font-black text-[#0A2540]">
+                  About Texpart Ltd.
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal mt-2">
+                  We are a leading buying house in Bangladesh, specializing in high-quality garment accessories. With strong sourcing capability and industry experience, we are committed to deliver the best products and services to our valued customers worldwide.
+                </p>
+              </div>
+
+              {/* WHY TEXPART? Feature Container (Clean White Theme & Blue Ticks) */}
+              <div className="bg-white text-[#0A2540] rounded-[4px] p-5 sm:p-6 shadow-sm border border-slate-200">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+                  <div className="sm:border-r sm:border-slate-200 sm:pr-5 flex-shrink-0">
+                    <h3 className="text-xl sm:text-2xl font-heading font-black text-[#0A2540] uppercase tracking-wide">
+                      Why <br className="hidden sm:inline" />
+                      Texpart?
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2 flex-grow text-xs sm:text-[13px] text-slate-700 font-medium">
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-[#0066CC] flex-shrink-0" />
+                      <span>Wide Range of Accessories &amp; Packaging Solutions</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-[#0066CC] flex-shrink-0" />
+                      <span>Customized Design &amp; Development</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-[#0066CC] flex-shrink-0" />
+                      <span>High Quality Materials &amp; Finishing</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-[#0066CC] flex-shrink-0" />
+                      <span>Competitive Price</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-[#0066CC] flex-shrink-0" />
+                      <span>On-time Delivery &amp; After Sales Support</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* =================================================================
-          SECTION 2: TWO CORE SERVICES (MAIN SELLING POINT)
-          MOVED RIGHT AFTER HERO PER USER INSTRUCTION
-          (TEXTURE VARIANT: LINEN WEAVE)
+          4. TWO CORE DIVISIONS (MINIMAL, ACCURATE, ELEGANT)
           ================================================================= */}
-      <section className="py-24 sm:py-32 bg-offwhite text-charcoal relative bg-fabric-linen">
+      <section className="py-8 sm:py-10 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="max-w-3xl space-y-3 mb-16 anim-fade-up">
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
-              Engineered For Modern Brands.
+          <div className="text-center max-w-2xl mx-auto mb-6 space-y-1">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              <span>Two Core Divisions</span>
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
             </h2>
-            <p className="text-sm sm:text-base text-grey-dark font-light leading-relaxed">
-              Choose the exact manufacturing path suited to your scale &mdash; from complete garment tech packs and outerwear prototyping to corporate commercial printing and luxury packaging.
+            <p className="text-xs text-slate-500 font-normal">
+              Specialized B2B manufacturing and high-precision print solutions tailored to your brand scale.
             </p>
           </div>
 
-          {/* Two Highly Professional Service Columns (Spacious, Clean, Not Clumsy) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
-            {/* SERVICE 01: PRIVATE JOBS */}
-            <div className="group bg-white border border-charcoal/15 hover:border-orange rounded-sm overflow-hidden flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
+            {/* Division 01: Private Jobs */}
+            <div className="bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] overflow-hidden flex flex-col justify-between shadow-sm transition-all duration-200">
               <div>
-                {/* Visual Header */}
-                <Link href="/services/private-jobs" className="relative aspect-[16/10] w-full overflow-hidden block">
+                <Link href="/services/private-jobs" className="relative aspect-[16/9] w-full overflow-hidden block bg-slate-100 group">
                   <Image
-                    src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=1200&q=80"
-                    alt="Private Jobs Apparel Development"
+                    src="/images/divisions/private-jobs.jpg"
+                    alt="Private Jobs Apparel Accessories & Packaging"
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-108"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent opacity-60" />
                 </Link>
 
-                {/* Editorial Content */}
-                <div className="p-8 sm:p-10 space-y-6">
-                  <div>
-                    <Link href="/services/private-jobs">
-                      <h3 className="text-2xl sm:text-3xl font-heading font-black uppercase text-charcoal group-hover:text-orange transition-colors leading-tight">
-                        From Tech Pack to Finished Product.
-                      </h3>
-                    </Link>
-                    <p className="text-sm text-grey-dark leading-relaxed mt-4 font-light">
-                      We provide end-to-end apparel development and manufacturing solutions. From initial concepts and technical specifications to material sourcing, sampling, product development and final production, we take care of the complete process.
-                    </p>
-                  </div>
-
-                  {/* Highlights Checklist */}
-                  <ul className="space-y-3 text-xs text-charcoal/90 border-t border-charcoal/10 pt-5">
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-forest/10 text-forest flex items-center justify-center flex-shrink-0">
-                        <Scissors className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-medium">Jackets, Outerwear, Sportswear &amp; Technical Garments</span>
+                <div className="p-5 sm:p-6 space-y-2.5">
+                  <Link href="/services/private-jobs">
+                    <h3 className="text-base sm:text-lg font-heading font-bold uppercase text-[#0A2540] hover:text-[#0066CC] transition-colors">
+                      Apparel Accessories &amp; Packaging
+                    </h3>
+                  </Link>
+                  <p className="text-xs text-[#0066CC] font-heading font-semibold">
+                    &ldquo;One Partner. Multiple Solutions.&rdquo;
+                  </p>
+                  <ul className="space-y-1.5 text-xs text-[#0A2540] pt-2 border-t border-slate-100">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
+                      <span>Labels, Hangtags, Trims &amp; Tapes, Cords &amp; Drawstrings</span>
                     </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-forest/10 text-forest flex items-center justify-center flex-shrink-0">
-                        <Layers className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-medium">Material Sourcing, Lab Dip Sampling &amp; Prototype Development</span>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
+                      <span>Zippers, Buttons &amp; Buckles, Patches &amp; Badges</span>
                     </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-forest/10 text-forest flex items-center justify-center flex-shrink-0">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-medium">Rigorous In-Line AQL 1.5 Inspection &amp; Export Carton Finishing</span>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
+                      <span>Poly Bags, Paper Bags, Boxes &amp; Cartons, Tissue Wrapping</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              {/* Action Footer */}
-              <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-4 border-t border-charcoal/10 flex items-center justify-between">
+              <div className="p-5 sm:p-6 pt-0">
                 <Link
                   href="/services/private-jobs"
-                  className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal group-hover:text-orange transition-colors"
+                  className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
                 >
                   <span>Explore Private Jobs</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
 
-            {/* SERVICE 02: COMMERCIAL JOBS */}
-            <div className="group bg-white border border-charcoal/15 hover:border-forest rounded-sm overflow-hidden flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl">
+            {/* Division 02: Commercial Jobs */}
+            <div className="bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] overflow-hidden flex flex-col justify-between shadow-sm transition-all duration-200">
               <div>
-                {/* Visual Header */}
-                <Link href="/services/commercial-jobs" className="relative aspect-[16/10] w-full overflow-hidden block">
+                <Link href="/services/commercial-jobs" className="relative aspect-[16/9] w-full overflow-hidden block bg-slate-100 group">
                   <Image
-                    src="https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1200&q=80"
+                    src="/images/divisions/commercial-jobs.jpg"
                     alt="Commercial Printing & Promotional Products"
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-108"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 via-transparent to-transparent opacity-60" />
                 </Link>
 
-                {/* Editorial Content */}
-                <div className="p-8 sm:p-10 space-y-6">
-                  <div>
-                    <Link href="/services/commercial-jobs">
-                      <h3 className="text-2xl sm:text-3xl font-heading font-black uppercase text-charcoal group-hover:text-forest transition-colors leading-tight">
-                        Your Design. Our Printing Expertise.
-                      </h3>
-                    </Link>
-                    <p className="text-sm text-grey-dark leading-relaxed mt-4 font-light">
-                      Whether you already have a design or need creative support from scratch, we provide customized commercial printing solutions across a wide range of products and materials.
-                    </p>
-                  </div>
-
-                  {/* Highlights Checklist */}
-                  <ul className="space-y-3 text-xs text-charcoal/90 border-t border-charcoal/10 pt-5">
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-forest/10 text-forest flex items-center justify-center flex-shrink-0">
-                        <Printer className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-medium">Woven Labels, Hangtags, Trims &amp; Garment Accessories</span>
+                <div className="p-5 sm:p-6 space-y-2.5">
+                  <Link href="/services/commercial-jobs">
+                    <h3 className="text-base sm:text-lg font-heading font-bold uppercase text-[#0A2540] hover:text-[#0066CC] transition-colors">
+                      Commercial Printing &amp; Promotion
+                    </h3>
+                  </Link>
+                  <p className="text-xs text-[#0066CC] font-heading font-semibold">
+                    &ldquo;One Partner. Multiple Print Solutions.&rdquo;
+                  </p>
+                  <ul className="space-y-1.5 text-xs text-[#0A2540] pt-2 border-t border-slate-100">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
+                      <span>Brochures, Catalogues, Leaflets &amp; Flyers</span>
                     </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-forest/10 text-forest flex items-center justify-center flex-shrink-0">
-                        <Box className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-medium">Custom Rigid Gift Boxes, FSC Paper Bags &amp; Export Cartons</span>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
+                      <span>Business Cards &amp; Stationery, Diaries &amp; Notebooks</span>
                     </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full bg-forest/10 text-forest flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="font-medium">Brochures, Catalogues, Corporate Stationery &amp; Calendars</span>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
+                      <span>Wall &amp; Desk Calendars, Posters, Banners, Rigid Gift Boxes</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              {/* Action Footer */}
-              <div className="px-8 pb-8 sm:px-10 sm:pb-10 pt-4 border-t border-charcoal/10 flex items-center justify-between">
+              <div className="p-5 sm:p-6 pt-0">
                 <Link
                   href="/services/commercial-jobs"
-                  className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal group-hover:text-forest transition-colors"
+                  className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
                 >
                   <span>Explore Commercial Jobs</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
@@ -399,656 +623,207 @@ export default function HomePage() {
       </section>
 
       {/* =================================================================
-          SECTION 3: BRAND STATEMENT / EDITORIAL INTRO
-          (TEXTURE VARIANT: LINEN / PERPENDICULAR WEAVE)
-          RIGHT MEDIA REDUCED, OVERLAY TEXT REMOVED, GARMENT PRODUCT PHOTO
+          5. FROM CONCEPT TO DELIVERY STRIP (BLUE & WHITE THEME)
           ================================================================= */}
-      <section className="py-24 sm:py-32 bg-offwhite text-charcoal relative bg-fabric-linen border-t border-charcoal/10">
+      <section className="py-7 sm:py-9 bg-[#F0F7FD] border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Left Content (7 cols) */}
-            <div className="lg:col-span-7 space-y-6 anim-fade-up">
-              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black uppercase tracking-tight text-charcoal leading-[1.05]">
-                We Make Ideas Tangible.
-              </h2>
+          {/* Strip Header with Blue Accent Lines and Subheading */}
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 space-y-1">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              <span>From Concept To Delivery</span>
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+            </h2>
+            <p className="text-xs text-slate-500 font-normal">
+              A seamless, structured 5-stage manufacturing cycle ensuring precision and quality at every step
+            </p>
+          </div>
 
-              <p className="text-lg sm:text-xl text-grey-dark leading-relaxed font-light">
-                &ldquo;We co-operate you build a strong identity for your brand with the perfect accessories and packaging.&rdquo;
-              </p>
-
-              <div className="pt-2 text-sm text-grey-dark leading-relaxed space-y-4 font-light">
-                <p>
-                  From developing complete apparel products to delivering customized printing and packaging solutions, we bring creativity, craftsmanship and production expertise together under one roof in Bangladesh.
-                </p>
-                <p>
-                  As an international manufacturing partner, we bridge the gap between initial fashion sketches or tech packs and finished, export-grade garments. Simultaneously, our commercial print division produces brand identities, luxury packaging, and corporate collateral with uncompromising precision.
-                </p>
+          {/* 5-Step Process with Connecting Blue Badges */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5 lg:gap-3 items-start">
+            {/* Step 1: DESIGN */}
+            <div className="flex flex-col items-center text-center px-2 group">
+              <div className="w-12 h-12 rounded-full bg-[#0066CC] text-white flex items-center justify-center mb-2.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+                <Pencil className="w-5 h-5" />
               </div>
+              <h4 className="text-xs sm:text-sm font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                Design
+              </h4>
+              <p className="text-[11px] text-slate-500 font-normal mt-0.5 leading-tight">
+                Creative &amp; Customized Solutions
+              </p>
+            </div>
 
-              <div className="pt-4 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-widest text-charcoal hover:text-orange transition-colors group"
+            {/* Step 2: DEVELOP */}
+            <div className="flex flex-col items-center text-center px-2 group">
+              <div className="w-12 h-12 rounded-full bg-[#0066CC] text-white flex items-center justify-center mb-2.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+                <Layers className="w-5 h-5" />
+              </div>
+              <h4 className="text-xs sm:text-sm font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                Develop
+              </h4>
+              <p className="text-[11px] text-slate-500 font-normal mt-0.5 leading-tight">
+                Sample &amp; Product Development
+              </p>
+            </div>
+
+            {/* Step 3: PRODUCE */}
+            <div className="flex flex-col items-center text-center px-2 group">
+              <div className="w-12 h-12 rounded-full bg-[#0066CC] text-white flex items-center justify-center mb-2.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+                <Factory className="w-5 h-5" />
+              </div>
+              <h4 className="text-xs sm:text-sm font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                Produce
+              </h4>
+              <p className="text-[11px] text-slate-500 font-normal mt-0.5 leading-tight">
+                Quality Manufacturing &amp; Quality Control
+              </p>
+            </div>
+
+            {/* Step 4: PACK */}
+            <div className="flex flex-col items-center text-center px-2 group">
+              <div className="w-12 h-12 rounded-full bg-[#0066CC] text-white flex items-center justify-center mb-2.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+                <Package className="w-5 h-5" />
+              </div>
+              <h4 className="text-xs sm:text-sm font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                Pack
+              </h4>
+              <p className="text-[11px] text-slate-500 font-normal mt-0.5 leading-tight">
+                Smart &amp; Secure Packaging
+              </p>
+            </div>
+
+            {/* Step 5: DELIVER */}
+            <div className="flex flex-col items-center text-center px-2 group">
+              <div className="w-12 h-12 rounded-full bg-[#0066CC] text-white flex items-center justify-center mb-2.5 shadow-sm transition-transform duration-200 group-hover:scale-105">
+                <Truck className="w-5 h-5" />
+              </div>
+              <h4 className="text-xs sm:text-sm font-heading font-black uppercase tracking-wider text-[#0A2540]">
+                Deliver
+              </h4>
+              <p className="text-[11px] text-slate-500 font-normal mt-0.5 leading-tight">
+                On-time Delivery Every Time
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =================================================================
+          6. WE ARE CERTIFIED BY (SLIDING SINGLE ROW, HOVER PAUSES & ZOOMS)
+          ================================================================= */}
+      <section className="py-7 sm:py-9 bg-white border-b border-slate-200 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-6 space-y-1">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              <span>We Are Certified By</span>
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+            </h2>
+            <p className="text-xs text-slate-500 font-normal">
+              Internationally recognized quality, organic, and sustainability certifications
+            </p>
+          </div>
+
+          <div className="relative w-full overflow-hidden py-2">
+            {/* Edge fade gradients */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+            <div className="flex gap-4 sm:gap-6 animate-marquee hover:[animation-play-state:paused] w-max py-2">
+              {[...CERTIFICATIONS, ...CERTIFICATIONS, ...CERTIFICATIONS, ...CERTIFICATIONS].map((cert, idx) => (
+                <div
+                  key={idx}
+                  className="w-28 sm:w-32 h-28 sm:h-32 bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] p-3 flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200 hover:scale-110 hover:shadow-md cursor-pointer z-10"
                 >
-                  <span>Discover Our Story &amp; Philosophy</span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Media: Compact Tailored Layout (Text removed, reduced painting size, garments product detail) */}
-            <div className="lg:col-span-5 relative anim-scale flex justify-center">
-              <div className="relative w-full max-w-sm sm:max-w-md aspect-[4/3] rounded-sm overflow-hidden shadow-2xl border border-charcoal/10 group">
-                <Image
-                  src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1000&q=80"
-                  alt="Garment Sewing Craftsmanship"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-
-              {/* Smaller Floating Garments Product Detail Photo with Stitch Border (Replaced weave macro) */}
-              <div className="absolute -bottom-6 -left-4 sm:-bottom-8 sm:-left-6 w-1/2 aspect-square rounded-sm overflow-hidden shadow-2xl border-4 border-offwhite hidden sm:block group animate-float">
-                <Image
-                  src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80"
-                  alt="Garment Accessories & Woven Labels"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute top-2 right-2 bg-charcoal/90 text-orange text-[10px] font-mono px-2 py-0.5 rounded-sm">
-                  GARMENT ACCESSORIES
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 4: THE THREE PILLARS OF EXCELLENCE (REDESIGNED 3-i)
-          FIRST ICON, THEN HEADLINE, THEN DESCRIPTION
-          (TEXTURE VARIANT: OXFORD / BASKETWEAVE)
-          ================================================================= */}
-      <section className="py-24 sm:py-32 bg-offwhite border-y border-charcoal/10 relative bg-fabric-oxford">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3 anim-fade-up">
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
-              THE THREE PILLARS OF EXCELLENCE.
-            </h2>
-            <p className="text-sm sm:text-base text-grey-dark font-light leading-relaxed">
-              Grounding our global apparel manufacturing and commercial printing operations in three fundamental pillars of trust, innovation, and uncompromising precision.
-            </p>
-          </div>
-
-          {/* 3 Pillars Grid: Icon First -> Headline -> Description */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {/* 1. iNTEGRITY */}
-            <div className="bg-white p-8 sm:p-10 rounded-sm border-2 border-charcoal/10 hover:border-orange shadow-lg flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 group">
-              <div>
-                {/* 1. FIRST: ICON */}
-                <div className="w-16 h-16 rounded-sm bg-charcoal text-orange flex items-center justify-center border-2 border-dashed border-charcoal/20 shadow-md group-hover:bg-orange group-hover:text-white transition-all group-hover:scale-105 mb-6">
-                  <Handshake className="w-8 h-8" />
-                </div>
-
-                {/* 2. NEXT: HEADLINE */}
-                <span className="text-xs font-mono font-bold text-orange uppercase tracking-wider block mb-1">
-                  PILLAR 01 &bull; HONESTY &amp; TRUST
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-heading font-black uppercase text-charcoal">
-                  iNTEGRITY
-                </h3>
-                <h4 className="text-xs font-heading font-extrabold uppercase tracking-wider text-grey-dark mt-1">
-                  Trust in Every Transaction
-                </h4>
-
-                {/* 3. NEXT: DESCRIPTION */}
-                <p className="text-sm text-grey-dark leading-relaxed font-light border-t border-charcoal/10 pt-4 mt-4">
-                  &ldquo;We believe in honesty, transparency and building long-term business relationships.&rdquo;
-                </p>
-                <p className="text-xs text-grey-dark leading-relaxed font-light mt-2">
-                  Transparent open-book BOM costings, compliant factories, and ethical labor standards across every apparel cut and printed label run.
-                </p>
-              </div>
-            </div>
-
-            {/* 2. iNNOVATIVE */}
-            <div className="bg-white p-8 sm:p-10 rounded-sm border-2 border-charcoal/10 hover:border-orange shadow-lg flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 group">
-              <div>
-                {/* 1. FIRST: ICON */}
-                <div className="w-16 h-16 rounded-sm bg-charcoal text-orange flex items-center justify-center border-2 border-dashed border-charcoal/20 shadow-md group-hover:bg-orange group-hover:text-white transition-all group-hover:scale-105 mb-6">
-                  <Lightbulb className="w-8 h-8" />
-                </div>
-
-                {/* 2. NEXT: HEADLINE */}
-                <span className="text-xs font-mono font-bold text-orange uppercase tracking-wider block mb-1">
-                  PILLAR 02 &bull; CREATIVE TECHNOLOGY
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-heading font-black uppercase text-charcoal">
-                  iNNOVATIVE
-                </h3>
-                <h4 className="text-xs font-heading font-extrabold uppercase tracking-wider text-grey-dark mt-1">
-                  Ideas That Add Value
-                </h4>
-
-                {/* 3. NEXT: DESCRIPTION */}
-                <p className="text-sm text-grey-dark leading-relaxed font-light border-t border-charcoal/10 pt-4 mt-4">
-                  &ldquo;We create modern, functional and creative solutions that make your brand stand out.&rdquo;
-                </p>
-                <p className="text-xs text-grey-dark leading-relaxed font-light mt-2">
-                  Leveraging computer-aided design, 3D prototype draping, GRS recycled yarn innovations, and eco-friendly soy printing technologies.
-                </p>
-              </div>
-            </div>
-
-            {/* 3. iN-DEPTH */}
-            <div className="bg-white p-8 sm:p-10 rounded-sm border-2 border-charcoal/10 hover:border-orange shadow-lg flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 group">
-              <div>
-                {/* 1. FIRST: ICON */}
-                <div className="w-16 h-16 rounded-sm bg-charcoal text-orange flex items-center justify-center border-2 border-dashed border-charcoal/20 shadow-md group-hover:bg-orange group-hover:text-white transition-all group-hover:scale-105 mb-6">
-                  <Search className="w-8 h-8" />
-                </div>
-
-                {/* 2. NEXT: HEADLINE */}
-                <span className="text-xs font-mono font-bold text-orange uppercase tracking-wider block mb-1">
-                  PILLAR 03 &bull; RIGOROUS EXECUTION
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-heading font-black uppercase text-charcoal">
-                  iN-DEPTH
-                </h3>
-                <h4 className="text-xs font-heading font-extrabold uppercase tracking-wider text-grey-dark mt-1">
-                  Attention to Every Detail
-                </h4>
-
-                {/* 3. NEXT: DESCRIPTION */}
-                <p className="text-sm text-grey-dark leading-relaxed font-light border-t border-charcoal/10 pt-4 mt-4">
-                  &ldquo;From material to finishing, we focus on every detail to meet your exact requirements.&rdquo;
-                </p>
-                <p className="text-xs text-grey-dark leading-relaxed font-light mt-2">
-                  End-to-end multi-stage inspection, yarn density audits under magnification, needle detection, and AQL 1.5 international export clearance.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 5: FROM CONCEPT TO DELIVERY (5-STEP PROCESS FROM PDF)
-          3 PER ROW ON DESKTOP, CENTER-ALIGNED CONTAINERS, TEXT LEFT-ALIGNED
-          (TEXTURE VARIANT: DIAGONAL TWILL / DENIM WEAVE)
-          ================================================================= */}
-      <section className="py-24 sm:py-32 bg-charcoal text-white relative overflow-hidden bg-fabric-twill-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3 anim-fade-up">
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">
-              FROM CONCEPT TO DELIVERY.
-            </h2>
-            <p className="text-sm sm:text-base text-beige-light font-light leading-relaxed">
-              A disciplined five-stage production framework engineered for international fashion brands.
-            </p>
-          </div>
-
-          {/* 3 items per row on desktop, centered containers */}
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 items-stretch">
-            {/* STEP 1: DESIGN */}
-            <div className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md bg-charcoal-card p-7 sm:p-8 rounded-sm border border-white/15 hover:border-orange transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group shadow-xl">
-              <div>
-                <div className="w-14 h-14 rounded-sm bg-orange/20 text-orange flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-orange/30">
-                  <PenTool className="w-7 h-7" />
-                </div>
-                <span className="text-[11px] font-mono font-bold text-orange uppercase tracking-widest block">
-                  STAGE 01
-                </span>
-                <h3 className="text-2xl font-heading font-black uppercase text-white mt-1">
-                  DESIGN
-                </h3>
-                <h4 className="text-xs font-heading font-bold uppercase text-beige mt-1.5 leading-snug">
-                  Creative &amp; Customized Solutions
-                </h4>
-                <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
-                  Tailored style guidelines, CAD tech pack consultation, and structural dieline engineering for products and packaging.
-                </p>
-              </div>
-            </div>
-
-            {/* STEP 2: DEVELOP */}
-            <div className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md bg-charcoal-card p-7 sm:p-8 rounded-sm border border-white/15 hover:border-orange transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group shadow-xl">
-              <div>
-                <div className="w-14 h-14 rounded-sm bg-orange/20 text-orange flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-orange/30">
-                  <Layers className="w-7 h-7" />
-                </div>
-                <span className="text-[11px] font-mono font-bold text-orange uppercase tracking-widest block">
-                  STAGE 02
-                </span>
-                <h3 className="text-2xl font-heading font-black uppercase text-white mt-1">
-                  DEVELOP
-                </h3>
-                <h4 className="text-xs font-heading font-bold uppercase text-beige mt-1.5 leading-snug">
-                  Sample &amp; Product Development
-                </h4>
-                <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
-                  Physical proto sampling, lab dip color matching under D65, size grading, and wet proofs on actual production paper.
-                </p>
-              </div>
-            </div>
-
-            {/* STEP 3: PRODUCE */}
-            <div className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md bg-charcoal-card p-7 sm:p-8 rounded-sm border border-white/15 hover:border-orange transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group shadow-xl">
-              <div>
-                <div className="w-14 h-14 rounded-sm bg-orange/20 text-orange flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-orange/30">
-                  <Factory className="w-7 h-7" />
-                </div>
-                <span className="text-[11px] font-mono font-bold text-orange uppercase tracking-widest block">
-                  STAGE 03
-                </span>
-                <h3 className="text-2xl font-heading font-black uppercase text-white mt-1">
-                  PRODUCE
-                </h3>
-                <h4 className="text-xs font-heading font-bold uppercase text-beige mt-1.5 leading-snug">
-                  Quality Manufacturing &amp; Quality Control
-                </h4>
-                <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
-                  Automated computer cutting, dedicated assembly stitching lines, Heidelberg offset press runs, and 100% in-line QC.
-                </p>
-              </div>
-            </div>
-
-            {/* STEP 4: PACK */}
-            <div className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md bg-charcoal-card p-7 sm:p-8 rounded-sm border border-white/15 hover:border-orange transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group shadow-xl">
-              <div>
-                <div className="w-14 h-14 rounded-sm bg-orange/20 text-orange flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-orange/30">
-                  <Box className="w-7 h-7" />
-                </div>
-                <span className="text-[11px] font-mono font-bold text-orange uppercase tracking-widest block">
-                  STAGE 04
-                </span>
-                <h3 className="text-2xl font-heading font-black uppercase text-white mt-1">
-                  PACK
-                </h3>
-                <h4 className="text-xs font-heading font-bold uppercase text-beige mt-1.5 leading-snug">
-                  Smart &amp; Secure Packaging
-                </h4>
-                <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
-                  Retail polybagging, hangtag attachment, silica desiccant insertion, and heavy-duty corrugated export master carton packing.
-                </p>
-              </div>
-            </div>
-
-            {/* STEP 5: DELIVER */}
-            <div className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-md bg-charcoal-card p-7 sm:p-8 rounded-sm border border-white/15 hover:border-orange transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between group shadow-xl">
-              <div>
-                <div className="w-14 h-14 rounded-sm bg-orange/20 text-orange flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-orange/30">
-                  <Truck className="w-7 h-7" />
-                </div>
-                <span className="text-[11px] font-mono font-bold text-orange uppercase tracking-widest block">
-                  STAGE 05
-                </span>
-                <h3 className="text-2xl font-heading font-black uppercase text-white mt-1">
-                  DELIVER
-                </h3>
-                <h4 className="text-xs font-heading font-bold uppercase text-beige mt-1.5 leading-snug">
-                  On-Time Delivery Every Time
-                </h4>
-                <p className="text-xs text-grey-light mt-4 leading-relaxed font-light">
-                  Container consolidation, FOB Chittagong Port ocean export, or express air dispatch through Dhaka Shahjalal Airport.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 6: PRODUCT SHOWCASE ("WHAT WE CREATE")
-          EXACTLY 9 PRODUCTS, NO CATEGORY TABS, WITH "VIEW ALL PRODUCTS" BUTTON
-          ================================================================= */}
-      <section id="products" className="py-24 sm:py-32 bg-offwhite text-charcoal">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header (No tabs, clean editorial headline) */}
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3 anim-fade-up">
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
-              WHAT WE CREATE.
-            </h2>
-            <p className="text-sm sm:text-base text-grey-dark font-light leading-relaxed">
-              Authentic product categories straight from our Apparel Accessories &amp; Commercial Printing brochures. Click any item for technical specifications and instant quotation.
-            </p>
-          </div>
-
-          {/* Product Cards Grid: Exactly 9 Products */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {showcaseProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-
-          {/* Centered Prominent "View All Products" Button */}
-          <div className="mt-16 text-center">
-            <Link
-              href="/services"
-              className="bg-charcoal hover:bg-orange text-white px-10 py-5 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:shadow-orange/30 hover:-translate-y-0.5"
-            >
-              <span>View All Products</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 8: WHY TEXPART? (EXACT DATA FROM PDF BROCHURE)
-          (TEXTURE VARIANT: LUXURY HERRINGBONE / CHEVRON WEAVE)
-          ================================================================= */}
-      <section className="py-24 sm:py-32 bg-forest-dark text-offwhite relative overflow-hidden bg-fabric-herringbone-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Header & Slogan (5 cols) */}
-            <div className="lg:col-span-5 space-y-6">
-              <span className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange" />
-                Value Advantage &bull; Official Brochure
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white leading-tight">
-                WHY <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white">
-                  TEXPART?
-                </span>
-              </h2>
-
-              <p className="text-sm sm:text-base text-beige-light leading-relaxed font-light">
-                Grounding our operations in Bangladesh with global export standards to serve international fashion houses, budding designers, and multinational corporations with unwavering reliability.
-              </p>
-
-              {/* Special Badge from PDF: "LET'S TALK Packages & Competitive PRICING" */}
-              <div className="inline-block p-4 rounded-sm bg-charcoal/80 border-2 border-dashed border-orange/60 shadow-xl">
-                <span className="text-xs font-heading font-extrabold uppercase tracking-widest text-orange block">
-                  LET&apos;S TALK
-                </span>
-                <span className="text-lg font-heading font-black uppercase text-white block mt-0.5">
-                  Packages &amp; Competitive PRICING
-                </span>
-                <span className="text-[11px] text-grey-light block mt-1">
-                  Flexible volume tiers &amp; tailored pilot order quantities
-                </span>
-              </div>
-            </div>
-
-            {/* Right The 5 Core Advantages from PDF Checklist (7 cols) */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="bg-white/10 border border-white/15 p-5 rounded-sm flex items-start gap-4 hover:bg-white/15 transition-all">
-                <div className="w-8 h-8 rounded-full bg-orange text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-heading font-black uppercase text-white">
-                    Wide Range of Accessories &amp; Packaging Solutions
-                  </h3>
-                  <p className="text-xs text-beige-light/80 mt-1 font-light leading-relaxed">
-                    Everything from Swiss damask labels, zippers, and jacquard elastics to luxury Kappa rigid gift boxes and FSC shipping cartons.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white/10 border border-white/15 p-5 rounded-sm flex items-start gap-4 hover:bg-white/15 transition-all">
-                <div className="w-8 h-8 rounded-full bg-orange text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-heading font-black uppercase text-white">
-                    Customized Design &amp; Development
-                  </h3>
-                  <p className="text-xs text-beige-light/80 mt-1 font-light leading-relaxed">
-                    In-house CAD pattern engineers, graphic artists, and structural dieline specialists crafting bespoke collections from your tech packs.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white/10 border border-white/15 p-5 rounded-sm flex items-start gap-4 hover:bg-white/15 transition-all">
-                <div className="w-8 h-8 rounded-full bg-orange text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-heading font-black uppercase text-white">
-                    High Quality Materials &amp; Finishing
-                  </h3>
-                  <p className="text-xs text-beige-light/80 mt-1 font-light leading-relaxed">
-                    OEKO-TEX® Standard 100, GRS recycled polyester, soy-based non-bleeding inks, and hot foil metallic debossing.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white/10 border border-white/15 p-5 rounded-sm flex items-start gap-4 hover:bg-white/15 transition-all">
-                <div className="w-8 h-8 rounded-full bg-orange text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-heading font-black uppercase text-white">
-                    Competitive Price
-                  </h3>
-                  <p className="text-xs text-beige-light/80 mt-1 font-light leading-relaxed">
-                    Direct-from-manufacturer pricing in Dhaka, eliminating intermediaries with transparent bill-of-materials and bulk volume tier discounts.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white/10 border border-white/15 p-5 rounded-sm flex items-start gap-4 hover:bg-white/15 transition-all">
-                <div className="w-8 h-8 rounded-full bg-orange text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-heading font-black uppercase text-white">
-                    Reliable Delivery
-                  </h3>
-                  <p className="text-xs text-beige-light/80 mt-1 font-light leading-relaxed">
-                    Strict adherence to agreed ship windows with real-time milestone dispatch tracking, FOB Chittagong clearance, and express air options.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 9: MANUFACTURING / CRAFTSMANSHIP SHOWCASE
-          ================================================================= */}
-      <section className="py-24 sm:py-32 bg-charcoal text-offwhite">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-16 space-y-4">
-            <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-white">
-              Precision in Every Detail.
-            </h2>
-            <p className="text-base text-grey-light font-light leading-relaxed">
-              Step into our modern manufacturing floors where high-speed Swiss jacquard looms, automated CAD cutting, German offset presses, and master craftsmen converge.
-            </p>
-          </div>
-
-          {/* Asymmetrical Collage */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            <div className="md:col-span-8 relative aspect-[16/10] rounded-sm overflow-hidden group border border-white/10">
-              <Image
-                src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1400&q=80"
-                alt="Automated Garment Cutting & Sewing Line"
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-6 left-6 text-white space-y-1">
-                <span className="text-xs font-mono text-orange uppercase tracking-wider block">
-                  FACILITY 01 &bull; APPAREL ASSEMBLY
-                </span>
-                <h3 className="text-xl sm:text-2xl font-heading font-black uppercase">
-                  Automated CAD Cutting &amp; Assembly
-                </h3>
-              </div>
-            </div>
-
-            <div className="md:col-span-4 relative aspect-[4/5] md:aspect-auto rounded-sm overflow-hidden group border border-white/10">
-              <Image
-                src="https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=800&q=80"
-                alt="Swiss Jacquard Loom Weaving"
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-6 left-6 text-white space-y-1">
-                <span className="text-xs font-mono text-orange uppercase tracking-wider block">
-                  FACILITY 02 &bull; WEAVING
-                </span>
-                <h3 className="text-lg font-heading font-black uppercase">
-                  High-Density Damask Loom
-                </h3>
-              </div>
-            </div>
-
-            <div className="md:col-span-4 relative aspect-[4/5] md:aspect-auto rounded-sm overflow-hidden group border border-white/10">
-              <Image
-                src="https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=800&q=80"
-                alt="Offset Press Printing"
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-6 left-6 text-white space-y-1">
-                <span className="text-xs font-mono text-orange uppercase tracking-wider block">
-                  FACILITY 03 &bull; COMMERCIAL PRINT
-                </span>
-                <h3 className="text-lg font-heading font-black uppercase">
-                  Heidelberg Speedmaster Offset
-                </h3>
-              </div>
-            </div>
-
-            <div className="md:col-span-8 relative aspect-[16/10] rounded-sm overflow-hidden group border border-white/10">
-              <Image
-                src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1400&q=80"
-                alt="Garment Quality Inspection"
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-80" />
-              <div className="absolute bottom-6 left-6 text-white space-y-1">
-                <span className="text-xs font-mono text-orange uppercase tracking-wider block">
-                  FACILITY 04 &bull; AQL 1.5 AUDIT
-                </span>
-                <h3 className="text-xl sm:text-2xl font-heading font-black uppercase">
-                  Strict 100% In-Line Quality Inspection
-                </h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =================================================================
-          SECTION 10: GALLERY PREVIEW
-          (TEXTURE VARIANT: LINEN WEAVE)
-          ================================================================= */}
-      <section className="py-24 sm:py-32 bg-offwhite text-charcoal relative bg-fabric-linen border-t border-charcoal/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <h2 className="text-3xl sm:text-5xl font-heading font-black uppercase tracking-tight text-charcoal">
-                Manufacturing in Action.
-              </h2>
-            </div>
-            <Link
-              href="/gallery"
-              className="inline-flex items-center gap-2 text-xs font-heading font-extrabold uppercase tracking-widest text-orange hover:text-orange-hover group"
-            >
-              <span>Explore Full Gallery Archive</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {GALLERY_ITEMS.slice(0, 4).map((item) => (
-              <button
-                key={item.id}
-                onClick={() =>
-                  openLightbox({
-                    src: item.image,
-                    title: item.title,
-                    meta: item.categoryLabel || item.location || "",
-                  })
-                }
-                className="relative aspect-square rounded-sm overflow-hidden group text-left border border-charcoal/10"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <div className="text-white">
-                    <span className="text-[10px] font-mono uppercase text-orange block">
-                      {item.category}
-                    </span>
-                    <span className="text-xs font-heading font-bold uppercase block">
-                      {item.title}
-                    </span>
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={cert.image}
+                      alt={cert.name || "Certification"}
+                      fill
+                      className="object-contain"
+                    />
                   </div>
                 </div>
-              </button>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* =================================================================
-          SECTION 11: FINAL HIGH-IMPACT CTA WITH OFFICIAL CONTACT DATA
-          (TEXTURE VARIANT: OXFORD / BASKETWEAVE DARK)
+          7. OUR CLIENTS (STACKED 5x3 GRID, SQUARE CARDS 1.25x BIGGER, NOT SLIDING)
           ================================================================= */}
-      <section className="pt-20 sm:pt-28 pb-8 sm:pb-10 bg-charcoal text-white relative overflow-hidden bg-fabric-oxford-dark">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-heading font-black uppercase tracking-tight text-white leading-tight">
-            Ready to Create Something <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange via-beige to-white">
-              Exceptional?
-            </span>
-          </h2>
-
-          <p className="text-base sm:text-xl text-beige-light max-w-2xl mx-auto font-light leading-relaxed">
-            Whether you need custom trims, woven labels, rigid packaging boxes, or full apparel tech pack manufacturing, our team in Dhaka is ready to assist.
-          </p>
-
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <button
-              onClick={() => openQuote("General Project Inquiry")}
-              className="bg-orange hover:bg-orange-hover text-white px-10 py-5 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-3 transition-all duration-300 shadow-xl hover:shadow-orange/30 hover:scale-105"
-            >
-              <span>Request a Quote Today</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-            <Link
-              href="/contact"
-              className="bg-transparent hover:bg-white/10 text-white border border-white/30 hover:border-white px-10 py-5 rounded-sm font-heading text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 transition-all"
-            >
-              Contact Our Team
-            </Link>
+      <section className="py-8 sm:py-12 bg-slate-50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 space-y-1">
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              <span>Our Clients</span>
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+            </h2>
+            <p className="text-xs text-slate-500 font-normal">
+              Trusted apparel accessories and packaging manufacturing partner for global fashion brands
+            </p>
           </div>
 
-          {/* Official Brochure Contact Strip */}
-          <div className="pt-8 mt-10 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs text-grey-light font-light text-center">
-            <div>
-              <span className="font-heading font-bold text-beige uppercase tracking-wider block">
-                Office &amp; Factory
+          {isLoadingPartners ? (
+            <div className="py-12 flex flex-col items-center justify-center space-y-2">
+              <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+              <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
+                Loading client brands...
               </span>
-              <span className="mt-1 block">263, Fakirapool, Motijheel, Dhaka</span>
             </div>
-            <div>
-              <span className="font-heading font-bold text-beige uppercase tracking-wider block">
-                Direct Hotline
-              </span>
-              <span className="mt-1 block">+880 161 308 4465 &bull; +880 171 308 4465</span>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 max-w-5xl mx-auto">
+              {displayClients.map((client, idx) => (
+                <div
+                  key={idx}
+                  className="aspect-square sm:aspect-[4/3] bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] p-3 sm:p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                >
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={client.logoUrl || client.image}
+                      alt={client.name || "Client"}
+                      fill
+                      className="object-contain p-1 group-hover:scale-105 transition-transform duration-200"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-            <div>
-              <span className="font-heading font-bold text-beige uppercase tracking-wider block">
-                Corporate Email
-              </span>
-              <span className="mt-1 block">texpartdesign@gmail.com</span>
+          )}
+        </div>
+      </section>
+
+      {/* =================================================================
+          9. "LET'S GROW TOGETHER" BANNER
+          ================================================================= */}
+      <section className="py-6 sm:py-8 bg-gradient-to-r from-[#003B73] via-[#0056B3] to-[#002D59] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-[4px] bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0 text-white">
+                <Shirt className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-heading font-bold text-white tracking-tight">
+                  Let&apos;s Grow Together
+                </h2>
+                <p className="text-slate-200 text-xs font-light mt-0.5">
+                  Partner with Texpart for your garment accessories and sourcing needs.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex-shrink-0">
+              <button
+                onClick={openGeneralQuote}
+                className="bg-white hover:bg-slate-100 text-[#0056B3] px-5 py-2.5 rounded-[4px] font-heading text-xs font-bold inline-flex items-center gap-1.5 shadow-md transition-all"
+              >
+                <span>Contact Us Today</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>

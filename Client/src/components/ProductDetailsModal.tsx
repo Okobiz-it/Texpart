@@ -45,7 +45,7 @@ export default function ProductDetailsModal() {
         {/* Close Button */}
         <button
           onClick={closeProductModal}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-charcoal/80 text-white hover:bg-orange flex items-center justify-center transition-colors"
+          className="absolute top-4 right-4 z-20 w-8 h-8 rounded-[4px] bg-charcoal/80 text-white hover:bg-[#0066CC] flex items-center justify-center transition-colors"
           aria-label="Close details"
         >
           <X className="w-5 h-5" />

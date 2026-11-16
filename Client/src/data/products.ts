@@ -87,7 +87,7 @@ export const PRODUCTS: Product[] = [
     galleryImages: [
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/comm-boxes.jpg"
     ],
     featured: true
   },
@@ -250,9 +250,9 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "5 - 7 business days",
       "MOQ Consultation": "5,000 pcs"
     },
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/range-buttons.jpg",
     galleryImages: [
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+      "/images/products/comm-boxes.jpg",
       "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: false
@@ -373,9 +373,9 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "3 - 5 business days",
       "MOQ Consultation": "10,000 pcs"
     },
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-boxes.jpg",
     galleryImages: [
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+      "/images/products/comm-boxes.jpg",
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: false
@@ -417,7 +417,7 @@ export const PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
     galleryImages: [
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/comm-boxes.jpg"
     ],
     featured: true
   },
@@ -495,9 +495,9 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "5 - 7 business days",
       "MOQ Consultation": "1,000 master cartons / 3,000 presentation boxes"
     },
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-boxes.jpg",
     galleryImages: [
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+      "/images/products/comm-boxes.jpg",
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: false
@@ -578,9 +578,9 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "2 - 3 business days",
       "MOQ Consultation": "1,000 pcs"
     },
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-flyers.jpg",
     galleryImages: [
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+      "/images/products/comm-boxes.jpg",
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: true
@@ -617,10 +617,10 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "4 - 6 business days",
       "MOQ Consultation": "500 copies"
     },
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-brochures.jpg",
     galleryImages: [
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/comm-boxes.jpg"
     ],
     featured: true
   },
@@ -657,9 +657,9 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "3 - 5 business days",
       "MOQ Consultation": "500 sets / 1,000 cards"
     },
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-stationery.jpg",
     galleryImages: [
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+      "/images/products/comm-boxes.jpg",
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: false
@@ -698,7 +698,7 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "5 - 7 business days",
       "MOQ Consultation": "500 pcs"
     },
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-notebooks.jpg",
     galleryImages: [
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80"
@@ -738,10 +738,10 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "4 - 6 business days",
       "MOQ Consultation": "500 pcs"
     },
-    image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-calendars.jpg",
     galleryImages: [
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/comm-boxes.jpg"
     ],
     featured: false
   },
@@ -779,9 +779,9 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "2 - 3 business days",
       "MOQ Consultation": "10 pcs roll-ups / 50 pcs posters"
     },
-    image: "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-flyers.jpg",
     galleryImages: [
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80",
+      "/images/products/comm-boxes.jpg",
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80"
     ],
     featured: false
@@ -860,10 +860,10 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "4 - 6 business days",
       "MOQ Consultation": "2,000 pcs"
     },
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-boxes.jpg",
     galleryImages: [
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1589363460779-cd717d7e8fa5?auto=format&fit=crop&w=1000&q=80"
+      "/images/products/comm-boxes.jpg"
     ],
     featured: true
   },
@@ -901,7 +901,7 @@ export const PRODUCTS: Product[] = [
       "Sampling Time": "5 - 7 business days",
       "MOQ Consultation": "1,000 pcs"
     },
-    image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80",
+    image: "/images/products/comm-boxes.jpg",
     galleryImages: [
       "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1000&q=80",
       "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=80"

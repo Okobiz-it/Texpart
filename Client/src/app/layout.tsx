@@ -9,6 +9,7 @@ import ProductDetailsModal from "@/components/ProductDetailsModal";
 import LightboxModal from "@/components/LightboxModal";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://texpart.com"),
   title: "Texpart | Design & Packaging Solutions — Apparel Manufacturing & Commercial Printing",
   description: "Bangladesh-based premier apparel development, garments accessories, luxury packaging, and commercial printing partner. One partner, multiple solutions.",
   icons: {
