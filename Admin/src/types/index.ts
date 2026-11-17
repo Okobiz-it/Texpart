@@ -28,6 +28,8 @@ export interface DashboardStats {
   privateJobsCount: number;
   commercialJobsCount: number;
   partnersCount: number;
+  clientBrandsCount: number;
+  certificationsCount: number;
   featuredCount: number;
   recentProducts: ProductItem[];
 }

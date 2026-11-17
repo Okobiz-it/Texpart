@@ -162,10 +162,12 @@ export default function HomePage() {
   const [privateFeatured, setPrivateFeatured] = useState<any[]>([]);
   const [commercialFeatured, setCommercialFeatured] = useState<any[]>([]);
   const [dbClients, setDbClients] = useState<any[]>([]);
+  const [dbCertifications, setDbCertifications] = useState<any[]>([]);
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(true);
   const [isLoadingPartners, setIsLoadingPartners] = useState(true);
+  const [isLoadingCertifications, setIsLoadingCertifications] = useState(true);
 
-  // Fetch up to 5 featured products per division and partners from MongoDB Atlas
+  // Fetch up to 5 featured products per division, partners and certifications from MongoDB Atlas
   useEffect(() => {
     let isMounted = true;
     async function loadDynamicData() {
@@ -199,6 +201,20 @@ export default function HomePage() {
       } finally {
         if (isMounted) setIsLoadingPartners(false);
       }
+
+      try {
+        const certRes = await fetch("/api/partners?category=certification");
+        const certData = await certRes.json();
+        if (isMounted) {
+          if (certData.success && Array.isArray(certData.partners)) {
+            setDbCertifications(certData.partners);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load certifications from database", err);
+      } finally {
+        if (isMounted) setIsLoadingCertifications(false);
+      }
     }
     loadDynamicData();
     return () => {
@@ -209,7 +225,7 @@ export default function HomePage() {
   const displayPrivate = privateFeatured;
   const displayCommercial = commercialFeatured;
   const displayClients = dbClients;
-  const displayCertifications = CERTIFICATIONS;
+  const displayCertifications = dbCertifications;
 
   // Auto-slide back and forth every 5 seconds
   useEffect(() => {
@@ -730,23 +746,41 @@ export default function HomePage() {
             <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
 
-            <div className="flex gap-4 sm:gap-6 animate-marquee hover:[animation-play-state:paused] w-max py-2">
-              {[...CERTIFICATIONS, ...CERTIFICATIONS, ...CERTIFICATIONS, ...CERTIFICATIONS].map((cert, idx) => (
-                <div
-                  key={idx}
-                  className="w-28 sm:w-32 h-28 sm:h-32 bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] p-3 flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200 hover:scale-110 hover:shadow-md cursor-pointer z-10"
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={cert.image}
-                      alt={cert.name || "Certification"}
-                      fill
-                      className="object-contain"
-                    />
+            {isLoadingCertifications ? (
+              <div className="py-8 flex flex-col items-center justify-center space-y-2">
+                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+                <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
+                  Loading Certifications...
+                </span>
+              </div>
+            ) : displayCertifications.length === 0 ? (
+              <div className="py-6 text-center text-xs text-slate-400 font-heading">
+                No certifications registered yet.
+              </div>
+            ) : (
+              <div className="flex gap-4 sm:gap-6 animate-marquee hover:[animation-play-state:paused] w-max py-2">
+                {[
+                  ...displayCertifications,
+                  ...displayCertifications,
+                  ...displayCertifications,
+                  ...displayCertifications,
+                ].map((cert, idx) => (
+                  <div
+                    key={cert.id || idx}
+                    className="w-28 sm:w-32 h-28 sm:h-32 bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] p-3 flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-200 hover:scale-110 hover:shadow-md cursor-pointer z-10"
+                  >
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={cert.logoUrl || cert.image}
+                        alt={cert.name || "Certification"}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>

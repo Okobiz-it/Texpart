@@ -6,15 +6,25 @@ import Partner from "@/models/Partner";
 export async function GET() {
   try {
     await connectToDatabase();
-    const [totalProducts, privateJobsCount, commercialJobsCount, featuredCount, partnersCount, recentDocs] =
-      await Promise.all([
-        Product.countDocuments(),
-        Product.countDocuments({ division: "private-jobs" }),
-        Product.countDocuments({ division: "commercial-jobs" }),
-        Product.countDocuments({ isFeatured: true }),
-        Partner.countDocuments(),
-        Product.find().sort({ createdAt: -1 }).limit(5).lean(),
-      ]);
+    const [
+      totalProducts,
+      privateJobsCount,
+      commercialJobsCount,
+      featuredCount,
+      partnersCount,
+      clientBrandsCount,
+      certificationsCount,
+      recentDocs,
+    ] = await Promise.all([
+      Product.countDocuments(),
+      Product.countDocuments({ division: "private-jobs" }),
+      Product.countDocuments({ division: "commercial-jobs" }),
+      Product.countDocuments({ isFeatured: true }),
+      Partner.countDocuments(),
+      Partner.countDocuments({ category: "client" }),
+      Partner.countDocuments({ category: "certification" }),
+      Product.find().sort({ createdAt: -1 }).limit(6).lean(),
+    ]);
 
     const recentProducts = recentDocs.map((doc: any) => ({
       id: doc._id.toString(),
@@ -38,6 +48,8 @@ export async function GET() {
         commercialJobsCount,
         featuredCount,
         partnersCount,
+        clientBrandsCount,
+        certificationsCount,
         recentProducts,
       },
     });

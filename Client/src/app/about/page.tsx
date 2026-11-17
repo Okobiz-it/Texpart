@@ -80,11 +80,13 @@ const CLIENTS = [
 export default function AboutPage() {
   const { openGeneralQuote } = useQuote();
   const [dbClients, setDbClients] = useState<any[]>([]);
+  const [dbCertifications, setDbCertifications] = useState<any[]>([]);
   const [isLoadingPartners, setIsLoadingPartners] = useState(true);
+  const [isLoadingCertifications, setIsLoadingCertifications] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
-    async function loadPartners() {
+    async function loadData() {
       try {
         const clientRes = await fetch("/api/partners?category=client");
         const clientData = await clientRes.json();
@@ -98,14 +100,29 @@ export default function AboutPage() {
       } finally {
         if (isMounted) setIsLoadingPartners(false);
       }
+
+      try {
+        const certRes = await fetch("/api/partners?category=certification");
+        const certData = await certRes.json();
+        if (isMounted) {
+          if (certData.success && Array.isArray(certData.partners)) {
+            setDbCertifications(certData.partners);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load certifications from database", err);
+      } finally {
+        if (isMounted) setIsLoadingCertifications(false);
+      }
     }
-    loadPartners();
+    loadData();
     return () => {
       isMounted = false;
     };
   }, []);
 
   const displayClients = dbClients;
+  const displayCertifications = dbCertifications;
 
   return (
     <div className="bg-white min-h-screen text-[#0A2540]">
@@ -229,23 +246,36 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-            {CERTIFICATIONS.map((cert, idx) => (
-              <div
-                key={cert.id || idx}
-                className="w-24 sm:w-28 h-24 sm:h-28 bg-white border border-slate-200 rounded-[4px] p-2.5 flex items-center justify-center shadow-sm hover:border-[#0066CC] transition-colors"
-              >
-                <div className="relative w-full h-full">
-                  <Image
-                    src={cert.image}
-                    alt={cert.name || "Certification"}
-                    fill
-                    className="object-contain"
-                  />
+          {isLoadingCertifications ? (
+            <div className="py-8 flex flex-col items-center justify-center space-y-2">
+              <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+              <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
+                Loading Certifications...
+              </span>
+            </div>
+          ) : displayCertifications.length === 0 ? (
+            <div className="py-6 text-center text-xs text-slate-400 font-heading">
+              No certifications registered yet.
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+              {displayCertifications.map((cert, idx) => (
+                <div
+                  key={cert.id || idx}
+                  className="w-24 sm:w-28 h-24 sm:h-28 bg-white border border-slate-200 rounded-[4px] p-2.5 flex items-center justify-center shadow-sm hover:border-[#0066CC] transition-colors"
+                >
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={cert.logoUrl || cert.image}
+                      alt={cert.name || "Certification"}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

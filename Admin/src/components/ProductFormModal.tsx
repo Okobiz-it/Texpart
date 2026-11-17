@@ -56,6 +56,16 @@ export default function ProductFormModal({
     setError(null);
   }, [editingProduct, initialDivision, isOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen && !isSubmitting) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, isSubmitting, onClose]);
+
   // Auto-generate slug when name changes (if creating or if slug is synchronized)
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
@@ -116,7 +126,14 @@ export default function ProductFormModal({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm">
-      <div className="relative bg-white w-full max-w-4xl rounded-[4px] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div
+        className="fixed inset-0"
+        onClick={() => {
+          if (!isSubmitting) onClose();
+        }}
+        aria-hidden="true"
+      />
+      <div className="relative z-10 bg-white w-full max-w-4xl rounded-[4px] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="bg-[#0066CC] text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">

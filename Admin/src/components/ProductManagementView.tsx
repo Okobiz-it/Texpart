@@ -17,6 +17,9 @@ import {
   Star,
   Loader2,
   AlertCircle,
+  LayoutGrid,
+  List,
+  CheckCircle2,
 } from "lucide-react";
 import { ProductItem, JobDivision } from "@/types";
 import ProductFormModal from "@/components/ProductFormModal";
@@ -38,6 +41,7 @@ export default function ProductManagementView({
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
@@ -48,7 +52,7 @@ export default function ProductManagementView({
     try {
       const res = await fetch(`/api/products?division=${division}`);
       const data = await res.json();
-      if (data.success) {
+      if (data.success && Array.isArray(data.products)) {
         setProducts(data.products);
       }
     } catch (err) {
@@ -62,7 +66,7 @@ export default function ProductManagementView({
     fetchProducts();
   }, [division]);
 
-  // Featured products count across this view
+  // Featured count for this division
   const featuredCount = products.filter((p) => p.isFeatured).length;
 
   const handleToggleFeatured = async (prod: ProductItem) => {
@@ -80,7 +84,7 @@ export default function ProductManagementView({
       if (!res.ok || !data.success) {
         setFeedbackMessage({
           type: "error",
-          text: data.error || "Maximum 5 featured products allowed. Please unfeature another product first.",
+          text: data.error || "Maximum 5 featured products allowed for this division. Unfeature another product first.",
         });
         setTimeout(() => setFeedbackMessage(null), 5000);
       } else {
@@ -144,7 +148,7 @@ export default function ProductManagementView({
   });
 
   return (
-    <div className="p-6 sm:p-8 space-y-6 max-w-7xl">
+    <div className="p-6 sm:p-8 space-y-6 max-w-7xl mx-auto w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div className="flex items-start gap-3.5">
@@ -156,13 +160,14 @@ export default function ProductManagementView({
             )}
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-[11px] font-mono uppercase tracking-widest text-[#0066CC] font-bold">
-                Product Division Control
+                Catalog Management
               </span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-[10px] font-heading font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">
+              <span className="text-slate-300">&bull;</span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">
                 <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                Home Featured: {featuredCount}/5 in division
+                Home Featured: {featuredCount} / 5
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-heading font-black uppercase text-[#0A2540] tracking-tight">
@@ -191,7 +196,7 @@ export default function ProductManagementView({
           }`}
         >
           {feedbackMessage.type === "success" ? (
-            <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
           ) : (
             <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
           )}
@@ -228,189 +233,285 @@ export default function ProductManagementView({
             ))}
           </select>
         </div>
+
+        {/* View Toggle (Table / Grid) */}
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-[4px] flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            className={`p-1.5 rounded-[3px] transition-all ${
+              viewMode === "table"
+                ? "bg-white text-[#0066CC] shadow-sm"
+                : "text-slate-400 hover:text-slate-700"
+            }`}
+            title="Table View"
+          >
+            <List className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("grid")}
+            className={`p-1.5 rounded-[3px] transition-all ${
+              viewMode === "grid"
+                ? "bg-white text-[#0066CC] shadow-sm"
+                : "text-slate-400 hover:text-slate-700"
+            }`}
+            title="Grid Cards View"
+          >
+            <LayoutGrid className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      {/* Products Table */}
-      <div className="bg-white rounded-[4px] border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
-          <span>
-            Displaying <strong className="text-[#0A2540]">{filteredProducts.length}</strong> of{" "}
-            {products.length} products
-          </span>
-          {searchQuery && (
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("ALL");
-              }}
-              className="text-[#0066CC] hover:underline font-bold"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
+      {/* Main Content: Table or Grid */}
+      {viewMode === "table" ? (
+        <div className="bg-white rounded-[4px] border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500">
+            <span>
+              Displaying <strong className="text-[#0A2540]">{filteredProducts.length}</strong> of{" "}
+              {products.length} products
+            </span>
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("ALL");
+                }}
+                className="text-[#0066CC] hover:underline font-bold"
+              >
+                Clear search
+              </button>
+            )}
+          </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-heading uppercase text-[11px] tracking-wider">
-              <tr>
-                <th className="px-4 py-3">Product Name &amp; Front Image</th>
-                <th className="px-4 py-3">Slug (Auto-Generated)</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3 text-center">Featured on Home (Max 5)</th>
-                <th className="px-4 py-3">Images</th>
-                <th className="px-4 py-3">Description Preview</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {isLoading ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-heading uppercase text-[11px] tracking-wider">
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-400">
-                    Loading {title} from MongoDB...
-                  </td>
+                  <th className="px-4 py-3">Product Name &amp; Cover</th>
+                  <th className="px-4 py-3">Category</th>
+                  <th className="px-4 py-3 text-center">Home Featured (Max 5)</th>
+                  <th className="px-4 py-3">Images</th>
+                  <th className="px-4 py-3">Slug Preview</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
-              ) : filteredProducts.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-10 text-center space-y-2">
-                    <p className="font-heading font-bold text-slate-600 text-sm">
-                      No products found
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      Click &ldquo;Add New Product&rdquo; above to create your first item in this division.
-                    </p>
-                  </td>
-                </tr>
-              ) : (
-                filteredProducts.map((prod) => {
-                  const plainDesc = prod.description
-                    ? prod.description.replace(/<[^>]*>/g, " ").trim()
-                    : "No description provided";
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {isLoading ? (
+                  <tr>
+                    <td colSpan={6} className="p-12 text-center text-slate-400">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Loader2 className="w-6 h-6 animate-spin text-[#0066CC]" />
+                        <span>Loading {title} from MongoDB...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredProducts.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-12 text-center space-y-2">
+                      <p className="font-heading font-bold text-slate-600 text-sm">
+                        No products found
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Click &ldquo;Add New Product&rdquo; above to create your first item in this division.
+                      </p>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredProducts.map((prod) => {
+                    const isToggling = togglingId === prod.id;
 
-                  const isToggling = togglingId === prod.id;
+                    return (
+                      <tr key={prod.id} className="hover:bg-slate-50/70 transition-colors">
+                        {/* Thumbnail & Name */}
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="relative w-12 h-12 rounded-[4px] overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
+                              {prod.frontImage ? (
+                                <Image
+                                  src={prod.frontImage}
+                                  alt={prod.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                  <ImageIcon className="w-4 h-4" />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <strong className="text-xs font-heading font-bold text-[#0A2540] block hover:text-[#0066CC] transition-colors">
+                                {prod.name}
+                              </strong>
+                              <span className="text-[10px] text-emerald-600 font-mono font-medium flex items-center gap-1">
+                                <CheckCircle className="w-2.5 h-2.5" /> Front Image Active
+                              </span>
+                            </div>
+                          </div>
+                        </td>
 
-                  return (
-                    <tr key={prod.id} className="hover:bg-slate-50/70 transition-colors">
-                      {/* Product Thumbnail & Name */}
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="relative w-12 h-12 rounded-[4px] overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
-                            {prod.frontImage ? (
-                              <Image
-                                src={prod.frontImage}
-                                alt={prod.name}
-                                fill
-                                className="object-cover"
-                              />
+                        {/* Category */}
+                        <td className="px-4 py-3">
+                          <span className="inline-block px-2 py-0.5 rounded-[3px] bg-slate-100 text-slate-700 font-heading text-[11px] font-bold">
+                            {prod.category}
+                          </span>
+                        </td>
+
+                        {/* Home Featured Toggle */}
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleFeatured(prod)}
+                            disabled={isToggling}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] text-xs font-heading font-bold transition-all ${
+                              prod.isFeatured
+                                ? "bg-amber-500 hover:bg-amber-600 text-white shadow-sm"
+                                : "bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-300/80"
+                            } disabled:opacity-50`}
+                            title={
+                              prod.isFeatured
+                                ? "Click to remove from Home Featured"
+                                : "Click to feature on Home Page (Max 5 allowed)"
+                            }
+                          >
+                            {isToggling ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                <ImageIcon className="w-4 h-4" />
-                              </div>
+                              <Star
+                                className={`w-3.5 h-3.5 ${
+                                  prod.isFeatured ? "fill-white text-white" : "text-slate-400"
+                                }`}
+                              />
                             )}
-                          </div>
-                          <div>
-                            <strong className="text-xs font-heading font-bold text-[#0A2540] block hover:text-[#0066CC] transition-colors">
-                              {prod.name}
-                            </strong>
-                            <span className="text-[10px] text-emerald-600 font-mono font-medium flex items-center gap-1">
-                              <CheckCircle className="w-2.5 h-2.5" /> Front Image Active
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Auto Slug */}
-                      <td className="px-4 py-3 font-mono text-slate-600 text-[11px]">
-                        <span className="px-2 py-0.5 bg-slate-100 rounded-[4px] border border-slate-200/60">
-                          {prod.slug}
-                        </span>
-                      </td>
-
-                      {/* Category */}
-                      <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded-[4px] bg-blue-50 text-[#0066CC] font-medium text-[11px] border border-blue-100">
-                          {prod.category}
-                        </span>
-                      </td>
-
-                      {/* Featured on Home (Max 5) Interactive Toggle */}
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          type="button"
-                          disabled={isToggling}
-                          onClick={() => handleToggleFeatured(prod)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] text-[11px] font-heading font-bold transition-all shadow-xs ${
-                            prod.isFeatured
-                              ? "bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200"
-                              : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200"
-                          } disabled:opacity-50`}
-                          title={
-                            prod.isFeatured
-                              ? "Click to remove from Home Page featured products"
-                              : "Click to feature on Home Page (Max 5 allowed)"
-                          }
-                        >
-                          {isToggling ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          ) : (
-                            <Star
-                              className={`w-3.5 h-3.5 ${
-                                prod.isFeatured
-                                  ? "text-amber-500 fill-amber-500"
-                                  : "text-slate-400"
-                              }`}
-                            />
-                          )}
-                          <span>{prod.isFeatured ? "Featured" : "Feature"}</span>
-                        </button>
-                      </td>
-
-                      {/* Images Count */}
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1 text-slate-500 text-[11px]">
-                          <Layers className="w-3.5 h-3.5 text-slate-400" />
-                          <span>{prod.images?.length || 1} image(s)</span>
-                        </span>
-                      </td>
-
-                      {/* Description Preview */}
-                      <td className="px-4 py-3 max-w-xs">
-                        <p className="text-slate-500 text-[11px] line-clamp-2 leading-relaxed">
-                          {plainDesc}
-                        </p>
-                      </td>
-
-                      {/* Action Buttons */}
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => handleEdit(prod)}
-                            className="p-1.5 rounded-[4px] border border-slate-200 text-slate-600 hover:text-[#0066CC] hover:bg-blue-50 transition-colors"
-                            aria-label={`Edit ${prod.name}`}
-                            title="Edit Product"
-                          >
-                            <Edit className="w-3.5 h-3.5" />
+                            <span>{prod.isFeatured ? "★ Featured" : "Feature"}</span>
                           </button>
-                          <button
-                            onClick={() => handleDelete(prod.id, prod.name)}
-                            className="p-1.5 rounded-[4px] border border-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                            aria-label={`Delete ${prod.name}`}
-                            title="Delete Product"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                        </td>
+
+                        {/* Images count */}
+                        <td className="px-4 py-3 font-mono text-[11px] text-slate-500">
+                          {prod.images?.length || 1} asset(s)
+                        </td>
+
+                        {/* Slug */}
+                        <td className="px-4 py-3 font-mono text-[11px] text-slate-500">
+                          /products/{prod.slug}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <a
+                              href={`http://localhost:3000/products/${prod.slug}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="p-1.5 text-slate-400 hover:text-[#0066CC] hover:bg-blue-50 rounded-[3px] transition-colors"
+                              title="View on Live Storefront"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(prod)}
+                              className="p-1.5 text-slate-400 hover:text-[#0066CC] hover:bg-blue-50 rounded-[3px] transition-colors"
+                              title="Edit product"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(prod.id, prod.name)}
+                              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-[3px] transition-colors"
+                              title="Delete product"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Grid Cards View */
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filteredProducts.map((prod) => (
+            <div
+              key={prod.id}
+              className="bg-white rounded-[4px] border border-slate-200 hover:border-[#0066CC] p-4 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="relative aspect-[4/3] rounded-[3px] overflow-hidden bg-slate-100 border border-slate-100 mb-3">
+                  {prod.frontImage ? (
+                    <Image
+                      src={prod.frontImage}
+                      alt={prod.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                  )}
+                  {prod.isFeatured && (
+                    <div className="absolute top-2 right-2 bg-amber-500 text-white text-[10px] font-heading font-bold px-2 py-0.5 rounded-[3px] flex items-center gap-1 shadow-md">
+                      <Star className="w-3 h-3 fill-white text-white" />
+                      Featured
+                    </div>
+                  )}
+                </div>
 
-      {/* Modal */}
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                    {prod.category}
+                  </span>
+                  <h3 className="text-sm font-heading font-bold text-[#0A2540] truncate" title={prod.name}>
+                    {prod.name}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => handleToggleFeatured(prod)}
+                  className={`text-[10px] font-heading font-bold px-2 py-1 rounded-[3px] transition-colors ${
+                    prod.isFeatured
+                      ? "bg-amber-50 text-amber-700 border border-amber-200"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {prod.isFeatured ? "★ Featured" : "Feature"}
+                </button>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => handleEdit(prod)}
+                    className="p-1.5 text-slate-400 hover:text-[#0066CC] hover:bg-blue-50 rounded-[3px] transition-colors"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(prod.id, prod.name)}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-[3px] transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Product Form Modal */}
       <ProductFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
