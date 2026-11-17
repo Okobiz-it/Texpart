@@ -53,14 +53,40 @@ export default function QuoteModal() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isQuoteOpen, closeQuote]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitError, setSubmitError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError("");
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const res = await fetch("/api/quotations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          companyName,
+          email,
+          phone,
+          productName,
+          moqQuantity,
+          noteContent,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to submit quotation");
+      }
+
       setIsSuccess(true);
-    }, 750);
+    } catch (err: any) {
+      console.error("Quote submission error:", err);
+      setSubmitError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -232,6 +258,12 @@ export default function QuoteModal() {
                   />
                 </div>
               </div>
+
+              {submitError && (
+                <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-[4px]">
+                  {submitError}
+                </div>
+              )}
 
               {/* Modal Footer / Submit CTA */}
               <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-200">

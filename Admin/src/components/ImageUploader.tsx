@@ -4,12 +4,11 @@ import React, { useState } from "react";
 import Image from "next/image";
 import {
   UploadCloud,
-  CheckCircle,
   X,
   Star,
   Loader2,
-  Plus,
   Image as ImageIcon,
+  CheckCircle,
 } from "lucide-react";
 
 interface ImageUploaderProps {
@@ -27,7 +26,6 @@ export default function ImageUploader({
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [manualUrl, setManualUrl] = useState("");
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -71,17 +69,6 @@ export default function ImageUploader({
 
     setIsUploading(false);
     e.target.value = "";
-  };
-
-  const handleAddManualUrl = () => {
-    if (!manualUrl.trim()) return;
-    const url = manualUrl.trim();
-    const updated = [...images, url];
-    onImagesChange(updated);
-    if (!frontImage) {
-      onFrontImageChange(url);
-    }
-    setManualUrl("");
   };
 
   const handleRemoveImage = (indexToRemove: number) => {
@@ -143,25 +130,6 @@ export default function ImageUploader({
         </div>
       )}
 
-      {/* Manual URL Input Option */}
-      <div className="flex items-center gap-2">
-        <input
-          type="url"
-          value={manualUrl}
-          onChange={(e) => setManualUrl(e.target.value)}
-          placeholder="Or paste external / Cloudinary image URL..."
-          className="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-[4px] text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC]"
-        />
-        <button
-          type="button"
-          onClick={handleAddManualUrl}
-          className="px-3 py-1.5 bg-white border border-slate-200 hover:border-[#0066CC] text-[#0A2540] text-xs font-bold rounded-[4px] inline-flex items-center gap-1 transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5 text-[#0066CC]" />
-          <span>Add URL</span>
-        </button>
-      </div>
-
       {/* Image Gallery with "Select as front" */}
       {images.length > 0 && (
         <div className="space-y-2 pt-2">
@@ -200,7 +168,7 @@ export default function ImageUploader({
 
                     {/* Front Badge */}
                     {isFront && (
-                      <div className="absolute top-1.5 left-1.5 bg-[#0066CC] text-white px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-md z-10">
+                      <div className="absolute top-1.5 left-1.5 bg-[#0066CC] text-white px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-md z-10">
                         <Star className="w-2.5 h-2.5 fill-current" />
                         <span>Front</span>
                       </div>
@@ -210,7 +178,7 @@ export default function ImageUploader({
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-[3px] bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-md z-10"
+                      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-[4px] bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-md z-10"
                       title="Remove image"
                     >
                       <X className="w-3.5 h-3.5" />

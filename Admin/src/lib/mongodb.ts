@@ -19,6 +19,13 @@ if (!cached) {
 }
 
 export async function connectToDatabase() {
+  try {
+    dns.setServers(["8.8.8.8", "1.1.1.1"]);
+    if (typeof (dns as any).setDefaultResultOrder === "function") {
+      (dns as any).setDefaultResultOrder("ipv4first");
+    }
+  } catch {}
+
   if (cached.conn) {
     return cached.conn;
   }

@@ -18,11 +18,12 @@ export default function ContactPage() {
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
   const [commentError, setCommentError] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanComment = comment.replace(/<[^>]*>/g, "").trim();
     if (!cleanComment) {
@@ -31,11 +32,32 @@ export default function ContactPage() {
     }
     setCommentError(false);
     setIsSubmitting(true);
+    setSubmitError("");
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          comment,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to submit inquiry");
+      }
+
       setIsSubmitted(true);
-    }, 750);
+    } catch (err: any) {
+      console.error("Contact form error:", err);
+      setSubmitError(err.message || "Failed to submit inquiry. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -166,6 +188,12 @@ export default function ContactPage() {
                         </p>
                       )}
                     </div>
+
+                    {submitError && (
+                      <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-[4px]">
+                        {submitError}
+                      </div>
+                    )}
 
                     <button
                       type="submit"

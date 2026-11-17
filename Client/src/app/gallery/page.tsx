@@ -18,12 +18,32 @@ const ITEMS_PER_PAGE = 24;
 
 export default function GalleryPage() {
   const { openGeneralQuote } = useQuote();
+  const [items, setItems] = useState<any[]>(GALLERY_ITEMS);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const totalPages = Math.max(1, Math.ceil(GALLERY_ITEMS.length / ITEMS_PER_PAGE));
-  const paginatedItems = GALLERY_ITEMS.slice(
+  useEffect(() => {
+    async function loadGallery() {
+      try {
+        setIsLoading(true);
+        const res = await fetch("/api/gallery");
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setItems(data.data);
+        }
+      } catch (err) {
+        console.error("Failed to load gallery items", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadGallery();
+  }, []);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / ITEMS_PER_PAGE));
+  const paginatedItems = items.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -41,11 +61,11 @@ export default function GalleryPage() {
         }
       } else if (e.key === "ArrowLeft") {
         setActiveIndex((prev) =>
-          prev !== null ? (prev - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length : null
+          prev !== null ? (prev - 1 + items.length) % items.length : null
         );
       } else if (e.key === "ArrowRight") {
         setActiveIndex((prev) =>
-          prev !== null ? (prev + 1) % GALLERY_ITEMS.length : null
+          prev !== null ? (prev + 1) % items.length : null
         );
       } else if (e.key === "f" || e.key === "F") {
         setIsFullscreen((prev) => !prev);
@@ -59,19 +79,19 @@ export default function GalleryPage() {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [activeIndex, isFullscreen]);
+  }, [activeIndex, isFullscreen, items.length]);
 
   const handlePrev = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setActiveIndex((prev) =>
-      prev !== null ? (prev - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length : null
+      prev !== null ? (prev - 1 + items.length) % items.length : null
     );
   };
 
   const handleNext = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setActiveIndex((prev) =>
-      prev !== null ? (prev + 1) % GALLERY_ITEMS.length : null
+      prev !== null ? (prev + 1) % items.length : null
     );
   };
 
@@ -281,7 +301,7 @@ export default function GalleryPage() {
               }`}
             >
               {/* Hardware-Accelerated Controller Image Transitions */}
-              {GALLERY_ITEMS.map((item, idx) => (
+              {items.map((item: any, idx: number) => (
                 <div
                   key={item.id}
                   className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ease-in-out ${

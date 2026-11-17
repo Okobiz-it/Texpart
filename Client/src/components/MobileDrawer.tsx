@@ -1,13 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useQuote } from "@/context/QuoteContext";
-import { X, ArrowRight, Phone, Mail, MapPin } from "lucide-react";
+import { X, ArrowRight, Phone, Mail, MapPin, ChevronDown } from "lucide-react";
 
 export default function MobileDrawer() {
   const { isMobileDrawerOpen, closeMobileDrawer, openGeneralQuote } = useQuote();
+  const pathname = usePathname();
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+
+  // Automatically open services dropdown if user is currently viewing a services route
+  useEffect(() => {
+    if (pathname.startsWith("/services") || pathname.startsWith("/products")) {
+      setIsServicesOpen(true);
+    }
+  }, [pathname]);
 
   return (
     <div
@@ -68,25 +78,59 @@ export default function MobileDrawer() {
                 About Us
               </Link>
 
-              {/* Service Sub-links */}
-              <div className="pl-3 border-l-2 border-blue-500 space-y-2 py-1">
-                <span className="text-[10px] font-heading font-extrabold uppercase tracking-widest text-blue-400 block">
-                  Our Services
-                </span>
-                <Link
-                  href="/services/private-jobs"
-                  onClick={closeMobileDrawer}
-                  className="font-heading text-sm uppercase tracking-wide font-medium text-slate-300 hover:text-white block transition-colors"
+              {/* Services Dropdown (Smooth Dropdown like Desktop) */}
+              <div className="py-1">
+                <button
+                  type="button"
+                  onClick={() => setIsServicesOpen((prev) => !prev)}
+                  className={`w-full flex items-center justify-between font-heading text-base uppercase tracking-wider font-bold transition-colors py-1 focus:outline-none ${
+                    pathname.startsWith("/services") || pathname.startsWith("/products")
+                      ? "text-blue-400"
+                      : "text-white hover:text-blue-400"
+                  }`}
+                  aria-expanded={isServicesOpen}
                 >
-                  01. Private Jobs (Apparel Development)
-                </Link>
-                <Link
-                  href="/services/commercial-jobs"
-                  onClick={closeMobileDrawer}
-                  className="font-heading text-sm uppercase tracking-wide font-medium text-slate-300 hover:text-white block transition-colors"
+                  <span>Our Services</span>
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-300 ${
+                      isServicesOpen ? "rotate-180 text-blue-400" : "text-slate-400"
+                    }`}
+                  />
+                </button>
+
+                {/* Dropdown Menu Items */}
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isServicesOpen
+                      ? "max-h-48 opacity-100 mt-2 pointer-events-auto"
+                      : "max-h-0 opacity-0 pointer-events-none"
+                  }`}
                 >
-                  02. Commercial Jobs (Printing &amp; Packaging)
-                </Link>
+                  <div className="pl-3 py-1 space-y-2 border-l border-white/20 ml-1">
+                    <Link
+                      href="/services/private-jobs"
+                      onClick={closeMobileDrawer}
+                      className={`block py-1 text-xs tracking-wide uppercase transition-colors ${
+                        pathname === "/services/private-jobs"
+                          ? "text-blue-400 font-bold"
+                          : "text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      01. Private Jobs (Apparel Development)
+                    </Link>
+                    <Link
+                      href="/services/commercial-jobs"
+                      onClick={closeMobileDrawer}
+                      className={`block py-1 text-xs tracking-wide uppercase transition-colors ${
+                        pathname === "/services/commercial-jobs"
+                          ? "text-blue-400 font-bold"
+                          : "text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      02. Commercial Jobs (Printing &amp; Packaging)
+                    </Link>
+                  </div>
+                </div>
               </div>
 
               <Link

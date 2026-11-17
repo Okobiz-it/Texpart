@@ -159,6 +159,7 @@ export default function HomePage() {
   const { openGeneralQuote } = useQuote();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [heroBanners, setHeroBanners] = useState<any[]>(HERO_BANNERS);
   const [privateFeatured, setPrivateFeatured] = useState<any[]>([]);
   const [commercialFeatured, setCommercialFeatured] = useState<any[]>([]);
   const [dbClients, setDbClients] = useState<any[]>([]);
@@ -167,10 +168,21 @@ export default function HomePage() {
   const [isLoadingPartners, setIsLoadingPartners] = useState(true);
   const [isLoadingCertifications, setIsLoadingCertifications] = useState(true);
 
-  // Fetch up to 5 featured products per division, partners and certifications from MongoDB Atlas
+  // Fetch hero banners, up to 5 featured products per division, partners and certifications from MongoDB Atlas
   useEffect(() => {
     let isMounted = true;
     async function loadDynamicData() {
+      // Dynamic Hero Banners
+      try {
+        const bannerRes = await fetch("/api/hero-banners");
+        const bannerData = await bannerRes.json();
+        if (isMounted && bannerData.success && Array.isArray(bannerData.data) && bannerData.data.length > 0) {
+          setHeroBanners(bannerData.data);
+        }
+      } catch (err) {
+        console.error("Failed to load hero banners from database", err);
+      }
+
       try {
         const featRes = await fetch("/api/featured-products");
         const featData = await featRes.json();
@@ -229,19 +241,21 @@ export default function HomePage() {
 
   // Auto-slide back and forth every 5 seconds
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || heroBanners.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_BANNERS.length);
+      setCurrentSlide((prev) => (prev + 1) % heroBanners.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, heroBanners.length]);
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_BANNERS.length) % HERO_BANNERS.length);
+    if (heroBanners.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + heroBanners.length) % heroBanners.length);
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_BANNERS.length);
+    if (heroBanners.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % heroBanners.length);
   };
 
   return (
@@ -260,11 +274,11 @@ export default function HomePage() {
             className="flex h-full w-full transition-transform duration-700 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
-            {HERO_BANNERS.map((banner, idx) => (
-              <div key={banner.id} className="w-full h-full flex-shrink-0 relative">
+            {heroBanners.map((banner: any, idx: number) => (
+              <div key={banner.id || idx} className="w-full h-full flex-shrink-0 relative">
                 <Image
-                  src={banner.src}
-                  alt={banner.alt}
+                  src={banner.src || banner.imageUrl}
+                  alt={banner.alt || banner.title || "Texpart Banner"}
                   fill
                   className="object-contain sm:object-cover"
                   priority={idx === 0}
@@ -296,7 +310,7 @@ export default function HomePage() {
 
           {/* Slider Dots Indicator */}
           <div className="absolute bottom-1.5 sm:bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 sm:gap-2 bg-black/30 backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-[4px]">
-            {HERO_BANNERS.map((_, idx) => (
+            {heroBanners.map((_: any, idx: number) => (
               <button
                 key={idx}
                 type="button"
@@ -459,8 +473,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             {/* Left Image (Factory Floor Crop) */}
-            <div className="lg:col-span-5">
-              <div className="relative aspect-[16/10] sm:aspect-[4/3] rounded-[4px] overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
+            <div className="lg:col-span-5 flex justify-center lg:justify-start">
+              <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-[4px] overflow-hidden border border-slate-200 shadow-sm bg-slate-100">
                 <Image
                   src="/images/about-texpart-factory.jpg"
                   alt="Garment Accessories Factory Floor in Bangladesh"

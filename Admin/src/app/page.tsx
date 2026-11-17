@@ -6,35 +6,32 @@ import Image from "next/image";
 import {
   Package,
   Users,
-  Shirt,
-  Printer,
+  Award,
+  Image as ImageIcon,
+  FileText,
+  MessageSquare,
   Plus,
   ArrowRight,
-  TrendingUp,
-  Cloud,
-  CheckCircle2,
-  Trash2,
-  Edit,
   ExternalLink,
-  Star,
-  Award,
-  Database,
-  Sparkles,
-  Layers,
   Clock,
-  Activity,
+  Sparkles,
   ArrowUpRight,
+  CheckCircle2,
+  AlertCircle,
+  Eye,
+  X,
+  Phone,
+  Mail,
+  Building,
 } from "lucide-react";
-import { DashboardStats, ProductItem } from "@/types";
-import ProductFormModal from "@/components/ProductFormModal";
+import AdminNavbar from "@/components/AdminNavbar";
+import { DashboardStats, QuotationItem, ContactMessageItem } from "@/types";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalDivision, setModalDivision] = useState<"private-jobs" | "commercial-jobs">("private-jobs");
-  const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
-  const [currentDate, setCurrentDate] = useState("");
+  const [selectedQuotation, setSelectedQuotation] = useState<QuotationItem | null>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<ContactMessageItem | null>(null);
 
   const fetchStats = async () => {
     try {
@@ -44,7 +41,7 @@ export default function DashboardPage() {
         setStats(data.stats);
       }
     } catch (err) {
-      console.error("Failed to load stats", err);
+      console.error("Failed to load dashboard stats", err);
     } finally {
       setIsLoading(false);
     }
@@ -52,402 +49,532 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchStats();
-    const now = new Date();
-    setCurrentDate(
-      now.toLocaleDateString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      })
-    );
   }, []);
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
-    try {
-      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        fetchStats();
-      }
-    } catch (err) {
-      alert("Failed to delete product");
-    }
-  };
-
   return (
-    <div className="p-6 sm:p-8 space-y-8 max-w-7xl mx-auto w-full">
-      {/* Top Header & Executive Welcome */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#0066CC] font-bold">
-              Administration &amp; Control
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0A2540]">
+      {/* Top Navbar */}
+      <AdminNavbar title="Dashboard" subtitle="Overview" />
+
+      {/* Main Content Area */}
+      <div className="w-full px-6 sm:px-8 py-6 space-y-6">
+        {/* =================================================================
+            1. HERO CONTROL DASHBOARD BANNER (MATCHES REFERENCE SCREENSHOT)
+            ================================================================= */}
+        <div className="relative rounded-[4px] overflow-hidden bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#0052CC] p-7 sm:p-9 text-white shadow-lg border border-white/10">
+          {/* Subtle Ambient Decorative Circles */}
+          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute right-1/4 -top-10 w-48 h-48 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 max-w-3xl space-y-3">
+            <span className="inline-block px-2.5 py-1 rounded-[4px] bg-white/15 text-[10.5px] font-mono font-bold uppercase tracking-wider text-blue-200 border border-white/20">
+              Control Dashboard
             </span>
-            <span className="text-slate-300">&bull;</span>
-            <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-              <Clock className="w-3 h-3" /> {currentDate || "Live Session"}
-            </span>
+
+            <h1 className="text-2xl sm:text-3xl font-heading font-black tracking-tight text-white leading-tight">
+              Welcome to Texpart Admin
+            </h1>
+
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-2xl">
+              Manage your corporate web presentation, client portfolio, products, hero banners, and quotation inquiries with instant live synchronization.
+            </p>
+
+            {/* Quick Action Buttons inside Hero Banner */}
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] bg-white text-[#0066CC] font-heading text-xs font-bold hover:bg-blue-50 transition-colors shadow-sm"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Product</span>
+              </Link>
+
+              <Link
+                href="/hero-banners"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] bg-white/15 hover:bg-white/25 text-white font-heading text-xs font-bold border border-white/20 transition-colors backdrop-blur-xs"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Upload Hero Slide</span>
+              </Link>
+
+              <Link
+                href="/quotations"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] bg-white/15 hover:bg-white/25 text-white font-heading text-xs font-bold border border-white/20 transition-colors backdrop-blur-xs"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>View Quotations</span>
+              </Link>
+
+              <Link
+                href="/gallery"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[4px] bg-white/15 hover:bg-white/25 text-white font-heading text-xs font-bold border border-white/20 transition-colors backdrop-blur-xs"
+              >
+                <ImageIcon className="w-3.5 h-3.5" />
+                <span>Upload Media</span>
+              </Link>
+            </div>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-heading font-black uppercase text-[#0A2540] tracking-tight">
-            Dashboard Overview
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time management for Texpart garment accessories, commercial print catalog &amp; partner relationships.
-          </p>
         </div>
 
-        {/* Quick Add CTA Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={() => {
-              setModalDivision("private-jobs");
-              setEditingProduct(null);
-              setIsModalOpen(true);
-            }}
-            className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase rounded-[4px] inline-flex items-center gap-1.5 shadow-sm transition-all"
+        {/* =================================================================
+            2. STAT KPI CARDS (6 CARDS ROW MATCHING SCREENSHOT)
+            ================================================================= */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+          {/* Card 1: Products */}
+          <Link
+            href="/products"
+            className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs hover:border-[#0066CC] transition-all group"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Privet Job</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setModalDivision("commercial-jobs");
-              setEditingProduct(null);
-              setIsModalOpen(true);
-            }}
-            className="px-4 py-2 bg-[#0A2540] hover:bg-[#061730] text-white text-xs font-heading font-bold uppercase rounded-[4px] inline-flex items-center gap-1.5 shadow-sm transition-all"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Commercial Job</span>
-          </button>
-        </div>
-      </div>
-
-      {/* KPI Cards Grid (6 High-Impact Metric Cards) */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
-        {/* 1. Total Products */}
-        <div className="bg-white p-4 sm:p-5 rounded-[4px] border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 hover:border-slate-300 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-slate-500">
-              Total Products
-            </span>
-            <div className="w-8 h-8 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center mb-3">
               <Package className="w-4 h-4" />
             </div>
-          </div>
-          <div>
-            <span className="text-2xl sm:text-3xl font-heading font-black text-[#0A2540]">
+            <div className="text-2xl font-heading font-black text-[#0A2540] group-hover:text-[#0066CC] transition-colors">
               {isLoading ? "..." : stats?.totalProducts ?? 0}
-            </span>
-            <span className="text-[10px] text-emerald-600 font-mono flex items-center gap-1 mt-0.5">
-              <TrendingUp className="w-2.5 h-2.5" /> Live in Atlas DB
-            </span>
-          </div>
-        </div>
-
-        {/* 2. Privet Jobs */}
-        <Link
-          href="/products/private-jobs"
-          className="group bg-white p-4 sm:p-5 rounded-[4px] border border-slate-200 hover:border-[#0066CC] shadow-sm flex flex-col justify-between space-y-3 transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-slate-500">
-              Privet Jobs
-            </span>
-            <div className="w-8 h-8 rounded-[4px] bg-sky-50 text-sky-600 flex items-center justify-center group-hover:bg-[#0066CC] group-hover:text-white transition-colors">
-              <Shirt className="w-4 h-4" />
             </div>
-          </div>
-          <div>
-            <span className="text-2xl sm:text-3xl font-heading font-black text-[#0066CC]">
-              {isLoading ? "..." : stats?.privateJobsCount ?? 0}
-            </span>
-            <span className="text-[10px] text-slate-400 group-hover:text-[#0066CC] font-mono flex items-center gap-1 mt-0.5">
-              Apparel Range &rarr;
-            </span>
-          </div>
-        </Link>
-
-        {/* 3. Commercial Jobs */}
-        <Link
-          href="/products/commercial-jobs"
-          className="group bg-white p-4 sm:p-5 rounded-[4px] border border-slate-200 hover:border-[#0066CC] shadow-sm flex flex-col justify-between space-y-3 transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-slate-500">
-              Commercial
-            </span>
-            <div className="w-8 h-8 rounded-[4px] bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-[#0A2540] group-hover:text-white transition-colors">
-              <Printer className="w-4 h-4" />
+            <div className="text-xs font-medium text-slate-500 mt-0.5">
+              Products &amp; Items
             </div>
-          </div>
-          <div>
-            <span className="text-2xl sm:text-3xl font-heading font-black text-[#0A2540]">
-              {isLoading ? "..." : stats?.commercialJobsCount ?? 0}
-            </span>
-            <span className="text-[10px] text-slate-400 group-hover:text-[#0066CC] font-mono flex items-center gap-1 mt-0.5">
-              Printing &amp; Pack &rarr;
-            </span>
-          </div>
-        </Link>
+          </Link>
 
-        {/* 4. Home Featured */}
-        <div className="bg-white p-4 sm:p-5 rounded-[4px] border border-amber-200 shadow-sm flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-amber-800">
-              Home Featured
-            </span>
-            <div className="w-8 h-8 rounded-[4px] bg-amber-50 text-amber-600 flex items-center justify-center">
-              <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-            </div>
-          </div>
-          <div>
-            <span className="text-2xl sm:text-3xl font-heading font-black text-amber-600">
-              {isLoading ? "..." : `${stats?.featuredCount ?? 0} / 10`}
-            </span>
-            <span className="text-[10px] text-amber-700 font-mono block mt-0.5">
-              Max 5 per division
-            </span>
-          </div>
-        </div>
-
-        {/* 5. Client Brands */}
-        <Link
-          href="/partners"
-          className="group bg-white p-4 sm:p-5 rounded-[4px] border border-slate-200 hover:border-[#0066CC] shadow-sm flex flex-col justify-between space-y-3 transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-slate-500">
-              Our Clients
-            </span>
-            <div className="w-8 h-8 rounded-[4px] bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+          {/* Card 2: Client Partners */}
+          <Link
+            href="/partners"
+            className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs hover:border-[#0066CC] transition-all group"
+          >
+            <div className="w-9 h-9 rounded-[4px] bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
               <Users className="w-4 h-4" />
             </div>
-          </div>
-          <div>
-            <span className="text-2xl sm:text-3xl font-heading font-black text-emerald-700">
-              {isLoading ? "..." : stats?.clientBrandsCount ?? stats?.partnersCount ?? 0}
-            </span>
-            <span className="text-[10px] text-slate-400 group-hover:text-emerald-700 font-mono flex items-center gap-1 mt-0.5">
-              Global Brands &rarr;
-            </span>
-          </div>
-        </Link>
+            <div className="text-2xl font-heading font-black text-[#0A2540] group-hover:text-indigo-600 transition-colors">
+              {isLoading ? "..." : stats?.clientPartnersCount ?? 0}
+            </div>
+            <div className="text-xs font-medium text-slate-500 mt-0.5">
+              Client Partners
+            </div>
+          </Link>
 
-        {/* 6. Certifications */}
-        <Link
-          href="/partners"
-          className="group bg-white p-4 sm:p-5 rounded-[4px] border border-slate-200 hover:border-[#0066CC] shadow-sm flex flex-col justify-between space-y-3 transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-slate-500">
-              Certified By
-            </span>
-            <div className="w-8 h-8 rounded-[4px] bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-colors">
+          {/* Card 3: Certifications */}
+          <Link
+            href="/certifications"
+            className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs hover:border-[#0066CC] transition-all group"
+          >
+            <div className="w-9 h-9 rounded-[4px] bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
               <Award className="w-4 h-4" />
             </div>
-          </div>
-          <div>
-            <span className="text-2xl sm:text-3xl font-heading font-black text-teal-700">
-              {isLoading ? "..." : stats?.certificationsCount ?? 4}
-            </span>
-            <span className="text-[10px] text-slate-400 group-hover:text-teal-700 font-mono flex items-center gap-1 mt-0.5">
-              Accreditations &rarr;
-            </span>
-          </div>
-        </Link>
-      </div>
-
-      {/* Cloud & Database Health Bar */}
-      <div className="bg-gradient-to-r from-[#061730] to-[#0A2540] text-white p-5 rounded-[4px] shadow-sm border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-[4px] bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/30 flex-shrink-0">
-            <Activity className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-heading font-bold text-white uppercase tracking-wider">
-                System Infrastructure Synchronized
-              </h3>
-              <span className="px-2 py-0.5 rounded-[3px] bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> MongoDB + Cloudinary Active
-              </span>
+            <div className="text-2xl font-heading font-black text-[#0A2540] group-hover:text-purple-600 transition-colors">
+              {isLoading ? "..." : stats?.certificationsCount ?? 0}
             </div>
-            <p className="text-xs text-slate-300 font-light mt-0.5">
-              Products, client logos and certifications are synced with live website endpoints and persistent Cloudinary media.
-            </p>
-          </div>
-        </div>
+            <div className="text-xs font-medium text-slate-500 mt-0.5">
+              Certifications
+            </div>
+          </Link>
 
-        <div className="flex items-center gap-2">
-          <a
-            href="http://localhost:3000"
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs font-heading font-bold text-white px-3.5 py-2 bg-white/10 hover:bg-[#0066CC] rounded-[4px] transition-all inline-flex items-center gap-1.5 shadow-sm"
+          {/* Card 4: Hero Slides */}
+          <Link
+            href="/hero-banners"
+            className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs hover:border-[#0066CC] transition-all group"
           >
-            <span>Preview Client Storefront</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
+            <div className="w-9 h-9 rounded-[4px] bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+              <ImageIcon className="w-4 h-4" />
+            </div>
+            <div className="text-2xl font-heading font-black text-[#0A2540] group-hover:text-emerald-600 transition-colors">
+              {isLoading ? "..." : stats?.heroSlidesCount ?? 0}
+            </div>
+            <div className="text-xs font-medium text-slate-500 mt-0.5">
+              Hero Slides
+            </div>
+          </Link>
+
+          {/* Card 5: Gallery Media */}
+          <Link
+            href="/gallery"
+            className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs hover:border-[#0066CC] transition-all group"
+          >
+            <div className="w-9 h-9 rounded-[4px] bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+              <ImageIcon className="w-4 h-4" />
+            </div>
+            <div className="text-2xl font-heading font-black text-[#0A2540] group-hover:text-amber-600 transition-colors">
+              {isLoading ? "..." : stats?.galleryMediaCount ?? 0}
+            </div>
+            <div className="text-xs font-medium text-slate-500 mt-0.5">
+              Media Assets
+            </div>
+          </Link>
+
+          {/* Card 6: Customer Leads / Quotes */}
+          <Link
+            href="/quotations"
+            className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs hover:border-[#0066CC] transition-all group relative"
+          >
+            {stats?.newQuotationsCount ? (
+              <span className="absolute top-3 right-3 text-[10px] font-mono px-1.5 py-0.5 rounded-[4px] bg-rose-50 text-rose-600 border border-rose-200 font-bold">
+                {stats.newQuotationsCount} new
+              </span>
+            ) : null}
+            <div className="w-9 h-9 rounded-[4px] bg-rose-50 text-rose-600 flex items-center justify-center mb-3">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div className="text-2xl font-heading font-black text-[#0A2540] group-hover:text-rose-600 transition-colors">
+              {isLoading ? "..." : (stats?.quotationsCount ?? 0) + (stats?.inquiriesCount ?? 0)}
+            </div>
+            <div className="text-xs font-medium text-slate-500 mt-0.5">
+              Quotations &amp; Leads
+            </div>
+          </Link>
         </div>
-      </div>
 
-      {/* Recent Products Table */}
-      <div className="bg-white rounded-[4px] border border-slate-200 shadow-sm overflow-hidden space-y-3">
-        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between">
-          <div>
-            <h2 className="text-base font-heading font-bold uppercase text-[#0A2540]">
-              Recent Catalog Entries
-            </h2>
-            <p className="text-xs text-slate-500">
-              Latest items synchronized across Privet and Commercial job divisions.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/products/private-jobs"
-              className="text-xs font-heading font-bold text-[#0066CC] hover:underline flex items-center gap-1"
-            >
-              <span>View All Products</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
+        {/* =================================================================
+            3. TWO-COLUMN SPLIT (MATCHES DEMO SCREENSHOT)
+               Left: Recent Customer Inquiries
+               Right: Active Hero Slides
+            ================================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Recent Customer Inquiries (7 cols) */}
+          <div className="lg:col-span-7 bg-white rounded-[4px] border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-[#0066CC]" />
+                <h2 className="font-heading font-bold text-sm text-[#0A2540]">
+                  Recent Customer Inquiries &amp; Quotations
+                </h2>
+              </div>
+              <Link
+                href="/quotations"
+                className="text-xs font-semibold text-[#0066CC] hover:text-[#0052CC] flex items-center gap-1 group"
+              >
+                <span>View All</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-heading uppercase text-[11px] tracking-wider">
-              <tr>
-                <th className="px-4 py-3">Product Name &amp; Cover</th>
-                <th className="px-4 py-3">Division</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Home Featured</th>
-                <th className="px-4 py-3">URL Slug</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {isLoading ? (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-400">
-                    Loading catalog records...
-                  </td>
-                </tr>
-              ) : !stats?.recentProducts || stats.recentProducts.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center text-slate-400">
-                    No products added yet. Click &ldquo;Add Privet Job&rdquo; above to start.
-                  </td>
-                </tr>
-              ) : (
-                stats.recentProducts.map((prod) => (
-                  <tr key={prod.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* Front Image & Name */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-11 h-11 rounded-[3px] overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0">
-                          {prod.frontImage ? (
-                            <Image
-                              src={prod.frontImage}
-                              alt={prod.name}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400">
-                              N/A
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <strong className="text-xs font-bold text-[#0A2540] block hover:text-[#0066CC] transition-colors">
-                            {prod.name}
-                          </strong>
-                          <span className="text-[10px] text-slate-400 font-mono">
-                            {prod.images?.length || 1} image asset(s)
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Division */}
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-[3px] text-[10px] font-mono font-bold uppercase ${
-                          prod.division === "private-jobs"
-                            ? "bg-sky-50 text-sky-700 border border-sky-200"
-                            : "bg-indigo-50 text-indigo-700 border border-indigo-200"
-                        }`}
-                      >
-                        {prod.division === "private-jobs" ? "Privet Jobs" : "Commercial Jobs"}
-                      </span>
-                    </td>
-
-                    {/* Category */}
-                    <td className="px-4 py-3 text-slate-600 font-medium">
-                      {prod.category}
-                    </td>
-
-                    {/* Featured Status */}
-                    <td className="px-4 py-3">
-                      {prod.isFeatured ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-[3px] bg-amber-50 text-amber-800 border border-amber-200">
-                          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                          Featured (Max 5)
+            {/* Inquiries & Quotes List */}
+            {isLoading ? (
+              <div className="py-8 text-center text-xs text-slate-400">Loading inquiries...</div>
+            ) : (!stats?.recentQuotations || stats.recentQuotations.length === 0) &&
+              (!stats?.recentInquiries || stats.recentInquiries.length === 0) ? (
+              <div className="py-12 text-center text-xs text-slate-400">
+                No inquiries or quote requests received yet.
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {/* Quotations items */}
+                {stats?.recentQuotations?.map((quote) => (
+                  <div
+                    key={quote.id}
+                    className="py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/60 px-2 -mx-2 rounded-[4px] transition-colors"
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-xs text-[#0A2540]">
+                          {quote.fullName}
                         </span>
-                      ) : (
-                        <span className="text-[11px] text-slate-400 font-mono">&mdash; Standard</span>
-                      )}
-                    </td>
-
-                    {/* Slug */}
-                    <td className="px-4 py-3 text-slate-500 font-mono text-[11px]">
-                      /products/{prod.slug}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingProduct(prod);
-                            setModalDivision(prod.division);
-                            setIsModalOpen(true);
-                          }}
-                          className="p-1.5 text-slate-500 hover:text-[#0066CC] hover:bg-blue-50 rounded-[3px] transition-colors"
-                          title="Edit Product"
+                        <span
+                          className={`text-[9.5px] font-mono uppercase font-bold px-1.5 py-0.5 rounded-[4px] ${
+                            quote.status === "NEW"
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : quote.status === "IN_PROGRESS"
+                              ? "bg-blue-50 text-blue-700 border border-blue-200"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}
                         >
-                          <Edit className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(prod.id, prod.name)}
-                          className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-[3px] transition-colors"
-                          title="Delete Product"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                          {quote.status}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          {quote.companyName}
+                        </span>
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      <p className="text-xs text-slate-500 truncate max-w-md">
+                        <strong className="text-slate-700">Product:</strong> {quote.productName} &bull;{" "}
+                        <strong className="text-slate-700">MOQ:</strong> {quote.moqQuantity}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedQuotation(quote)}
+                      className="px-3 py-1.5 rounded-[4px] bg-slate-50 hover:bg-[#0066CC] hover:text-white border border-slate-200 text-xs font-semibold text-slate-700 transition-colors flex-shrink-0"
+                    >
+                      Details
+                    </button>
+                  </div>
+                ))}
+
+                {/* Contact Message Inquiries */}
+                {stats?.recentInquiries?.map((inq) => (
+                  <div
+                    key={inq.id}
+                    className="py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/60 px-2 -mx-2 rounded-[4px] transition-colors"
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-xs text-[#0A2540]">
+                          {inq.name}
+                        </span>
+                        <span
+                          className={`text-[9.5px] font-mono uppercase font-bold px-1.5 py-0.5 rounded-[4px] ${
+                            inq.status === "NEW"
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}
+                        >
+                          {inq.status}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          {inq.email}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 truncate max-w-md">
+                        {inq.comment.replace(/<[^>]*>/g, "")}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedInquiry(inq)}
+                      className="px-3 py-1.5 rounded-[4px] bg-slate-50 hover:bg-[#0066CC] hover:text-white border border-slate-200 text-xs font-semibold text-slate-700 transition-colors flex-shrink-0"
+                    >
+                      Details
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Active Hero Slides (5 cols) */}
+          <div className="lg:col-span-5 bg-white rounded-[4px] border border-slate-200 shadow-xs p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-emerald-600" />
+                <h2 className="font-heading font-bold text-sm text-[#0A2540]">
+                  Active Hero Slides
+                </h2>
+              </div>
+              <Link
+                href="/hero-banners"
+                className="text-xs font-semibold text-[#0066CC] hover:text-[#0052CC] flex items-center gap-1 group"
+              >
+                <span>Manage Slides</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </div>
+
+            {/* Hero Slides List */}
+            {isLoading ? (
+              <div className="py-8 text-center text-xs text-slate-400">Loading slides...</div>
+            ) : (!stats?.activeHeroSlides || stats.activeHeroSlides.length === 0) ? (
+              <div className="py-12 text-center text-xs text-slate-400">
+                No hero slides uploaded.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {stats.activeHeroSlides.map((slide, idx) => (
+                  <div
+                    key={slide.id || idx}
+                    className="p-2.5 rounded-[4px] border border-slate-100 hover:border-slate-200 bg-slate-50/50 flex items-center justify-between gap-3 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative w-16 h-10 rounded-[4px] overflow-hidden bg-slate-200 flex-shrink-0 border border-slate-200">
+                        <Image
+                          src={slide.imageUrl}
+                          alt={slide.title || "Slide"}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-heading font-bold text-xs text-[#0A2540] truncate">
+                          {slide.title || `Hero Slide #${slide.order || idx + 1}`}
+                        </h4>
+                        <span className="text-[10px] text-slate-400 font-mono block">
+                          Order #{slide.order || idx + 1} &bull; {slide.linkUrl}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 flex-shrink-0">
+                      Active
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Product Form Modal */}
-      <ProductFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSaved={fetchStats}
-        initialDivision={modalDivision}
-        editingProduct={editingProduct}
-      />
+      {/* =================================================================
+          MODAL: QUOTATION DETAILS VIEW
+          ================================================================= */}
+      {selectedQuotation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div className="bg-white rounded-[4px] shadow-2xl border border-slate-200 max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0066CC]">
+                  Quotation Request
+                </span>
+                <h3 className="text-base font-heading font-black text-[#0A2540]">
+                  {selectedQuotation.fullName} &mdash; {selectedQuotation.companyName}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedQuotation(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-[4px]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
+                  Email
+                </span>
+                <a
+                  href={`mailto:${selectedQuotation.email}`}
+                  className="font-medium text-[#0066CC] hover:underline"
+                >
+                  {selectedQuotation.email}
+                </a>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
+                  Phone / WhatsApp
+                </span>
+                <a
+                  href={`tel:${selectedQuotation.phone}`}
+                  className="font-medium text-[#0066CC] hover:underline"
+                >
+                  {selectedQuotation.phone}
+                </a>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
+                  Product Requested
+                </span>
+                <span className="font-bold text-[#0A2540]">{selectedQuotation.productName}</span>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
+                  MOQ / Quantity
+                </span>
+                <span className="font-bold text-[#0A2540]">{selectedQuotation.moqQuantity}</span>
+              </div>
+            </div>
+
+            {selectedQuotation.noteContent && (
+              <div className="space-y-1">
+                <span className="text-[10.5px] font-heading font-bold uppercase text-slate-500 block">
+                  Technical Instructions / Notes:
+                </span>
+                <div
+                  className="p-3 bg-slate-50 rounded-[4px] border border-slate-200 text-xs leading-relaxed max-h-48 overflow-y-auto [&_blockquote]:border-l-4 [&_blockquote]:border-[#0066CC] [&_blockquote]:pl-3 [&_blockquote]:italic [&_ol]:list-decimal [&_ol]:ml-5 [&_ul]:list-disc [&_ul]:ml-5"
+                  dangerouslySetInnerHTML={{ __html: selectedQuotation.noteContent }}
+                />
+              </div>
+            )}
+
+            <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedQuotation(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-[4px]"
+              >
+                Close
+              </button>
+              <a
+                href={`mailto:${selectedQuotation.email}?subject=Quote%20Request%20-%20Texpart%20Garment%20Accessories&body=Dear%20${encodeURIComponent(
+                  selectedQuotation.fullName
+                )},`}
+                className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] flex items-center gap-1.5"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Reply to Buyer</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =================================================================
+          MODAL: CONTACT INQUIRY DETAILS VIEW
+          ================================================================= */}
+      {selectedInquiry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+          <div className="bg-white rounded-[4px] shadow-2xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0066CC]">
+                  Contact Form Submission
+                </span>
+                <h3 className="text-base font-heading font-black text-[#0A2540]">
+                  {selectedInquiry.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedInquiry(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-[4px]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
+                  Email
+                </span>
+                <a
+                  href={`mailto:${selectedInquiry.email}`}
+                  className="font-medium text-[#0066CC] hover:underline"
+                >
+                  {selectedInquiry.email}
+                </a>
+              </div>
+              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
+                  Phone
+                </span>
+                <a
+                  href={`tel:${selectedInquiry.phone}`}
+                  className="font-medium text-[#0066CC] hover:underline"
+                >
+                  {selectedInquiry.phone}
+                </a>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[10.5px] font-heading font-bold uppercase text-slate-500 block">
+                Message Content:
+              </span>
+              <div
+                className="p-3 bg-slate-50 rounded-[4px] border border-slate-200 text-xs leading-relaxed max-h-48 overflow-y-auto [&_blockquote]:border-l-4 [&_blockquote]:border-[#0066CC] [&_blockquote]:pl-3 [&_blockquote]:italic [&_ol]:list-decimal [&_ol]:ml-5 [&_ul]:list-disc [&_ul]:ml-5"
+                dangerouslySetInnerHTML={{ __html: selectedInquiry.comment }}
+              />
+            </div>
+
+            <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedInquiry(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-[4px]"
+              >
+                Close
+              </button>
+              <a
+                href={`mailto:${selectedInquiry.email}?subject=Regarding%20your%20inquiry%20to%20Texpart`}
+                className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] flex items-center gap-1.5"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Reply Email</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
