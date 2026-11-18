@@ -323,7 +323,7 @@ export default function ProductForm({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Product Name */}
-                <div className="sm:col-span-2">
+                <div className="sm:col-span-1">
                   <label className="block text-xs font-heading font-bold uppercase text-[#0A2540] mb-1.5">
                     Product Name <span className="text-[#0066CC]">*</span>
                   </label>
@@ -332,13 +332,13 @@ export default function ProductForm({
                     required
                     value={name}
                     onChange={handleNameChange}
-                    placeholder="e.g. Woven Labels, Rigid Magnetic Boxes, Hangtags"
+                    placeholder="e.g. Boxes & Cartons, Woven Labels"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
                   />
                 </div>
 
-                {/* Slug (Explicitly renamed from Auto-Generated Slug to Slug) */}
-                <div>
+                {/* Slug */}
+                <div className="sm:col-span-1">
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-heading font-bold uppercase text-[#0A2540]">
                       Slug <span className="text-[#0066CC]">*</span>
@@ -359,82 +359,6 @@ export default function ProductForm({
                     Live URL: /products/{slug || "slug"}
                   </p>
                 </div>
-
-                {/* Job Division */}
-                <div>
-                  <label className="block text-xs font-heading font-bold uppercase text-[#0A2540] mb-1.5">
-                    Job Division <span className="text-[#0066CC]">*</span>
-                  </label>
-                  <select
-                    value={division}
-                    onChange={(e) => {
-                      const newDiv = e.target.value as JobDivision;
-                      setDivision(newDiv);
-                      if (typeof window !== "undefined") {
-                        try {
-                          sessionStorage.setItem("texpart_active_division", newDiv);
-                          window.dispatchEvent(
-                            new CustomEvent("texpart_active_division", { detail: newDiv })
-                          );
-                        } catch (_) {}
-                      }
-                    }}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all cursor-pointer font-medium"
-                  >
-                    <option value="private-jobs">
-                      Custom Jobs (Apparel Development)
-                    </option>
-                    <option value="commercial-jobs">
-                      Commercial Jobs (Printing &amp; Packaging)
-                    </option>
-                  </select>
-                </div>
-
-                {/* Category Tag */}
-                <div className="sm:col-span-2">
-                  <label className="block text-xs font-heading font-bold uppercase text-[#0A2540] mb-1.5">
-                    Category Tag
-                  </label>
-                  <input
-                    type="text"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    placeholder="e.g. Garment Identification, Luxury Packaging, Corporate Stationery"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
-                  />
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Used to categorize and filter products in the catalog dropdowns.
-                  </p>
-                </div>
-              </div>
-
-              {/* Home Featured Checkbox */}
-              <div className="pt-3 border-t border-slate-100">
-                <label className="flex items-start gap-3 p-3.5 bg-amber-50/60 border border-amber-200 rounded-[4px] cursor-pointer hover:bg-amber-50 transition-colors">
-                  <input
-                    type="checkbox"
-                    checked={isFeatured}
-                    onChange={(e) => setIsFeatured(e.target.checked)}
-                    className="w-4 h-4 mt-0.5 text-[#0066CC] rounded-[4px] focus:ring-[#0066CC] cursor-pointer"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <Star
-                        className={`w-4 h-4 ${
-                          isFeatured
-                            ? "text-amber-500 fill-amber-500"
-                            : "text-amber-400"
-                        }`}
-                      />
-                      <span className="text-xs font-heading font-bold text-[#0A2540]">
-                        Feature on Home Page (Maximum 5 items per division)
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      When enabled, this product is highlighted on the Homepage Featured Products grid.
-                    </p>
-                  </div>
-                </label>
               </div>
             </div>
 
@@ -486,6 +410,35 @@ export default function ProductForm({
               />
             </div>
 
+            {/* Feature on Home Page Card */}
+            <div className="bg-white p-5 rounded-[4px] border border-slate-200 shadow-sm space-y-3">
+              <label className="flex items-start gap-3 p-3.5 bg-amber-50/60 border border-amber-200 rounded-[4px] cursor-pointer hover:bg-amber-50 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={isFeatured}
+                  onChange={(e) => setIsFeatured(e.target.checked)}
+                  className="w-4 h-4 mt-0.5 text-[#0066CC] rounded-[4px] focus:ring-[#0066CC] cursor-pointer"
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <Star
+                      className={`w-4 h-4 ${
+                        isFeatured
+                          ? "text-amber-500 fill-amber-500"
+                          : "text-amber-400"
+                      }`}
+                    />
+                    <span className="text-xs font-heading font-bold text-[#0A2540]">
+                      Feature on Home Page
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Maximum 5 items per division. Highlighted on the Homepage Featured Products grid.
+                  </p>
+                </div>
+              </label>
+            </div>
+
             {/* Card 4: Summary Card */}
             <div className="bg-white p-5 rounded-[4px] border border-slate-200 shadow-sm space-y-3">
               <h4 className="text-xs font-heading font-bold uppercase text-[#0A2540] border-b border-slate-100 pb-2">
@@ -497,12 +450,6 @@ export default function ProductForm({
                   <span className="text-slate-400">Division:</span>
                   <span className="font-bold text-[#0A2540]">
                     {division === "private-jobs" ? "Custom Jobs" : "Commercial Jobs"}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Category:</span>
-                  <span className="font-medium text-[#0A2540]">
-                    {category || "General"}
                   </span>
                 </div>
                 <div className="flex justify-between">

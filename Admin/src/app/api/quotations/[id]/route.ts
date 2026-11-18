@@ -26,6 +26,12 @@ export async function GET(
       );
     }
 
+    // Auto-mark incoming inquiry as IN_PROGRESS if NEW
+    if ((doc as any).doc_type === "INQUIRY" && (doc as any).status === "NEW") {
+      await Quotation.findByIdAndUpdate((doc as any)._id, { status: "IN_PROGRESS" });
+      (doc as any).status = "IN_PROGRESS";
+    }
+
     const formatted = {
       _id: (doc as any)._id.toString(),
       id: (doc as any)._id.toString(),

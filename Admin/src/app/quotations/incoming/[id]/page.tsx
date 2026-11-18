@@ -53,21 +53,9 @@ export default function IncomingQuotationDetailsPage() {
         if (data.success && data.data) {
           const item = data.data;
           setInquiry(item);
-          setStatus(item.status || "NEW");
+          setStatus(item.status || "IN_PROGRESS");
           setAdminNotes(item.adminNotes || "");
-
-          // If NEW, auto mark as IN_PROGRESS when viewed by admin
-          if (item.status === "NEW") {
-            try {
-              await fetch(`/api/quotations/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "IN_PROGRESS" }),
-              });
-              setStatus("IN_PROGRESS");
-              window.dispatchEvent(new Event("texpart_stats_updated"));
-            } catch {}
-          }
+          window.dispatchEvent(new Event("texpart_stats_updated"));
         } else {
           setError(data.error || "Quotation inquiry not found");
         }

@@ -577,7 +577,7 @@ export default function AdminSidebar() {
           }`}
         >
           <Inbox className="w-5 h-5" />
-          {counts.newQuotations ? (
+          {counts.newQuotations && counts.newQuotations > 0 ? (
             <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-[4px] bg-rose-500 ring-2 ring-white" />
           ) : null}
         </Link>
@@ -606,7 +606,7 @@ export default function AdminSidebar() {
           }`}
         >
           <MessageSquare className="w-5 h-5" />
-          {counts.newInquiries ? (
+          {counts.newInquiries && counts.newInquiries > 0 ? (
             <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-[4px] bg-amber-500 ring-2 ring-white" />
           ) : null}
         </Link>

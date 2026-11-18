@@ -43,7 +43,6 @@ export default function ProductManagementView({
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 10;
@@ -134,26 +133,18 @@ export default function ProductManagementView({
     }
   };
 
-  // Categories list
-  const categories = Array.from(new Set(products.map((p) => p.category))).filter(
-    Boolean
-  );
-
   // Filtered products
   const filteredProducts = products.filter((p) => {
-    const matchCat =
-      selectedCategory === "ALL" || p.category === selectedCategory;
     const matchSearch =
       !searchQuery.trim() ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-      p.slug.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase().trim());
-    return matchCat && matchSearch;
+      p.slug.toLowerCase().includes(searchQuery.toLowerCase().trim());
+    return matchSearch;
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, searchQuery]);
+  }, [searchQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -215,25 +206,9 @@ export default function ProductManagementView({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by product name, category, or slug..."
+            placeholder="Search by product name or slug..."
             className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
           />
-        </div>
-
-        {/* Category Filter */}
-        <div className="sm:w-60">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all cursor-pointer font-medium"
-          >
-            <option value="ALL">All Categories ({products.length})</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat} ({products.filter((p) => p.category === cat).length})
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* View Toggle (Table / Grid) */}
@@ -275,10 +250,7 @@ export default function ProductManagementView({
             </span>
             {searchQuery && (
               <button
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("ALL");
-                }}
+                onClick={() => setSearchQuery("")}
                 className="text-[#0066CC] hover:underline font-bold"
               >
                 Clear search
@@ -291,7 +263,6 @@ export default function ProductManagementView({
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-heading uppercase text-[11px] tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Product Name &amp; Cover</th>
-                  <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3 text-center">Home Featured (Max 5)</th>
                   <th className="px-4 py-3">Images</th>
                   <th className="px-4 py-3">Slug Preview</th>
@@ -301,7 +272,7 @@ export default function ProductManagementView({
               <tbody className="divide-y divide-slate-100">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={6} className="p-12 text-center text-slate-400">
+                    <td colSpan={5} className="p-12 text-center text-slate-400">
                       <div className="flex flex-col items-center justify-center gap-2">
                         <Loader2 className="w-6 h-6 animate-spin text-[#0066CC]" />
                         <span>Loading {title} from MongoDB...</span>
@@ -310,7 +281,7 @@ export default function ProductManagementView({
                   </tr>
                 ) : filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-12 text-center space-y-2">
+                    <td colSpan={5} className="p-12 text-center space-y-2">
                       <p className="font-heading font-bold text-slate-600 text-sm">
                         No products found
                       </p>
@@ -356,13 +327,6 @@ export default function ProductManagementView({
                               </span>
                             </div>
                           </div>
-                        </td>
-
-                        {/* Category */}
-                        <td className="px-4 py-3">
-                          <span className="inline-block px-2 py-0.5 rounded-[4px] bg-slate-100 text-slate-700 font-heading text-[11px] font-bold">
-                            {prod.category}
-                          </span>
                         </td>
 
                         {/* Home Featured Toggle */}
@@ -496,9 +460,6 @@ export default function ProductManagementView({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                    {prod.category}
-                  </span>
                   <h3
                     className="text-sm font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors truncate"
                     title={prod.name}

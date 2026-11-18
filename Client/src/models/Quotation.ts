@@ -8,6 +8,7 @@ export interface IQuotation extends Document {
   productName: string;
   moqQuantity: string;
   noteContent: string;
+  doc_type?: string;
   status: "NEW" | "IN_PROGRESS" | "QUOTED" | "CLOSED";
   adminNotes?: string;
   createdAt: Date;
@@ -23,6 +24,7 @@ const QuotationSchema = new Schema<IQuotation>(
     productName: { type: String, default: "General Production", trim: true },
     moqQuantity: { type: String, default: "5,000 pcs", trim: true },
     noteContent: { type: String, default: "" },
+    doc_type: { type: String, default: "INQUIRY" },
     status: {
       type: String,
       enum: ["NEW", "IN_PROGRESS", "QUOTED", "CLOSED"],

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -30,8 +30,6 @@ import { DashboardStats, QuotationItem, ContactMessageItem } from "@/types";
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedQuotation, setSelectedQuotation] = useState<QuotationItem | null>(null);
-  const [selectedInquiry, setSelectedInquiry] = useState<ContactMessageItem | null>(null);
 
   const fetchStats = async () => {
     try {
@@ -46,6 +44,37 @@ export default function DashboardPage() {
       setIsLoading(false);
     }
   };
+
+  // Combine quotations and contact inquiries into latest 5 activities max
+  const recentActivities = useMemo(() => {
+    const quotes = (stats?.recentQuotations || []).map((q: any) => ({
+      id: q.id,
+      kind: "quote" as const,
+      docType: q.doc_type || (q.fullName ? "INQUIRY" : "QUOTATION"),
+      title: q.fullName || "Prospective Client",
+      subtitle: q.companyName || "",
+      status: q.status || "NEW",
+      meta: `Product: ${q.productName || "General Production"} • MOQ: ${q.moqQuantity || "Flexible"}`,
+      raw: q,
+      date: new Date(q.createdAt).getTime(),
+    }));
+
+    const inqs = (stats?.recentInquiries || []).map((i: any) => ({
+      id: i.id,
+      kind: "inquiry" as const,
+      docType: "INQUIRY",
+      title: i.name || "Website Visitor",
+      subtitle: i.email || "",
+      status: i.status || "NEW",
+      meta: (i.comment || "").replace(/<[^>]*>/g, ""),
+      raw: i,
+      date: new Date(i.createdAt).getTime(),
+    }));
+
+    return [...quotes, ...inqs]
+      .sort((a, b) => b.date - a.date)
+      .slice(0, 5);
+  }, [stats]);
 
   useEffect(() => {
     fetchStats();
@@ -246,96 +275,66 @@ export default function DashboardPage() {
               </Link>
             </div>
 
-            {/* Inquiries & Quotes List */}
+            {/* Inquiries & Quotes List (Latest 5 Max) */}
             {isLoading ? (
               <div className="py-8 text-center text-xs text-slate-400">Loading inquiries...</div>
-            ) : (!stats?.recentQuotations || stats.recentQuotations.length === 0) &&
-              (!stats?.recentInquiries || stats.recentInquiries.length === 0) ? (
+            ) : recentActivities.length === 0 ? (
               <div className="py-12 text-center text-xs text-slate-400">
                 No inquiries or quote requests received yet.
               </div>
             ) : (
               <div className="divide-y divide-slate-100">
-                {/* Quotations items */}
-                {stats?.recentQuotations?.map((quote) => (
-                  <div
-                    key={quote.id}
-                    className="py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/60 px-2 -mx-2 rounded-[4px] transition-colors"
-                  >
-                    <div className="min-w-0 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-xs text-[#0A2540]">
-                          {quote.fullName}
-                        </span>
-                        <span
-                          className={`text-[9.5px] font-mono uppercase font-bold px-1.5 py-0.5 rounded-[4px] ${
-                            quote.status === "NEW"
-                              ? "bg-amber-50 text-amber-700 border border-amber-200"
-                              : quote.status === "IN_PROGRESS"
-                              ? "bg-blue-50 text-blue-700 border border-blue-200"
-                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          }`}
-                        >
-                          {quote.status}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {quote.companyName}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 truncate max-w-md">
-                        <strong className="text-slate-700">Product:</strong> {quote.productName} &bull;{" "}
-                        <strong className="text-slate-700">MOQ:</strong> {quote.moqQuantity}
-                      </p>
-                    </div>
+                {recentActivities.map((item) => {
+                  const detailUrl =
+                    item.kind === "inquiry"
+                      ? `/inquiries/${item.id}`
+                      : item.docType === "INQUIRY"
+                      ? `/quotations/incoming/${item.id}`
+                      : `/quotations/${item.id}/print`;
 
-                    <button
-                      type="button"
-                      onClick={() => setSelectedQuotation(quote)}
-                      className="px-3 py-1.5 rounded-[4px] bg-slate-50 hover:bg-[#0066CC] hover:text-white border border-slate-200 text-xs font-semibold text-slate-700 transition-colors flex-shrink-0"
+                  return (
+                    <div
+                      key={`${item.kind}-${item.id}`}
+                      className="py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/80 px-2 -mx-2 rounded-[4px] transition-colors group"
                     >
-                      Details
-                    </button>
-                  </div>
-                ))}
+                      <Link href={detailUrl} className="min-w-0 space-y-1 flex-1 block">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-heading font-bold text-xs text-[#0A2540] group-hover:text-[#0066CC] transition-colors">
+                            {item.title}
+                          </span>
+                          <span
+                            className={`text-[9.5px] font-mono uppercase font-bold px-1.5 py-0.5 rounded-[4px] ${
+                              item.status === "NEW"
+                                ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                : item.status === "IN_PROGRESS"
+                                ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                : item.status === "ACCEPTED" || item.status === "QUOTED"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : "bg-slate-50 text-slate-700 border border-slate-200"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                          {item.subtitle && (
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              {item.subtitle}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-500 truncate max-w-md">
+                          {item.meta}
+                        </p>
+                      </Link>
 
-                {/* Contact Message Inquiries */}
-                {stats?.recentInquiries?.map((inq) => (
-                  <div
-                    key={inq.id}
-                    className="py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/60 px-2 -mx-2 rounded-[4px] transition-colors"
-                  >
-                    <div className="min-w-0 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-xs text-[#0A2540]">
-                          {inq.name}
-                        </span>
-                        <span
-                          className={`text-[9.5px] font-mono uppercase font-bold px-1.5 py-0.5 rounded-[4px] ${
-                            inq.status === "NEW"
-                              ? "bg-amber-50 text-amber-700 border border-amber-200"
-                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          }`}
-                        >
-                          {inq.status}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {inq.email}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 truncate max-w-md">
-                        {inq.comment.replace(/<[^>]*>/g, "")}
-                      </p>
+                      <Link
+                        href={detailUrl}
+                        className="px-3 py-1.5 rounded-[4px] bg-slate-50 hover:bg-[#0066CC] hover:text-white border border-slate-200 text-xs font-semibold text-slate-700 transition-colors flex-shrink-0"
+                      >
+                        Details
+                      </Link>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setSelectedInquiry(inq)}
-                      className="px-3 py-1.5 rounded-[4px] bg-slate-50 hover:bg-[#0066CC] hover:text-white border border-slate-200 text-xs font-semibold text-slate-700 transition-colors flex-shrink-0"
-                    >
-                      Details
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -401,180 +400,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-
-      {/* =================================================================
-          MODAL: QUOTATION DETAILS VIEW
-          ================================================================= */}
-      {selectedQuotation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-[4px] shadow-2xl border border-slate-200 max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0066CC]">
-                  Quotation Request
-                </span>
-                <h3 className="text-base font-heading font-black text-[#0A2540]">
-                  {selectedQuotation.fullName} &mdash; {selectedQuotation.companyName}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedQuotation(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-[4px]"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Email
-                </span>
-                <a
-                  href={`mailto:${selectedQuotation.email}`}
-                  className="font-medium text-[#0066CC] hover:underline"
-                >
-                  {selectedQuotation.email}
-                </a>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Phone / WhatsApp
-                </span>
-                <a
-                  href={`tel:${selectedQuotation.phone}`}
-                  className="font-medium text-[#0066CC] hover:underline"
-                >
-                  {selectedQuotation.phone}
-                </a>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Product Requested
-                </span>
-                <span className="font-bold text-[#0A2540]">{selectedQuotation.productName}</span>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  MOQ / Quantity
-                </span>
-                <span className="font-bold text-[#0A2540]">{selectedQuotation.moqQuantity}</span>
-              </div>
-            </div>
-
-            {selectedQuotation.noteContent && (
-              <div className="space-y-1">
-                <span className="text-[10.5px] font-heading font-bold uppercase text-slate-500 block">
-                  Technical Instructions / Notes:
-                </span>
-                <div
-                  className="p-3 bg-slate-50 rounded-[4px] border border-slate-200 text-xs leading-relaxed max-h-48 overflow-y-auto [&_blockquote]:border-l-4 [&_blockquote]:border-[#0066CC] [&_blockquote]:pl-3 [&_blockquote]:italic [&_ol]:list-decimal [&_ol]:ml-5 [&_ul]:list-disc [&_ul]:ml-5"
-                  dangerouslySetInnerHTML={{ __html: selectedQuotation.noteContent }}
-                />
-              </div>
-            )}
-
-            <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setSelectedQuotation(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-[4px]"
-              >
-                Close
-              </button>
-              <a
-                href={`mailto:${selectedQuotation.email}?subject=Quote%20Request%20-%20Texpart%20Garment%20Accessories&body=Dear%20${encodeURIComponent(
-                  selectedQuotation.fullName
-                )},`}
-                className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] flex items-center gap-1.5"
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>Reply to Buyer</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* =================================================================
-          MODAL: CONTACT INQUIRY DETAILS VIEW
-          ================================================================= */}
-      {selectedInquiry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-[4px] shadow-2xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0066CC]">
-                  Contact Form Submission
-                </span>
-                <h3 className="text-base font-heading font-black text-[#0A2540]">
-                  {selectedInquiry.name}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedInquiry(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-[4px]"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Email
-                </span>
-                <a
-                  href={`mailto:${selectedInquiry.email}`}
-                  className="font-medium text-[#0066CC] hover:underline"
-                >
-                  {selectedInquiry.email}
-                </a>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Phone
-                </span>
-                <a
-                  href={`tel:${selectedInquiry.phone}`}
-                  className="font-medium text-[#0066CC] hover:underline"
-                >
-                  {selectedInquiry.phone}
-                </a>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <span className="text-[10.5px] font-heading font-bold uppercase text-slate-500 block">
-                Message Content:
-              </span>
-              <div
-                className="p-3 bg-slate-50 rounded-[4px] border border-slate-200 text-xs leading-relaxed max-h-48 overflow-y-auto [&_blockquote]:border-l-4 [&_blockquote]:border-[#0066CC] [&_blockquote]:pl-3 [&_blockquote]:italic [&_ol]:list-decimal [&_ol]:ml-5 [&_ul]:list-disc [&_ul]:ml-5"
-                dangerouslySetInnerHTML={{ __html: selectedInquiry.comment }}
-              />
-            </div>
-
-            <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setSelectedInquiry(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-[4px]"
-              >
-                Close
-              </button>
-              <a
-                href={`mailto:${selectedInquiry.email}?subject=Regarding%20your%20inquiry%20to%20Texpart`}
-                className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] flex items-center gap-1.5"
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>Reply Email</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

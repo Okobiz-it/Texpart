@@ -81,13 +81,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let finalOrder = typeof order === "number" && !isNaN(order) ? order : null;
+    if (finalOrder === null) {
+      const highestBanner = await HeroBanner.findOne().sort({ order: -1 }).select("order").lean();
+      finalOrder = (highestBanner?.order ?? 0) + 1;
+    }
+
     const created = await HeroBanner.create({
       title: title || "",
       subtitle: subtitle || "",
       imageUrl,
       altText: altText || title || "Hero Banner",
       linkUrl: linkUrl || "",
-      order: typeof order === "number" ? order : 1,
+      order: finalOrder,
       isActive: isActive !== undefined ? !!isActive : true,
     });
 

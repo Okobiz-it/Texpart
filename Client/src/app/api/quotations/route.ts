@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       productName: productName || "General Production",
       moqQuantity: moqQuantity || "5,000 pcs",
       noteContent: noteContent || "",
+      doc_type: "INQUIRY",
       status: "NEW",
     });
 

@@ -36,6 +36,65 @@ export default function RichTextEditor({
   const [isInsideLink, setIsInsideLink] = useState(false);
   const savedSelectionRef = useRef<Range | null>(null);
 
+  // Active formatting state for toolbar button highlights
+  const [activeStyles, setActiveStyles] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    unorderedList: false,
+    orderedList: false,
+    blockquote: false,
+    link: false,
+  });
+
+  const checkActiveStyles = React.useCallback(() => {
+    if (typeof document === "undefined" || !editorRef.current) return;
+    const sel = window.getSelection();
+    if (!sel || !sel.anchorNode) return;
+
+    if (!editorRef.current.contains(sel.anchorNode)) return;
+
+    try {
+      const isBold = document.queryCommandState("bold");
+      const isItalic = document.queryCommandState("italic");
+      const isUnderline = document.queryCommandState("underline");
+      const isUnordered = document.queryCommandState("insertUnorderedList");
+      const isOrdered = document.queryCommandState("insertOrderedList");
+
+      let isBlockquote = false;
+      let isLink = false;
+      let node: Node | null = sel.anchorNode;
+      while (node && node !== editorRef.current) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = (node as HTMLElement).tagName.toLowerCase();
+          if (tag === "blockquote") isBlockquote = true;
+          if (tag === "a") isLink = true;
+        }
+        node = node.parentNode;
+      }
+
+      setActiveStyles({
+        bold: isBold,
+        italic: isItalic,
+        underline: isUnderline,
+        unorderedList: isUnordered,
+        orderedList: isOrdered,
+        blockquote: isBlockquote,
+        link: isLink,
+      });
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      checkActiveStyles();
+    };
+    document.addEventListener("selectionchange", handleSelectionChange);
+    return () => {
+      document.removeEventListener("selectionchange", handleSelectionChange);
+    };
+  }, [checkActiveStyles]);
+
   // Sync initial or reset value into contentEditable
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== value) {
@@ -70,6 +129,7 @@ export default function RichTextEditor({
       if (editorRef.current) {
         onChange(editorRef.current.innerHTML);
       }
+      setTimeout(checkActiveStyles, 10);
     }
   };
 
@@ -292,7 +352,11 @@ export default function RichTextEditor({
             e.preventDefault();
             executeCommand("bold");
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs font-bold transition-colors"
+          className={`p-1.5 rounded-[4px] text-xs font-bold transition-all ${
+            activeStyles.bold
+              ? "bg-[#0066CC] text-white shadow-xs"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Bold (Ctrl+B)"
           aria-label="Bold"
         >
@@ -305,7 +369,11 @@ export default function RichTextEditor({
             e.preventDefault();
             executeCommand("italic");
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs transition-colors"
+          className={`p-1.5 rounded-[4px] text-xs transition-all ${
+            activeStyles.italic
+              ? "bg-[#0066CC] text-white shadow-xs font-bold"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Italic (Ctrl+I)"
           aria-label="Italic"
         >
@@ -318,7 +386,11 @@ export default function RichTextEditor({
             e.preventDefault();
             executeCommand("underline");
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs transition-colors"
+          className={`p-1.5 rounded-[4px] text-xs transition-all ${
+            activeStyles.underline
+              ? "bg-[#0066CC] text-white shadow-xs font-bold"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Underline (Ctrl+U)"
           aria-label="Underline"
         >
@@ -333,7 +405,11 @@ export default function RichTextEditor({
             e.preventDefault();
             executeCommand("insertOrderedList");
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs transition-colors"
+          className={`p-1.5 rounded-[4px] text-xs transition-all ${
+            activeStyles.orderedList
+              ? "bg-[#0066CC] text-white shadow-xs font-bold"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Numbered List"
           aria-label="Numbered List"
         >
@@ -346,7 +422,11 @@ export default function RichTextEditor({
             e.preventDefault();
             executeCommand("insertUnorderedList");
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs transition-colors"
+          className={`p-1.5 rounded-[4px] text-xs transition-all ${
+            activeStyles.unorderedList
+              ? "bg-[#0066CC] text-white shadow-xs font-bold"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Bullet List"
           aria-label="Bullet List"
         >
@@ -359,7 +439,11 @@ export default function RichTextEditor({
             e.preventDefault();
             executeCommand("formatBlock", "<blockquote>");
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs transition-colors"
+          className={`p-1.5 rounded-[4px] text-xs transition-all ${
+            activeStyles.blockquote
+              ? "bg-[#0066CC] text-white shadow-xs font-bold"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Quote Block"
           aria-label="Quote"
         >
@@ -375,11 +459,15 @@ export default function RichTextEditor({
             e.preventDefault();
             handleOpenLinkPopover();
           }}
-          className="p-1.5 hover:bg-white hover:text-[#0066CC] rounded-[4px] text-xs transition-colors flex items-center gap-1"
+          className={`p-1.5 rounded-[4px] text-xs transition-all flex items-center gap-1 ${
+            activeStyles.link
+              ? "bg-[#0066CC] text-white shadow-xs font-bold"
+              : "text-slate-600 hover:bg-white hover:text-[#0066CC]"
+          }`}
           title="Add / Edit Hyperlink (Ctrl+K)"
           aria-label="Add Hyperlink"
         >
-          <LinkIcon className="w-3.5 h-3.5 text-[#0066CC]" />
+          <LinkIcon className={`w-3.5 h-3.5 ${activeStyles.link ? "text-white" : "text-[#0066CC]"}`} />
         </button>
 
         {/* Floating Link Popover */}
@@ -459,8 +547,15 @@ export default function RichTextEditor({
         ref={editorRef}
         contentEditable
         suppressContentEditableWarning
-        onInput={handleInput}
+        onInput={(e) => {
+          handleInput(e);
+          checkActiveStyles();
+        }}
         onKeyDown={handleKeyDown}
+        onKeyUp={checkActiveStyles}
+        onMouseUp={checkActiveStyles}
+        onFocus={checkActiveStyles}
+        onClick={checkActiveStyles}
         data-placeholder={placeholder}
         style={{ minHeight }}
         className="w-full px-3.5 py-2.5 bg-slate-50/40 text-xs text-[#0A2540] focus:bg-white focus:outline-none leading-relaxed transition-colors relative before:content-[attr(data-placeholder)] before:text-slate-400 before:pointer-events-none empty:before:inline-block [&:not(:empty)]:before:hidden [&_blockquote]:border-l-4 [&_blockquote]:border-[#0066CC] [&_blockquote]:pl-3 [&_blockquote]:italic [&_blockquote]:text-slate-600 [&_blockquote]:my-2 [&_blockquote]:bg-slate-50/80 [&_blockquote]:py-1 [&_ol]:list-decimal [&_ol]:ml-5 [&_ol]:my-1.5 [&_ul]:list-disc [&_ul]:ml-5 [&_ul]:my-1.5 [&_a]:text-[#0066CC] [&_a]:underline [&_a]:hover:text-blue-700"

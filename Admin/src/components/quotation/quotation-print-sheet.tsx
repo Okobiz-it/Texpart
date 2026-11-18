@@ -108,7 +108,7 @@ export const formatPrice = (val: number | string | undefined | null): string => 
 // TOP-LEVEL REUSABLE COMPONENTS
 // ─────────────────────────────────────────────────────────────────────────────
 export const SignatoryBlock: React.FC<{ data: QuotationPrintData }> = ({ data }) => (
-  <div className="signatory-block mt-auto pt-4 pb-2 shrink-0 select-none">
+  <div className="signatory-block mt-auto pt-2 pb-0 shrink-0 select-none">
     <div className="grid grid-cols-2 gap-8 text-xs">
       <div>
         <div className="text-[12px] text-zinc-500 mb-6">Sincerely,</div>
@@ -263,8 +263,8 @@ export const SoftwareTable: React.FC<{
                   {row.scope}
                 </td>
                 <td
-                  className="py-2 px-3 text-zinc-800 leading-snug align-top border-r border-zinc-400 w-[51%] bg-transparent whitespace-pre-line text-[12px]"
-                  style={{ backgroundColor: "transparent" }}
+                  className="py-2 px-3 text-black font-medium leading-snug align-top border-r border-zinc-400 w-[51%] bg-transparent whitespace-pre-line text-[12px] particulars-cell"
+                  style={{ backgroundColor: "transparent", color: "#000000" }}
                 >
                   {row.particulars}
                 </td>
@@ -337,8 +337,11 @@ export const QuotationPageShell: React.FC<{
     <section
       className="quotation-page relative bg-white border border-zinc-200 print:border-none p-0 mb-8 print:mb-0 shadow-sm print:shadow-none w-[210mm] max-w-[210mm] print:w-full print:max-w-full print:m-0 print:mx-0 flex flex-col justify-between overflow-hidden rounded-none"
     >
-      {/* Authentic Full Letterhead Pad (Watermark + Crystal Banners + Footer Contacts) */}
-      <TexpartLetterheadPadBackground />
+      {/* Authentic Vector Letterhead Pad (Watermark + Crystal Banners + Footer Contacts) */}
+      <TexpartLetterheadPadBackground
+        phone={data.company_phone}
+        email={data.company_email}
+      />
 
       {/* Safe printable content container (clears top crystals & bottom contacts) */}
       <div
@@ -756,8 +759,8 @@ export function buildQuotationPages(data: QuotationPrintData): QuotationPageMode
   const raw = compileNarrativeText(data);
   const allBlocks = tokenizeHtmlBlocks(raw);
 
-  // Usable printable vertical height (296.2mm total - 32mm top padding - 20mm bottom padding = 244.2mm = ~922px)
-  const PAGE_USABLE_HEIGHT = 920;
+  // Usable printable vertical height (296.2mm total - 32mm top padding - 17mm bottom padding = 247.2mm = ~938px)
+  const PAGE_USABLE_HEIGHT = 938;
   const TABLE_THEAD_HEIGHT = 26;
   const TABLE_TFOOT_HEIGHT = 50;
   const TABLE_MARGINS_TOTAL = 12;
@@ -943,13 +946,19 @@ export const QUOTATION_CSS = `
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
+    bottom: 0 !important;
     width: 100% !important;
-    height: calc(100% + 4px) !important;
-    bottom: -4px !important;
-    object-fit: fill !important;
+    height: 100% !important;
     pointer-events: none !important;
     user-select: none !important;
     z-index: 0 !important;
+    overflow: hidden !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .quotation-footer,
+  .quotation-header,
+  .quotation-watermark {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -962,7 +971,7 @@ export const QUOTATION_CSS = `
     padding-left: 14mm !important;
     padding-right: 14mm !important;
     padding-top: 33mm !important;    /* Clears top crystals & blue accent rule */
-    padding-bottom: 23mm !important; /* Clears bottom footer banner & contacts */
+    padding-bottom: 17mm !important; /* Clears bottom footer banner & contacts with sleek balanced gap */
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -1005,6 +1014,11 @@ export const QUOTATION_CSS = `
   .quotation-page th *,
   .quotation-table th * {
     color: #ffffff !important;
+  }
+  .quotation-table td.particulars-cell,
+  .particulars-cell {
+    color: #000000 !important;
+    font-weight: 500 !important;
   }
   .quotation-narrative-flow {
     font-size: 11.5px !important;
@@ -1215,14 +1229,14 @@ export const QUOTATION_CSS = `
       top: 0 !important;
       left: 0 !important;
       right: 0 !important;
+      bottom: 0 !important;
       width: 100% !important;
-      height: calc(100% + 4px) !important;
-      bottom: -4px !important;
-      object-fit: fill !important;
+      height: 100% !important;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
       z-index: 0 !important;
       display: block !important;
+      overflow: hidden !important;
     }
     .quotation-page-body {
       box-sizing: border-box !important;
@@ -1231,7 +1245,7 @@ export const QUOTATION_CSS = `
       padding-left: 14mm !important;
       padding-right: 14mm !important;
       padding-top: 32mm !important;
-      padding-bottom: 20mm !important;
+      padding-bottom: 17mm !important;
       display: flex !important;
       flex-direction: column !important;
       justify-content: space-between !important;

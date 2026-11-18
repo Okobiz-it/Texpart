@@ -150,59 +150,53 @@ export default function ImageUploader({
               return (
                 <div
                   key={idx}
-                  className={`relative group bg-white border rounded-[4px] overflow-hidden shadow-sm transition-all ${
+                  className={`relative aspect-square w-full bg-white border rounded-[4px] overflow-hidden shadow-sm transition-all group ${
                     isFront
                       ? "border-[#0066CC] ring-2 ring-[#0066CC]/30"
                       : "border-slate-200 hover:border-slate-300"
                   }`}
                 >
-                  {/* Photo container */}
-                  <div className="relative aspect-square w-full bg-slate-100">
-                    <Image
-                      src={imgUrl}
-                      alt={`Product image ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="200px"
-                    />
+                  <Image
+                    src={imgUrl}
+                    alt={`Product image ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="200px"
+                  />
 
-                    {/* Front Badge */}
-                    {isFront && (
-                      <div className="absolute top-1.5 left-1.5 bg-[#0066CC] text-white px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-md z-10">
-                        <Star className="w-2.5 h-2.5 fill-current" />
-                        <span>Front</span>
+                  {/* Front Badge */}
+                  {isFront && (
+                    <div className="absolute top-1.5 left-1.5 bg-[#0066CC] text-white px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-md z-10">
+                      <Star className="w-2.5 h-2.5 fill-current" />
+                      <span>Front</span>
+                    </div>
+                  )}
+
+                  {/* Remove Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(idx)}
+                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-[4px] bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-md z-10 cursor-pointer"
+                    title="Remove image"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Bottom Bar: Current Front Badge or Select as Front Button */}
+                  <div className="absolute bottom-0 inset-x-0 z-10">
+                    {isFront ? (
+                      <div className="py-1 px-1.5 bg-[#0066CC]/95 backdrop-blur-xs text-white text-[10.5px] font-heading font-bold flex items-center justify-center gap-1 shadow-sm">
+                        <CheckCircle className="w-3 h-3 text-white" />
+                        <span>Current Front</span>
                       </div>
-                    )}
-
-                    {/* Remove Button */}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-[4px] bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-md z-10"
-                      title="Remove image"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Actions Bar */}
-                  <div className="p-2 bg-white border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-slate-400 truncate max-w-[80px]">
-                      #{idx + 1}
-                    </span>
-                    {!isFront ? (
+                    ) : (
                       <button
                         type="button"
                         onClick={() => handleSelectFront(imgUrl)}
-                        className="text-[11px] font-heading font-bold text-[#0066CC] hover:text-[#0052CC] hover:underline transition-colors"
+                        className="w-full py-1 px-1.5 bg-black/60 hover:bg-[#0066CC] backdrop-blur-xs text-white text-[10.5px] font-heading font-bold flex items-center justify-center transition-colors cursor-pointer"
                       >
                         Select as front
                       </button>
-                    ) : (
-                      <span className="text-[11px] font-heading font-bold text-emerald-600 flex items-center gap-0.5">
-                        <CheckCircle className="w-3 h-3" />
-                        Current Front
-                      </span>
                     )}
                   </div>
                 </div>

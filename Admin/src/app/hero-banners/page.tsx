@@ -38,13 +38,26 @@ export default function HeroBannersPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
 
-  const fetchBanners = async () => {
+  // Auto-calculate next display order based on highest existing order + 1
+  const calculateNextOrder = (items: HeroBannerItem[]) => {
+    if (!items || items.length === 0) return 1;
+    const maxOrder = items.reduce((max, b) => {
+      const num = Number(b.order);
+      return !isNaN(num) && num > max ? num : max;
+    }, 0);
+    return maxOrder + 1;
+  };
+
+  const fetchBanners = async (syncOrder = true) => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/hero-banners");
       const data = await res.json();
       if (data.success && Array.isArray(data.data)) {
         setBanners(data.data);
+        if (syncOrder) {
+          setOrder(calculateNextOrder(data.data));
+        }
       }
     } catch (err) {
       console.error("Failed to load hero banners", err);
@@ -54,7 +67,7 @@ export default function HeroBannersPage() {
   };
 
   useEffect(() => {
-    fetchBanners();
+    fetchBanners(true);
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,11 +91,12 @@ export default function HeroBannersPage() {
     setFormSuccess(null);
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (customList?: HeroBannerItem[] | React.MouseEvent) => {
+    const list = Array.isArray(customList) ? customList : banners;
     setEditingBannerId(null);
     setTitle("");
     setSubtitle("");
-    setOrder(banners.length + 1);
+    setOrder(calculateNextOrder(list));
     setIsActive(true);
     setPreviewUrl(null);
     setSelectedFile(null);
@@ -142,6 +156,7 @@ export default function HeroBannersPage() {
 
         setFormSuccess("Hero banner updated successfully!");
         handleCancelEdit();
+        fetchBanners(true);
       } else {
         // Create new banner
         const res = await fetch("/api/hero-banners", {
@@ -151,7 +166,7 @@ export default function HeroBannersPage() {
             title: title.trim(),
             subtitle: subtitle.trim(),
             linkUrl: "",
-            order: Number(order) || (banners.length + 1),
+            order: Number(order) || calculateNextOrder(banners),
             isActive,
             imageUrl,
           }),
@@ -163,10 +178,11 @@ export default function HeroBannersPage() {
         }
 
         setFormSuccess("New hero banner created successfully!");
-        handleCancelEdit();
+        const updatedList = [...banners, data.data];
+        setBanners(updatedList);
+        handleCancelEdit(updatedList);
+        fetchBanners(true);
       }
-
-      fetchBanners();
     } catch (err: any) {
       setFormError(err.message || "An error occurred");
     } finally {
@@ -206,7 +222,13 @@ export default function HeroBannersPage() {
     try {
       const res = await fetch(`/api/hero-banners/${id}`, { method: "DELETE" });
       if (res.ok) {
-        setBanners((prev) => prev.filter((b) => b.id !== id));
+        setBanners((prev) => {
+          const updated = prev.filter((b) => b.id !== id);
+          if (!editingBannerId) {
+            setOrder(calculateNextOrder(updated));
+          }
+          return updated;
+        });
       } else {
         alert("Failed to delete banner");
       }
@@ -251,7 +273,7 @@ export default function HeroBannersPage() {
               {editingBannerId && (
                 <button
                   type="button"
-                  onClick={handleCancelEdit}
+                  onClick={() => handleCancelEdit()}
                   className="text-xs text-slate-500 hover:text-slate-800"
                 >
                   Cancel
