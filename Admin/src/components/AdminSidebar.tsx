@@ -10,12 +10,14 @@ import {
   Package,
   Shirt,
   Printer,
+  Plus,
   Users,
   Award,
   Camera,
   Image as ImageIcon,
   FileText,
   MessageSquare,
+  Inbox,
   ChevronDown,
   LogOut,
   Menu,
@@ -30,6 +32,7 @@ export default function AdminSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [productsOpen, setProductsOpen] = useState(true);
+  const [quotationsOpen, setQuotationsOpen] = useState(true);
 
   const [counts, setCounts] = useState<{
     products?: number;
@@ -52,6 +55,9 @@ export default function AdminSidebar() {
   useEffect(() => {
     if (pathname.startsWith("/products")) {
       setProductsOpen(true);
+    }
+    if (pathname.startsWith("/quotations")) {
+      setQuotationsOpen(true);
     }
   }, [pathname]);
 
@@ -126,8 +132,11 @@ export default function AdminSidebar() {
   const isPartners = pathname === "/partners";
   const isCertifications = pathname === "/certifications";
   const isGallery = pathname === "/gallery";
-  const isQuotations = pathname === "/quotations";
-  const isInquiries = pathname === "/inquiries";
+  const isIncomingQuotations = pathname.startsWith("/quotations/incoming");
+  const isQuotationsParent = pathname.startsWith("/quotations") && !isIncomingQuotations;
+  const isCreateQuotation = pathname === "/quotations/create";
+  const isManageQuotation = isQuotationsParent && !isCreateQuotation;
+  const isInquiries = pathname.startsWith("/inquiries");
 
   // Sidebar expanded content
   const expandedContent = (
@@ -314,46 +323,107 @@ export default function AdminSidebar() {
           </div>
         </Link>
 
-        {/* 7. Quotations */}
+        {/* 7. Incoming Quotations */}
         <Link
-          href="/quotations"
-          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-all ${
-            isQuotations
+          href="/quotations/incoming"
+          className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-all ${
+            isIncomingQuotations
               ? "bg-[#0066CC] text-white shadow-xs"
               : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
           }`}
         >
-          <div className="flex items-center gap-3">
-            <FileText
-              className={`w-[18px] h-[18px] ${isQuotations ? "text-white" : "text-slate-400"}`}
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <Inbox
+              className={`w-[18px] h-[18px] shrink-0 ${
+                isIncomingQuotations ? "text-white" : "text-slate-400"
+              }`}
             />
-            <span>Quotations</span>
+            <span className="truncate">Incoming Quotations</span>
           </div>
           {counts.newQuotations && counts.newQuotations > 0 ? (
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-rose-50 text-rose-600 font-bold border border-rose-200">
-              {formatBadgeCount(counts.newQuotations)} new
+            <span className="shrink-0 px-2 py-0.5 text-[10px] font-mono font-bold rounded-[4px] bg-rose-50 text-rose-600 border border-rose-200 leading-none">
+              {formatBadgeCount(counts.newQuotations)}
             </span>
           ) : null}
         </Link>
 
-        {/* 8. Contact Messages */}
+        {/* 8. Quotation (Create & Manage Saved Official Quotations) */}
+        <div className="pt-0.5">
+          <button
+            type="button"
+            onClick={() => setQuotationsOpen((prev) => !prev)}
+            className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-colors ${
+              isQuotationsParent
+                ? "bg-blue-50/70 text-[#0066CC] font-bold"
+                : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <FileText
+                className={`w-[18px] h-[18px] shrink-0 ${
+                  isQuotationsParent ? "text-[#0066CC]" : "text-slate-400"
+                }`}
+              />
+              <span className="truncate">Quotation</span>
+            </div>
+            <ChevronDown
+              className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                isQuotationsParent ? "text-[#0066CC]" : "text-slate-400"
+              } ${quotationsOpen ? "" : "-rotate-90"}`}
+            />
+          </button>
+
+          {quotationsOpen && (
+            <div className="ml-4 pl-3 border-l-2 border-slate-100 mt-1 space-y-1">
+              {/* Submenu 1: Create Quotation */}
+              <Link
+                href="/quotations/create"
+                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] text-[13px] font-medium transition-colors ${
+                  isCreateQuotation
+                    ? "bg-[#0066CC] text-white font-bold shadow-xs"
+                    : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
+                }`}
+              >
+                <Plus className={`w-4 h-4 shrink-0 ${isCreateQuotation ? "text-white" : "text-slate-400"}`} />
+                <span className="truncate">Create Quotation</span>
+              </Link>
+
+              {/* Submenu 2: Manage Quotation */}
+              <Link
+                href="/quotations"
+                className={`flex items-center justify-between px-2.5 py-2 rounded-[4px] text-[13px] font-medium transition-colors ${
+                  isManageQuotation
+                    ? "bg-[#0066CC] text-white font-bold shadow-xs"
+                    : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <FileText className={`w-4 h-4 shrink-0 ${isManageQuotation ? "text-white" : "text-slate-400"}`} />
+                  <span className="truncate">Manage Quotation</span>
+                </div>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* 9. Contact Messages */}
         <Link
           href="/inquiries"
-          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-all ${
+          className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-all ${
             isInquiries
               ? "bg-[#0066CC] text-white shadow-xs"
               : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
           }`}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <MessageSquare
-              className={`w-[18px] h-[18px] ${isInquiries ? "text-white" : "text-slate-400"}`}
+              className={`w-[18px] h-[18px] shrink-0 ${isInquiries ? "text-white" : "text-slate-400"}`}
             />
-            <span>Contact Messages</span>
+            <span className="truncate">Contact Messages</span>
           </div>
           {counts.newInquiries && counts.newInquiries > 0 ? (
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-[4px] bg-amber-50 text-amber-700 font-bold border border-amber-200">
-              {formatBadgeCount(counts.newInquiries)} new
+            <span className="shrink-0 px-2 py-0.5 text-[10px] font-mono font-bold rounded-[4px] bg-amber-50 text-amber-700 border border-amber-200 leading-none">
+              {formatBadgeCount(counts.newInquiries)}
             </span>
           ) : null}
         </Link>
@@ -496,20 +566,33 @@ export default function AdminSidebar() {
           <Camera className="w-5 h-5" />
         </Link>
 
+        {/* Incoming Quotations */}
+        <Link
+          href="/quotations/incoming"
+          title="Incoming Quotations"
+          className={`w-11 h-11 flex items-center justify-center rounded-[4px] transition-colors relative ${
+            isIncomingQuotations
+              ? "bg-[#0066CC] text-white shadow-xs"
+              : "text-slate-500 hover:text-[#0066CC] hover:bg-slate-100"
+          }`}
+        >
+          <Inbox className="w-5 h-5" />
+          {counts.newQuotations ? (
+            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-[4px] bg-rose-500 ring-2 ring-white" />
+          ) : null}
+        </Link>
+
         {/* Quotations */}
         <Link
           href="/quotations"
-          title="Quotations"
+          title="Quotation (Create & Manage)"
           className={`w-11 h-11 flex items-center justify-center rounded-[4px] transition-colors relative ${
-            isQuotations
+            isQuotationsParent
               ? "bg-[#0066CC] text-white shadow-xs"
               : "text-slate-500 hover:text-[#0066CC] hover:bg-slate-100"
           }`}
         >
           <FileText className="w-5 h-5" />
-          {counts.newQuotations ? (
-            <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-[4px] bg-rose-500 ring-2 ring-white" />
-          ) : null}
         </Link>
 
         {/* Contact Messages */}
@@ -544,7 +627,7 @@ export default function AdminSidebar() {
   return (
     <>
       {/* Mobile Top Header */}
-      <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-40 sticky top-0 shadow-xs">
+      <div className="no-print print:hidden lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-40 sticky top-0 shadow-xs">
         <div className="flex items-center gap-2">
           <div className="relative w-32 h-8 overflow-hidden">
             <Image
@@ -567,7 +650,7 @@ export default function AdminSidebar() {
 
       {/* Mobile Slide-Out Drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="no-print print:hidden fixed inset-0 z-50 lg:hidden">
           <div
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileOpen(false)}
@@ -580,7 +663,7 @@ export default function AdminSidebar() {
 
       {/* Desktop Sidebar (Collapsible with smooth width transition) */}
       <aside
-        className={`hidden lg:flex lg:flex-col flex-shrink-0 border-r border-slate-200 min-h-screen sticky top-0 h-screen transition-[width] duration-200 ease-in-out shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
+        className={`no-print print:hidden hidden lg:flex lg:flex-col flex-shrink-0 border-r border-slate-200 min-h-screen sticky top-0 h-screen transition-[width] duration-200 ease-in-out shadow-[1px_0_2px_rgba(0,0,0,0.02)] ${
           isCollapsed ? "lg:w-[70px]" : "lg:w-64"
         }`}
       >

@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       alt: doc.altText || doc.title || "Hero Banner",
       title: doc.title || "",
       subtitle: doc.subtitle || "",
-      linkUrl: doc.linkUrl || "/services/private-jobs",
+      linkUrl: (doc.linkUrl && !doc.linkUrl.includes("services")) ? doc.linkUrl : "",
       order: doc.order ?? 0,
     }));
 

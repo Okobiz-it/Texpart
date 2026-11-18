@@ -18,7 +18,7 @@ const HeroBannerSchema = new Schema<IHeroBanner>(
     subtitle: { type: String, default: "", trim: true },
     imageUrl: { type: String, required: true },
     altText: { type: String, default: "Texpart Hero Banner", trim: true },
-    linkUrl: { type: String, default: "/services/private-jobs", trim: true },
+    linkUrl: { type: String, default: "", trim: true },
     order: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
   },

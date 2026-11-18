@@ -146,7 +146,7 @@ export default function QuoteModal() {
                 <span className="font-semibold text-[#0A2540]">
                   {productName || "Custom Production"}
                 </span>
-                . We will calculate an itemized Bill of Materials (BOM) quote with lead times and contact you within <strong>24 hours</strong>.
+                . We will contact you within <strong>24 hours</strong>.
               </p>
               <div className="pt-2">
                 <button

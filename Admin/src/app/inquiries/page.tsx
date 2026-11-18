@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   MessageSquare,
   Search,
@@ -10,27 +12,20 @@ import {
   Mail,
   Phone,
   Loader2,
-  X,
-  Save,
+  Eye,
 } from "lucide-react";
 import AdminNavbar from "@/components/AdminNavbar";
 import AdminPagination from "@/components/AdminPagination";
 import { ContactMessageItem } from "@/types";
 
 export default function InquiriesAdminPage() {
+  const router = useRouter();
   const [messages, setMessages] = useState<ContactMessageItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 10;
-  const [activeItem, setActiveItem] = useState<ContactMessageItem | null>(null);
-
-  // Modal edit state
-  const [modalStatus, setModalStatus] = useState<"NEW" | "IN_PROGRESS" | "RESOLVED">("NEW");
-  const [modalAdminNotes, setModalAdminNotes] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [updateMsg, setUpdateMsg] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchMessages = async () => {
@@ -56,186 +51,148 @@ export default function InquiriesAdminPage() {
     fetchMessages();
   }, [selectedStatus]);
 
-  const handleOpenDetails = async (item: ContactMessageItem) => {
-    setActiveItem(item);
-    setModalStatus(item.status === "NEW" ? "IN_PROGRESS" : item.status);
-    setModalAdminNotes(item.adminNotes || "");
-    setUpdateMsg("");
-
-    // If message was NEW, viewing it automatically marks it as seen (IN_PROGRESS)
-    if (item.status === "NEW") {
-      setMessages((prev) =>
-        prev.map((m) => (m.id === item.id ? { ...m, status: "IN_PROGRESS" } : m))
-      );
-      try {
-        await fetch(`/api/contact/${item.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: "IN_PROGRESS" }),
-        });
-        window.dispatchEvent(new Event("texpart_stats_updated"));
-      } catch (err) {
-        console.error("Failed to auto-mark message as seen", err);
-      }
-    }
-  };
-
-  const handleSaveModal = async () => {
-    if (!activeItem) return;
-    setIsUpdating(true);
-    setUpdateMsg("");
-
-    try {
-      const res = await fetch(`/api/contact/${activeItem.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          status: modalStatus,
-          adminNotes: modalAdminNotes.trim(),
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to update contact inquiry");
-      }
-
-      setUpdateMsg("Inquiry status updated successfully!");
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === activeItem.id
-            ? { ...m, status: modalStatus, adminNotes: modalAdminNotes }
-            : m
-        )
-      );
-      window.dispatchEvent(new Event("texpart_stats_updated"));
-    } catch (err: any) {
-      alert(err.message || "Failed to update contact inquiry");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete message from "${name}"?`)) {
+    if (!confirm(`Are you sure you want to permanently delete the inquiry from "${name}"?`)) {
       return;
     }
 
     setDeletingId(id);
     try {
       const res = await fetch(`/api/contact/${id}`, { method: "DELETE" });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
         setMessages((prev) => prev.filter((m) => m.id !== id));
-        if (activeItem?.id === id) setActiveItem(null);
         window.dispatchEvent(new Event("texpart_stats_updated"));
       } else {
-        alert("Failed to delete inquiry");
+        alert(data.error || "Failed to delete inquiry");
       }
     } catch (err) {
-      alert("Failed to delete inquiry");
+      console.error("Delete failed", err);
+      alert("Network error while deleting");
     } finally {
       setDeletingId(null);
     }
   };
 
-  const filtered = messages.filter((m) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
+  const filteredMessages = messages.filter((m) => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return true;
     return (
-      m.name.toLowerCase().includes(query) ||
-      m.email.toLowerCase().includes(query) ||
-      m.phone.toLowerCase().includes(query) ||
-      m.comment.toLowerCase().includes(query)
+      m.name.toLowerCase().includes(q) ||
+      m.email.toLowerCase().includes(q) ||
+      m.phone.toLowerCase().includes(q) ||
+      m.comment.toLowerCase().includes(q)
     );
   });
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedStatus, searchQuery]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safeCurrentPage = Math.min(currentPage, totalPages);
-  const paginatedMessages = filtered.slice(
-    (safeCurrentPage - 1) * PAGE_SIZE,
-    safeCurrentPage * PAGE_SIZE
+  const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE) || 1;
+  const paginatedMessages = filteredMessages.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
   );
 
-  const newCount = messages.filter((m) => m.status === "NEW").length;
-
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0A2540]">
-      <AdminNavbar title="Contact Inquiries" subtitle="Direct Messages from Website" />
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <AdminNavbar title="Contact Messages" subtitle="Public Inquiries" />
 
       <div className="w-full px-6 sm:px-8 py-6 space-y-6">
-        {/* Sleek, Uncluttered Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-heading font-black text-[#0A2540] tracking-tight">
-                Contact Inquiries
-              </h1>
-              {newCount > 0 ? (
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-[4px] bg-amber-50 text-amber-700 border border-amber-200">
-                  {newCount} new
-                </span>
-              ) : (
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-[4px] bg-slate-100 text-slate-600">
-                  {messages.length} total
-                </span>
-              )}
+        {/* Metric / Status Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-heading font-bold text-slate-400 uppercase tracking-wider block">
+              Total Inquiries
+            </span>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-2xl font-heading font-black text-[#0A2540]">
+                {messages.length}
+              </span>
+              <MessageSquare className="w-5 h-5 text-slate-300" />
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Review and reply to client inquiries submitted through the contact form.
-            </p>
+          </div>
+
+          <div className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-heading font-bold text-slate-400 uppercase tracking-wider block">
+              New Messages
+            </span>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-2xl font-heading font-black text-amber-600">
+                {messages.filter((m) => m.status === "NEW").length}
+              </span>
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs">
+            <span className="text-[11px] font-heading font-bold text-slate-400 uppercase tracking-wider block">
+              Resolved Cases
+            </span>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-2xl font-heading font-black text-emerald-600">
+                {messages.filter((m) => m.status === "RESOLVED").length}
+              </span>
+              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+            </div>
           </div>
         </div>
 
-        {/* Filters & Search Toolbar */}
-        <div className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-          {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-            {["ALL", "NEW", "IN_PROGRESS", "RESOLVED"].map((st) => (
+        {/* Search & Filter Toolbar */}
+        <div className="bg-white p-4 rounded-[4px] border border-slate-200 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by name, email, phone, keyword..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-[4px] focus:outline-none focus:border-[#0066CC] font-medium"
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Filter className="w-3.5 h-3.5 text-slate-400 mr-1" />
+            {(["ALL", "NEW", "IN_PROGRESS", "RESOLVED"] as const).map((status) => (
               <button
-                key={st}
+                key={status}
                 type="button"
-                onClick={() => setSelectedStatus(st)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-[4px] transition-colors whitespace-nowrap ${
-                  selectedStatus === st
+                onClick={() => {
+                  setSelectedStatus(status);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-[4px] text-xs font-heading font-bold transition-colors cursor-pointer ${
+                  selectedStatus === status
                     ? "bg-[#0066CC] text-white shadow-xs"
-                    : "bg-slate-50 text-slate-600 hover:text-[#0A2540] hover:bg-slate-100"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
-                {st === "ALL" ? "All Messages" : st.replace("_", " ")}
+                {status === "ALL" ? "All" : status.replace("_", " ")}
               </button>
             ))}
           </div>
-
-          {/* Search Box */}
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search sender, email, text..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded-[4px] focus:outline-none focus:border-[#0066CC]"
-            />
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          </div>
         </div>
 
-        {/* Messages Table */}
-        <div className="bg-white border border-slate-200 rounded-[4px] shadow-xs overflow-hidden">
+        {/* Inquiries Table */}
+        <div className="bg-white rounded-[4px] border border-slate-200 shadow-xs overflow-hidden">
           {isLoading ? (
-            <div className="py-20 text-center text-xs text-slate-400">Loading inquiries...</div>
-          ) : filtered.length === 0 ? (
-            <div className="py-20 text-center text-xs text-slate-400">
-              {searchQuery ? "No messages match your search." : "No contact messages found."}
+            <div className="p-12 text-center text-slate-400">
+              <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#0066CC] mb-2" />
+              Loading messages...
+            </div>
+          ) : paginatedMessages.length === 0 ? (
+            <div className="p-12 text-center text-slate-400">
+              <MessageSquare className="w-8 h-8 mx-auto text-slate-300 mb-2" />
+              <p className="font-semibold text-slate-600 text-sm">No contact messages found</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Messages submitted via the contact page will appear here.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-[10.5px] font-heading font-bold uppercase tracking-wider text-slate-500">
+              <table className="w-full text-left">
+                <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-heading font-bold text-slate-500 uppercase tracking-wider">
+                  <tr>
                     <th className="px-4 py-3">Sender Name</th>
                     <th className="px-4 py-3">Contact Coordinates</th>
                     <th className="px-4 py-3">Message Preview</th>
@@ -249,11 +206,11 @@ export default function InquiriesAdminPage() {
                     <tr
                       key={item.id}
                       className="hover:bg-blue-50/30 transition-colors group cursor-pointer"
-                      onClick={() => handleOpenDetails(item)}
+                      onClick={() => router.push(`/inquiries/${item.id}`)}
                     >
                       {/* Sender Name */}
                       <td className="px-4 py-3.5">
-                        <div className="font-heading font-bold text-[#0A2540]">
+                        <div className="font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors">
                           {item.name}
                         </div>
                       </td>
@@ -309,19 +266,19 @@ export default function InquiriesAdminPage() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenDetails(item)}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-[#0066CC] hover:text-white rounded-[4px] text-xs font-semibold text-slate-700 transition-colors"
+                          <Link
+                            href={`/inquiries/${item.id}`}
+                            className="p-1.5 text-[#0066CC] hover:bg-blue-50 rounded-[4px] transition-colors"
+                            title="View Message Details"
                           >
-                            Details
-                          </button>
+                            <Eye className="w-4 h-4" />
+                          </Link>
                           <button
                             type="button"
                             onClick={() => handleDelete(item.id, item.name)}
                             disabled={deletingId === item.id}
-                            className="p-1 text-slate-400 hover:text-red-600 rounded-[4px] hover:bg-red-50 transition-colors"
-                            title="Delete this inquiry"
+                            className="p-1 text-slate-400 hover:text-red-600 rounded-[4px] hover:bg-red-50 transition-colors cursor-pointer"
+                            title="Delete this message"
                           >
                             {deletingId === item.id ? (
                               <Loader2 className="w-3.5 h-3.5 animate-spin text-red-600" />
@@ -338,158 +295,18 @@ export default function InquiriesAdminPage() {
             </div>
           )}
 
-          <AdminPagination
-            currentPage={safeCurrentPage}
-            totalPages={totalPages}
-            totalItems={filtered.length}
-            pageSize={PAGE_SIZE}
-            onPageChange={setCurrentPage}
-            itemLabel="messages"
-          />
-        </div>
-      </div>
-
-      {/* =================================================================
-          DRAWER / MODAL: INQUIRY FULL CONTENT
-          ================================================================= */}
-      {activeItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-[4px] shadow-2xl border border-slate-200 max-w-xl w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0066CC]">
-                  Contact Message &mdash; ID: {activeItem.id.slice(-6)}
-                </span>
-                <h3 className="text-lg font-heading font-black text-[#0A2540]">
-                  {activeItem.name}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveItem(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-[4px]"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {updateMsg && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-[4px] text-xs flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>{updateMsg}</span>
-              </div>
-            )}
-
-            {/* Coordinates Grid */}
-            <div className="grid grid-cols-2 gap-2.5 text-xs">
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Email
-                </span>
-                <a
-                  href={`mailto:${activeItem.email}`}
-                  className="font-medium text-[#0066CC] hover:underline truncate block"
-                >
-                  {activeItem.email}
-                </a>
-              </div>
-              <div className="p-2.5 bg-slate-50 rounded-[4px] border border-slate-100">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                  Phone / WhatsApp
-                </span>
-                <a
-                  href={`tel:${activeItem.phone}`}
-                  className="font-medium text-[#0066CC] hover:underline truncate block"
-                >
-                  {activeItem.phone}
-                </a>
-              </div>
-            </div>
-
-            {/* Message Body */}
-            <div className="space-y-1">
-              <span className="text-[10.5px] font-heading font-bold uppercase text-slate-500 block">
-                Message Content:
-              </span>
-              <div
-                className="p-3 bg-slate-50/70 rounded-[4px] border border-slate-200 text-xs leading-relaxed max-h-56 overflow-y-auto [&_blockquote]:border-l-4 [&_blockquote]:border-[#0066CC] [&_blockquote]:pl-3 [&_blockquote]:italic [&_ol]:list-decimal [&_ol]:ml-5 [&_ul]:list-disc [&_ul]:ml-5"
-                dangerouslySetInnerHTML={{
-                  __html: activeItem.comment || "<em>Empty message.</em>",
-                }}
-              />
-            </div>
-
-            {/* Status Change & Admin Internal Notes */}
-            <div className="pt-2 border-t border-slate-100 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
-                    Follow-Up Status
-                  </label>
-                  <select
-                    value={modalStatus}
-                    onChange={(e) => setModalStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-[4px] focus:outline-none focus:border-[#0066CC] bg-white"
-                  >
-                    <option value="NEW">NEW &mdash; Needs Attention</option>
-                    <option value="IN_PROGRESS">IN_PROGRESS &mdash; In Discussion</option>
-                    <option value="RESOLVED">RESOLVED &mdash; Handled / Closed</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
-                    Internal Follow-Up Note
-                  </label>
-                  <input
-                    type="text"
-                    value={modalAdminNotes}
-                    onChange={(e) => setModalAdminNotes(e.target.value)}
-                    placeholder="e.g. Called client via WhatsApp on Nov 17"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-[4px] focus:outline-none focus:border-[#0066CC]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="pt-3 flex items-center justify-between border-t border-slate-200">
-              <a
-                href={`mailto:${activeItem.email}?subject=Regarding%20your%20inquiry%20to%20Texpart%20Garment%20Accessories&body=Dear%20${encodeURIComponent(
-                  activeItem.name
-                )},%0D%0A%0D%0AThank%20you%20for%20contacting%20Texpart.%20`}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-[4px] flex items-center gap-1.5 transition-colors"
-              >
-                <Mail className="w-3.5 h-3.5 text-[#0066CC]" />
-                <span>Send Email Reply</span>
-              </a>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveItem(null)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-[4px]"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveModal}
-                  disabled={isUpdating}
-                  className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] flex items-center gap-1.5 shadow-sm transition-colors"
-                >
-                  {isUpdating ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <Save className="w-3.5 h-3.5" />
-                  )}
-                  <span>Save Status</span>
-                </button>
-              </div>
-            </div>
+          {/* Pagination */}
+          <div className="p-4 border-t border-slate-100">
+            <AdminPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={filteredMessages.length}
+              pageSize={PAGE_SIZE}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

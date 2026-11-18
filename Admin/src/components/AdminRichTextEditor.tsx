@@ -56,7 +56,6 @@ const FONT_SIZES = [
   { label: "Medium (16px)", value: "4", px: "16px" },
   { label: "Large (20px)", value: "5", px: "20px" },
   { label: "Extra Large (24px)", value: "6", px: "24px" },
-  { label: "Huge (32px)", value: "7", px: "32px" },
 ];
 
 export default function AdminRichTextEditor({
@@ -109,15 +108,6 @@ export default function AdminRichTextEditor({
       editorRef.current.focus();
       document.execCommand(command, false, arg);
       onChange(editorRef.current.innerHTML);
-    }
-  };
-
-  const handleHeadingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const format = e.target.value;
-    if (format === "p") {
-      exec("formatBlock", "<p>");
-    } else {
-      exec("formatBlock", `<${format}>`);
     }
   };
 
@@ -341,23 +331,6 @@ export default function AdminRichTextEditor({
     <div className="border border-slate-200 rounded-[4px] overflow-hidden bg-white shadow-sm focus-within:border-[#0066CC] focus-within:ring-1 focus-within:ring-[#0066CC] transition-all relative">
       {/* Top Toolbar */}
       <div className="bg-slate-50 border-b border-slate-200 px-3 py-2 flex flex-wrap items-center gap-1.5 text-[#0A2540] relative">
-        {/* Headings Selector */}
-        <div className="relative">
-          <select
-            onChange={handleHeadingChange}
-            defaultValue="p"
-            className="text-xs bg-white border border-slate-200 rounded-[4px] px-2 py-1 pr-6 font-medium text-[#0A2540] hover:border-slate-300 focus:outline-none focus:border-[#0066CC] appearance-none cursor-pointer"
-            title="Heading Level"
-          >
-            <option value="p">Paragraph</option>
-            <option value="h1">Heading 1</option>
-            <option value="h2">Heading 2</option>
-            <option value="h3">Heading 3</option>
-            <option value="h4">Heading 4</option>
-          </select>
-          <ChevronDown className="w-3 h-3 text-slate-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-        </div>
-
         {/* Font Size Selector */}
         <div className="relative">
           <select
@@ -585,17 +558,23 @@ export default function AdminRichTextEditor({
                   Custom Color Picker
                 </span>
                 <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={customTextColor}
-                    onChange={(e) => setCustomTextColor(e.target.value)}
-                    className="w-8 h-8 rounded-[4px] cursor-pointer border border-slate-200 p-0.5"
-                  />
+                  <label
+                    className="w-8 h-8 shrink-0 rounded-[4px] border-2 border-slate-300 shadow-xs cursor-pointer overflow-hidden flex items-center justify-center relative hover:border-[#0066CC] transition-colors"
+                    style={{ backgroundColor: customTextColor }}
+                    title="Pick custom font color"
+                  >
+                    <input
+                      type="color"
+                      value={customTextColor}
+                      onChange={(e) => setCustomTextColor(e.target.value)}
+                      className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                    />
+                  </label>
                   <input
                     type="text"
                     value={customTextColor}
                     onChange={(e) => setCustomTextColor(e.target.value)}
-                    className="flex-1 px-2 py-1 text-xs border border-slate-200 rounded-[4px] font-mono uppercase"
+                    className="flex-1 h-8 px-2 text-xs border border-slate-200 rounded-[4px] font-mono uppercase focus:outline-none focus:border-[#0066CC]"
                   />
                   <button
                     type="button"
@@ -603,7 +582,7 @@ export default function AdminRichTextEditor({
                       e.preventDefault();
                       applyTextColor(customTextColor);
                     }}
-                    className="px-2.5 py-1 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px]"
+                    className="h-8 px-2.5 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] transition-colors cursor-pointer"
                   >
                     Set
                   </button>
@@ -659,17 +638,23 @@ export default function AdminRichTextEditor({
                   Custom Highlight Picker
                 </span>
                 <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={customBgColor}
-                    onChange={(e) => setCustomBgColor(e.target.value)}
-                    className="w-8 h-8 rounded-[4px] cursor-pointer border border-slate-200 p-0.5"
-                  />
+                  <label
+                    className="w-8 h-8 shrink-0 rounded-[4px] border-2 border-slate-300 shadow-xs cursor-pointer overflow-hidden flex items-center justify-center relative hover:border-[#0066CC] transition-colors"
+                    style={{ backgroundColor: customBgColor }}
+                    title="Pick custom highlight color"
+                  >
+                    <input
+                      type="color"
+                      value={customBgColor}
+                      onChange={(e) => setCustomBgColor(e.target.value)}
+                      className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                    />
+                  </label>
                   <input
                     type="text"
                     value={customBgColor}
                     onChange={(e) => setCustomBgColor(e.target.value)}
-                    className="flex-1 px-2 py-1 text-xs border border-slate-200 rounded-[4px] font-mono uppercase"
+                    className="flex-1 h-8 px-2 text-xs border border-slate-200 rounded-[4px] font-mono uppercase focus:outline-none focus:border-[#0066CC]"
                   />
                   <button
                     type="button"
@@ -677,7 +662,7 @@ export default function AdminRichTextEditor({
                       e.preventDefault();
                       applyBgColor(customBgColor);
                     }}
-                    className="px-2.5 py-1 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px]"
+                    className="h-8 px-2.5 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-bold rounded-[4px] transition-colors cursor-pointer"
                   >
                     Set
                   </button>

@@ -27,7 +27,6 @@ export default function HeroBannersPage() {
   const [editingBannerId, setEditingBannerId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
-  const [linkUrl, setLinkUrl] = useState("/services/private-jobs");
   const [order, setOrder] = useState(1);
   const [isActive, setIsActive] = useState(true);
 
@@ -69,9 +68,8 @@ export default function HeroBannersPage() {
 
   const handleStartEdit = (b: HeroBannerItem) => {
     setEditingBannerId(b.id);
-    setTitle(b.title);
-    setSubtitle(b.subtitle);
-    setLinkUrl(b.linkUrl);
+    setTitle(b.title || "");
+    setSubtitle(b.subtitle || "");
     setOrder(b.order);
     setIsActive(b.isActive);
     setPreviewUrl(b.imageUrl);
@@ -84,7 +82,6 @@ export default function HeroBannersPage() {
     setEditingBannerId(null);
     setTitle("");
     setSubtitle("");
-    setLinkUrl("/services/private-jobs");
     setOrder(banners.length + 1);
     setIsActive(true);
     setPreviewUrl(null);
@@ -131,7 +128,7 @@ export default function HeroBannersPage() {
           body: JSON.stringify({
             title: title.trim(),
             subtitle: subtitle.trim(),
-            linkUrl: linkUrl.trim(),
+            linkUrl: "",
             order: Number(order) || 1,
             isActive,
             imageUrl,
@@ -153,7 +150,7 @@ export default function HeroBannersPage() {
           body: JSON.stringify({
             title: title.trim(),
             subtitle: subtitle.trim(),
-            linkUrl: linkUrl.trim(),
+            linkUrl: "",
             order: Number(order) || (banners.length + 1),
             isActive,
             imageUrl,
@@ -350,20 +347,6 @@ export default function HeroBannersPage() {
                 </div>
               </div>
 
-              {/* Link Target URL */}
-              <div>
-                <label className="block text-xs font-heading font-bold uppercase tracking-wider text-[#0A2540] mb-1">
-                  Target Destination URL
-                </label>
-                <input
-                  type="text"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
-                  placeholder="/services/private-jobs or /services/commercial-jobs"
-                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-[4px] focus:outline-none focus:border-[#0066CC]"
-                />
-              </div>
-
               {/* Active Toggle */}
               <div className="flex items-center gap-2 pt-1">
                 <input
@@ -441,7 +424,7 @@ export default function HeroBannersPage() {
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                          Destination: <span className="font-mono text-slate-600">{b.linkUrl}</span>
+                          Homepage Hero Slider
                         </p>
                       </div>
                     </div>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ExternalLink, ShieldCheck } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 interface AdminNavbarProps {
   title?: string;
@@ -14,7 +14,7 @@ export default function AdminNavbar({
   subtitle,
 }: AdminNavbarProps) {
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+    <header className="no-print print:hidden sticky top-0 z-30 bg-white border-b border-slate-200 px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       {/* Page Title / Breadcrumb */}
       <div>
         <div className="flex items-center gap-2">
@@ -30,7 +30,7 @@ export default function AdminNavbar({
         </div>
       </div>
 
-      {/* Right Controls: Live Site, Profile */}
+      {/* Right Controls: Live Site */}
       <div className="flex items-center gap-3">
         {/* Live Site Button */}
         <a
@@ -43,17 +43,6 @@ export default function AdminNavbar({
           <span>Live Site</span>
           <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0066CC]" />
         </a>
-
-        {/* Profile Avatar Pill with Admin Icon instead of "A" */}
-        <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-          <div
-            className="w-8 h-8 rounded-[4px] bg-[#0066CC] text-white flex items-center justify-center shadow-xs"
-            title="Super Admin Profile"
-            aria-label="Admin Profile"
-          >
-            <ShieldCheck className="w-4 h-4" />
-          </div>
-        </div>
       </div>
     </header>
   );
