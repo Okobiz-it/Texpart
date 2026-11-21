@@ -126,19 +126,26 @@ export default function AboutPage() {
 
   return (
     <div className="bg-white min-h-screen text-[#0A2540]">
-      {/* 1. ABOUT BANNER (Comfortable executive padding with breathing room) */}
-      <section className="pt-32 sm:pt-36 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white border-b border-white/10">
+      {/* 1. ABOUT BANNER */}
+      <section className="pt-24 sm:pt-28 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black uppercase text-white leading-tight">
-              About Texpart <br />
-              <span className="text-blue-400">
-                Your Trusted Partner for Garment Accessories
-              </span>
+          <div className="max-w-3xl space-y-3">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black uppercase tracking-tight text-white leading-tight">
+              About Texpart <br className="hidden sm:inline" />
+              <span className="text-blue-400">Design &amp; Accessories</span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed pt-1">
-              Operating from our Motijheel, Dhaka headquarters to serve international fashion houses, buying offices, and apparel brands worldwide.
+            <p className="text-xs sm:text-sm text-slate-300 font-light leading-relaxed">
+              DESIGN &bull; DEVELOP &bull; PRODUCE &bull; PACK &bull; DELIVER &mdash; One Partner. Multiple Solutions. Operating from our Motijheel, Dhaka headquarters to serve international fashion houses, buying offices, and apparel brands worldwide.
             </p>
+            <div className="pt-2 flex flex-wrap gap-3">
+              <button
+                onClick={openGeneralQuote}
+                className="px-6 py-2.5 rounded-[4px] bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase tracking-wider transition-colors shadow-sm inline-flex items-center gap-2 cursor-pointer"
+              >
+                <span>Request a Quote</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -319,38 +326,6 @@ export default function AboutPage() {
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* 6. "LET'S GROW TOGETHER" BANNER */}
-      <section className="py-6 sm:py-8 bg-gradient-to-r from-[#003B73] via-[#0056B3] to-[#002D59] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-[4px] bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0 text-white">
-                <Shirt className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-lg sm:text-xl font-heading font-bold text-white tracking-tight">
-                  Let&apos;s Grow Together
-                </h2>
-                <p className="text-slate-200 text-xs font-light mt-0.5">
-                  Partner with Texpart for your garment accessories and sourcing needs.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex-shrink-0">
-              <button
-                type="button"
-                onClick={openGeneralQuote}
-                className="bg-white hover:bg-slate-100 text-[#0056B3] px-5 py-2.5 rounded-[4px] font-heading text-xs font-bold inline-flex items-center gap-1.5 shadow-md transition-all"
-              >
-                <span>Contact Us Today</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
         </div>
       </section>
     </div>

@@ -21,9 +21,10 @@ export default function ProductDetailsModal() {
 
   if (!isProductModalOpen || !selectedProduct) return null;
 
-  const images = selectedProduct.galleryImages?.length > 0
-    ? selectedProduct.galleryImages
-    : [selectedProduct.image];
+  const images =
+    selectedProduct.galleryImages && selectedProduct.galleryImages.length > 0
+      ? selectedProduct.galleryImages
+      : [selectedProduct.image || "/images/products/range-labels.jpg"];
 
   const handleRequestQuote = () => {
     const prod = selectedProduct;
@@ -128,76 +129,84 @@ export default function ProductDetailsModal() {
           </div>
 
           {/* Sub-Items from Brochure */}
-          <div className="py-3 border-t border-charcoal/10">
-            <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2.5">
-              Available Product Variations (Brochure Range)
-            </h4>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              {selectedProduct.subItems.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-charcoal/90">
-                  <Check className="w-3.5 h-3.5 text-forest flex-shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {selectedProduct.subItems && selectedProduct.subItems.length > 0 && (
+            <div className="py-3 border-t border-charcoal/10">
+              <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2.5">
+                Available Product Variations (Brochure Range)
+              </h4>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {selectedProduct.subItems.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-charcoal/90">
+                    <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Materials */}
-          <div className="py-3 border-t border-charcoal/10">
-            <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2">
-              Materials &amp; Substrates
-            </h4>
-            <div className="flex flex-wrap gap-1.5">
-              {selectedProduct.materials.map((mat, idx) => (
-                <span
-                  key={idx}
-                  className="bg-offwhite-alt px-2.5 py-1 text-[11px] font-medium text-charcoal rounded-sm"
-                >
-                  {mat}
-                </span>
-              ))}
+          {selectedProduct.materials && selectedProduct.materials.length > 0 && (
+            <div className="py-3 border-t border-charcoal/10">
+              <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2">
+                Materials &amp; Substrates
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedProduct.materials.map((mat, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-offwhite-alt px-2.5 py-1 text-[11px] font-medium text-charcoal rounded-sm"
+                  >
+                    {mat}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Finishes & Customization Options */}
-          <div className="py-3 border-t border-charcoal/10">
-            <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2">
-              Finishing &amp; Customization Options
-            </h4>
-            <div className="flex flex-wrap gap-1.5">
-              {selectedProduct.finishes.map((fin, idx) => (
-                <span
-                  key={idx}
-                  className="bg-forest/10 text-forest px-2.5 py-1 text-[11px] font-semibold rounded-sm"
-                >
-                  {fin}
-                </span>
-              ))}
+          {selectedProduct.finishes && selectedProduct.finishes.length > 0 && (
+            <div className="py-3 border-t border-charcoal/10">
+              <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2">
+                Finishing &amp; Customization Options
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedProduct.finishes.map((fin, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-blue-50 text-[#0066CC] border border-blue-100 px-2.5 py-1 text-[11px] font-semibold rounded-sm"
+                  >
+                    {fin}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Technical Specifications Table */}
-          <div className="py-3 border-t border-charcoal/10">
-            <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2">
-              Manufacturing Specifications
-            </h4>
-            <div className="border border-charcoal/10 rounded-sm overflow-hidden text-xs">
-              <table className="w-full divide-y divide-charcoal/10">
-                <tbody className="divide-y divide-charcoal/5 bg-offwhite/30">
-                  {Object.entries(selectedProduct.specifications).map(([key, val], idx) => (
-                    <tr key={idx}>
-                      <td className="px-3.5 py-2 font-heading font-bold text-grey-dark w-2/5 bg-offwhite/50">
-                        {key}
-                      </td>
-                      <td className="px-3.5 py-2 text-charcoal font-medium">
-                        {val}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {selectedProduct.specifications && Object.keys(selectedProduct.specifications).length > 0 && (
+            <div className="py-3 border-t border-charcoal/10">
+              <h4 className="text-xs font-heading font-extrabold uppercase tracking-widest text-charcoal mb-2">
+                Manufacturing Specifications
+              </h4>
+              <div className="border border-charcoal/10 rounded-sm overflow-hidden text-xs">
+                <table className="w-full divide-y divide-charcoal/10">
+                  <tbody className="divide-y divide-charcoal/5 bg-offwhite/30">
+                    {Object.entries(selectedProduct.specifications).map(([key, val], idx) => (
+                      <tr key={idx}>
+                        <td className="px-3.5 py-2 font-heading font-bold text-grey-dark w-2/5 bg-offwhite/50">
+                          {key}
+                        </td>
+                        <td className="px-3.5 py-2 text-charcoal font-medium">
+                          {val}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* B2B Quotation Callout */}
           <div className="mt-6 pt-4 border-t border-charcoal/10 flex flex-col sm:flex-row items-center justify-between gap-4">

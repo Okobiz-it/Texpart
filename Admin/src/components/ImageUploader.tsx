@@ -130,10 +130,10 @@ export default function ImageUploader({
 
           <div>
             <p className="text-xs sm:text-sm font-heading font-bold text-[#0A2540]">
-              {isUploading ? "Uploading to Cloudinary..." : "Click to Upload Product Images"}
+              {isUploading ? "Uploading images..." : "Click to Upload Product Images"}
             </p>
             <p className="text-[11px] text-slate-500 mt-0.5">
-              Select multiple photos (PNG, JPG, WebP). Cloudinary auto-optimizes images.
+              Select multiple photos (PNG, JPG, WebP).
             </p>
           </div>
         </label>

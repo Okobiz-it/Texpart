@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formatBadgeCount } from "@/lib/formatNumber";
 import {
   LayoutDashboard,
@@ -25,7 +25,12 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ShieldCheck,
+  Gift,
+  Briefcase,
+  Scissors,
+  FolderTree,
 } from "lucide-react";
+import { ADMIN_DIVISIONS } from "@/data/divisions";
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -58,6 +63,42 @@ export default function AdminSidebar() {
     inquiries?: number;
     newInquiries?: number;
   }>({});
+
+  const searchParams = useSearchParams();
+  const currentDivisionParam = searchParams.get("division");
+  const currentCategoryParam = searchParams.get("category");
+
+  const [openDivisions, setOpenDivisions] = useState<Record<string, boolean>>({
+    "commercial-printing": false,
+    "garments-accessories": false,
+    "packaging-solutions": false,
+    "promotional-products": false,
+  });
+
+  const toggleDivisionAccordion = (divId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpenDivisions((prev) => ({ ...prev, [divId]: !prev[divId] }));
+  };
+
+  const getDivisionIcon = (iconName: string) => {
+    switch (iconName) {
+      case "printer":
+        return <Printer className="w-3.5 h-3.5 shrink-0" />;
+      case "shirt":
+        return <Shirt className="w-3.5 h-3.5 shrink-0" />;
+      case "package":
+        return <Package className="w-3.5 h-3.5 shrink-0" />;
+      case "gift":
+        return <Gift className="w-3.5 h-3.5 shrink-0" />;
+      case "briefcase":
+        return <Briefcase className="w-3.5 h-3.5 shrink-0" />;
+      case "scissors":
+        return <Scissors className="w-3.5 h-3.5 shrink-0" />;
+      default:
+        return <Package className="w-3.5 h-3.5 shrink-0" />;
+    }
+  };
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -199,14 +240,14 @@ export default function AdminSidebar() {
         {/* 1. Overview */}
         <Link
           href="/"
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-all ${
+          className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-[4px] text-[14px] font-semibold transition-all ${
             isOverview
               ? "bg-[#0066CC] text-white shadow-xs"
               : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
           }`}
         >
           <LayoutDashboard
-            className={`w-[18px] h-[18px] ${isOverview ? "text-white" : "text-slate-400"}`}
+            className={`w-[19px] h-[19px] ${isOverview ? "text-white" : "text-slate-400"}`}
           />
           <span>Overview</span>
         </Link>
@@ -214,7 +255,7 @@ export default function AdminSidebar() {
         {/* 2. Hero Banners */}
         <Link
           href="/hero-banners"
-          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-all ${
+          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-[4px] text-[14px] font-semibold transition-all ${
             isHeroBanners
               ? "bg-[#0066CC] text-white shadow-xs"
               : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
@@ -222,18 +263,18 @@ export default function AdminSidebar() {
         >
           <div className="flex items-center gap-3">
             <ImageIcon
-              className={`w-[18px] h-[18px] ${isHeroBanners ? "text-white" : "text-slate-400"}`}
+              className={`w-[19px] h-[19px] ${isHeroBanners ? "text-white" : "text-slate-400"}`}
             />
             <span>Hero Banners</span>
           </div>
         </Link>
 
-        {/* 3. Products (Parent Menu with Submenus: Private Jobs & Commercial Jobs) */}
+        {/* 3. Products (Parent Menu with 6 Manufacturing Divisions) */}
         <div className="pt-0.5">
           <button
             type="button"
             onClick={() => setProductsOpen((prev) => !prev)}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-[4px] text-[13.5px] font-semibold transition-colors ${
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-[4px] text-[14px] font-semibold transition-colors cursor-pointer ${
               isProducts
                 ? "bg-blue-50/70 text-[#0066CC] font-bold"
                 : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
@@ -241,7 +282,7 @@ export default function AdminSidebar() {
           >
             <div className="flex items-center gap-3">
               <Package
-                className={`w-[18px] h-[18px] ${
+                className={`w-[19px] h-[19px] ${
                   isProducts ? "text-[#0066CC]" : "text-slate-400"
                 }`}
               />
@@ -255,31 +296,64 @@ export default function AdminSidebar() {
           </button>
 
           {productsOpen && (
-            <div className="ml-4 pl-3 border-l-2 border-slate-100 mt-1 space-y-1">
-              {/* Submenu 1: Private Jobs */}
+            <div className="ml-3 pl-2.5 border-l-2 border-slate-200 mt-1 space-y-1">
+              {/* All Products */}
               <Link
-                href="/products/private-jobs"
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] text-[13px] font-medium transition-colors ${
-                  isPrivateJobs
+                href="/products?division=all"
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[13px] font-semibold transition-colors ${
+                  pathname === "/products" && (!currentDivisionParam || currentDivisionParam === "all")
                     ? "bg-[#0066CC] text-white font-bold shadow-xs"
                     : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
                 }`}
               >
-                <Shirt className={`w-4 h-4 ${isPrivateJobs ? "text-white" : "text-slate-400"}`} />
-                <span>Private Jobs</span>
+                <Package className="w-4 h-4 shrink-0" />
+                <span>All Products</span>
               </Link>
 
-              {/* Submenu 2: Commercial Jobs */}
+              {/* 6 Core Divisions (No grandchild subcategories) */}
+              {[
+                { id: "commercial-printing", label: "Commercial Printing", icon: "printer" },
+                { id: "garments-accessories", label: "Garments Accessories", icon: "shirt" },
+                { id: "packaging-solutions", label: "Packaging", icon: "package" },
+                { id: "promotional-products", label: "Promotional Products", icon: "gift" },
+                { id: "corporate-projects", label: "Corporate Projects", icon: "briefcase" },
+                { id: "apparel-projects", label: "Apparel Projects", icon: "scissors" },
+              ].map((div) => {
+                const isDivActive = currentDivisionParam === div.id;
+
+                return (
+                  <Link
+                    key={div.id}
+                    href={`/products?division=${div.id}`}
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[12.5px] font-medium transition-colors ${
+                      isDivActive
+                        ? "bg-blue-50/90 text-[#0066CC] font-bold"
+                        : "hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    {getDivisionIcon(div.icon)}
+                    <span className="truncate uppercase tracking-wide">
+                      {div.label}
+                    </span>
+                  </Link>
+                );
+              })}
+
+              {/* Category Manager Link */}
               <Link
-                href="/products/commercial-jobs"
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] text-[13px] font-medium transition-colors ${
-                  isCommercialJobs
-                    ? "bg-[#0066CC] text-white font-bold shadow-xs"
-                    : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
+                href="/categories"
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[12.5px] font-medium transition-colors ${
+                  pathname === "/categories"
+                    ? "bg-blue-50/90 text-[#0066CC] font-bold"
+                    : "hover:bg-slate-50 text-slate-700"
                 }`}
               >
-                <Printer className={`w-4 h-4 ${isCommercialJobs ? "text-white" : "text-slate-400"}`} />
-                <span>Commercial Jobs</span>
+                <FolderTree
+                  className={`w-3.5 h-3.5 shrink-0 ${
+                    pathname === "/categories" ? "text-[#0066CC]" : "text-slate-400"
+                  }`}
+                />
+                <span className="truncate">Manage Categories</span>
               </Link>
             </div>
           )}

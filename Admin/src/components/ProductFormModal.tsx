@@ -257,7 +257,7 @@ export default function ProductFormModal({
                 2. Product Images &amp; Front Image Selection
               </h4>
               <span className="text-[11px] text-slate-400">
-                Uploaded to Cloudinary CDN
+                High-Resolution Assets
               </span>
             </div>
 

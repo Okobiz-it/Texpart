@@ -16,7 +16,7 @@ const config: Config = {
       xl: "4px",
       "2xl": "4px",
       "3xl": "4px",
-      full: "4px", // Strictly 4px border radius everywhere
+      full: "9999px", // Keep full for circles and pills
     },
     extend: {
       colors: {

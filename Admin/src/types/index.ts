@@ -1,10 +1,19 @@
-export type JobDivision = "private-jobs" | "commercial-jobs";
+export type JobDivision =
+  | "commercial-printing"
+  | "garments-accessories"
+  | "packaging-solutions"
+  | "packaging"
+  | "promotional-products"
+  | "corporate-projects"
+  | "apparel-projects"
+  | "private-jobs"
+  | "commercial-jobs";
 
 export interface ProductItem {
   id: string;
   slug: string;
   name: string;
-  division: JobDivision; // "private-jobs" | "commercial-jobs"
+  division: JobDivision;
   category: string;
   description: string; // rich text HTML
   frontImage: string;
@@ -53,35 +62,47 @@ export interface ContactMessageItem {
 export interface HeroBannerItem {
   id: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   imageUrl: string;
-  altText: string;
-  linkUrl: string;
   order: number;
+  displayOrder?: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface GalleryItemType {
+export type HeroSlideItem = HeroBannerItem;
+
+export interface GalleryMediaItem {
   id: string;
   title: string;
-  category: string;
-  categoryLabel: string;
-  aspect: "square" | "wide" | "tall";
-  image: string;
-  description: string;
-  location: string;
-  meta: string;
-  order: number;
+  caption?: string;
+  mediaUrl: string;
+  mediaType: "image" | "video";
+  category?: string;
+  displayOrder: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface GalleryItemType {
+  _id?: string;
+  id: string;
+  title: string;
+  image: string;
+  imageUrl?: string;
+  mediaUrl?: string;
+  description: string;
+  category?: string;
+  aspect?: string;
+  createdAt?: string;
 }
 
 export interface DashboardStats {
   totalProducts: number;
   privateJobsCount: number;
   commercialJobsCount: number;
+  featuredCount?: number;
   clientPartnersCount: number;
   certificationsCount: number;
   heroSlidesCount: number;
@@ -90,8 +111,10 @@ export interface DashboardStats {
   newQuotationsCount: number;
   inquiriesCount: number;
   newInquiriesCount: number;
-  recentQuotations: QuotationItem[];
-  recentInquiries: ContactMessageItem[];
-  activeHeroSlides: HeroBannerItem[];
-  recentProducts: ProductItem[];
+  recentProducts?: ProductItem[];
+  recentQuotations?: any[];
+  recentInquiries?: any[];
+  activeHeroSlides?: any[];
 }
+
+export type AdminStats = DashboardStats;

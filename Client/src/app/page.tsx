@@ -23,6 +23,10 @@ import {
   Search,
   CheckCircle2,
   Loader2,
+  Printer,
+  Gift,
+  Briefcase,
+  Scissors,
 } from "lucide-react";
 
 // 3 Provided Hero Banners for Sliding Back & Forth
@@ -264,7 +268,7 @@ export default function HomePage() {
           1. HERO SLIDER SECTION (PRESERVES EXACT 3584x1184 RATIO ACROSS ALL SCREENS)
           ================================================================= */}
       <section
-        className="relative pt-14 sm:pt-16 bg-white border-b border-slate-200 overflow-hidden group"
+        className="relative pt-[64px] sm:pt-[68px] lg:pt-[76px] bg-white border-b border-slate-200 overflow-hidden group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -326,143 +330,70 @@ export default function HomePage() {
       </section>
 
       {/* =================================================================
-          2. OUR PRODUCT RANGE (RESTORED TWO SECTIONS: PRIVATE JOBS & COMMERCIAL JOBS)
+          2. OUR PRODUCT RANGE (SINGLE UNIFIED SECTION WITH ONE VIEW ALL)
           ================================================================= */}
-      <section id="product-range" className="py-8 sm:py-10 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {/* Centered Section Header with Accent Lines */}
-          <div className="text-center max-w-2xl mx-auto space-y-1">
-            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-              <span>Our Product Range</span>
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-            </h2>
-            <p className="text-xs text-slate-500 font-normal">
-              A comprehensive range of garment accessories and commercial print solutions for your brand
-            </p>
-          </div>
-
-          {/* Part 1: Private Jobs (Up to 5 Featured Products) */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-[#0066CC] rounded-[2px]" />
-                <h3 className="text-sm sm:text-base font-heading font-black uppercase tracking-wider text-[#0A2540]">
-                  Private Jobs
-                </h3>
-                <span className="text-xs text-slate-400 font-normal hidden sm:inline">
-                  &bull; Apparel Accessories &amp; Packaging
-                </span>
-              </div>
-              <Link
-                href="/services/private-jobs"
-                className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
-              >
-                <span>View All</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
+      <section id="product-range" className="py-10 sm:py-14 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          {/* Single Clean Header with Blue Accent Bars and ONE View All */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+            <div className="space-y-1">
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center gap-3">
+                <span className="w-8 sm:w-12 h-[2px] bg-[#0066CC] inline-block shrink-0" />
+                <span>Our Product Range</span>
+                <span className="w-8 sm:w-12 h-[2px] bg-[#0066CC] inline-block shrink-0" />
+              </h2>
+              <p className="text-xs text-slate-500 font-normal">
+                Authentic apparel accessories and precision commercial print solutions manufactured for export.
+              </p>
             </div>
 
-            {/* 5 Cards for Private Jobs */}
-            {isLoadingFeatured ? (
-              <div className="py-12 bg-white rounded-[4px] border border-slate-200 flex flex-col items-center justify-center space-y-2">
-                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
-                <span className="text-xs font-heading font-medium text-slate-500 uppercase tracking-wider">
-                  Loading Private Jobs...
-                </span>
-              </div>
-            ) : displayPrivate.length === 0 ? (
-              <div className="py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-[4px]">
-                No featured private products selected.
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
-                {displayPrivate.map((item, idx) => (
-                  <Link
-                    key={idx}
-                    href={item.href || `/products/${item.slug || item.id}`}
-                    className="group bg-white rounded-[4px] border border-slate-200 hover:border-[#0066CC] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-sm"
-                  >
-                    <div className="relative w-full aspect-square overflow-hidden bg-slate-100">
-                      <Image
-                        src={item.frontImage || item.image || item.logoUrl}
-                        alt={item.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="220px"
-                      />
-                    </div>
-                    <div className="p-2 sm:p-2.5 text-center bg-white border-t border-slate-100 flex-grow flex items-center justify-center">
-                      <h4 className="text-xs font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-tight">
-                        {item.name}
-                      </h4>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+            <Link
+              href="/work"
+              className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1.5 shrink-0"
+            >
+              <span>View All Products</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
-          {/* Part 2: Commercial Jobs (Up to 5 Featured Products) */}
-          <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-[#0066CC] rounded-[2px]" />
-                <h3 className="text-sm sm:text-base font-heading font-black uppercase tracking-wider text-[#0A2540]">
-                  Commercial Jobs
-                </h3>
-                <span className="text-xs text-slate-400 font-normal hidden sm:inline">
-                  &bull; Commercial Printing &amp; Promotional Products
-                </span>
-              </div>
-              <Link
-                href="/services/commercial-jobs"
-                className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
-              >
-                <span>View All</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
+          {/* Unified 10 Cards Grid */}
+          {isLoadingFeatured ? (
+            <div className="py-16 bg-white rounded-[4px] border border-slate-200 flex flex-col items-center justify-center space-y-2">
+              <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+              <span className="text-xs font-heading font-medium text-slate-500 uppercase tracking-wider">
+                Loading Featured Products...
+              </span>
             </div>
-
-            {/* 5 Cards for Commercial Jobs */}
-            {isLoadingFeatured ? (
-              <div className="py-12 bg-white rounded-[4px] border border-slate-200 flex flex-col items-center justify-center space-y-2">
-                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
-                <span className="text-xs font-heading font-medium text-slate-500 uppercase tracking-wider">
-                  Loading Commercial Jobs...
-                </span>
-              </div>
-            ) : displayCommercial.length === 0 ? (
-              <div className="py-8 text-center text-xs text-slate-400 bg-slate-50 rounded-[4px]">
-                No featured commercial products selected.
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
-                {displayCommercial.map((item, idx) => (
-                  <Link
-                    key={idx}
-                    href={item.href || `/products/${item.slug || item.id}`}
-                    className="group bg-white rounded-[4px] border border-slate-200 hover:border-[#0066CC] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-sm"
-                  >
-                    <div className="relative w-full aspect-square overflow-hidden bg-slate-100">
-                      <Image
-                        src={item.frontImage || item.image || item.logoUrl}
-                        alt={item.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="220px"
-                      />
-                    </div>
-                    <div className="p-2 sm:p-2.5 text-center bg-white border-t border-slate-100 flex-grow flex items-center justify-center">
-                      <h4 className="text-xs font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-tight">
-                        {item.name}
-                      </h4>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          ) : (displayPrivate.length === 0 && displayCommercial.length === 0) ? (
+            <div className="py-10 text-center text-xs text-slate-400 bg-slate-50 rounded-[4px]">
+              No featured products selected.
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+              {[...displayPrivate, ...displayCommercial].slice(0, 10).map((item, idx) => (
+                <Link
+                  key={idx}
+                  href={item.href || `/products/${item.slug || item.id}`}
+                  className="group bg-white rounded-[4px] border border-slate-200 hover:border-[#0066CC] overflow-hidden flex flex-col transition-all duration-200 hover:shadow-sm"
+                >
+                  <div className="relative w-full aspect-square overflow-hidden bg-slate-100">
+                    <Image
+                      src={item.frontImage || item.image || item.logoUrl}
+                      alt={item.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="220px"
+                    />
+                  </div>
+                  <div className="p-2 sm:p-2.5 text-center bg-white border-t border-slate-100 flex-grow flex items-center justify-center">
+                    <h4 className="text-xs font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-tight">
+                      {item.name}
+                    </h4>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -535,115 +466,175 @@ export default function HomePage() {
       </section>
 
       {/* =================================================================
-          4. TWO CORE DIVISIONS (MINIMAL, ACCURATE, ELEGANT)
+          4. 6 CORE VERTICAL DIVISIONS (3 PER ROW, 2 ROWS ON DESKTOP)
           ================================================================= */}
-      <section className="py-8 sm:py-10 bg-slate-50 border-b border-slate-200">
+      <section className="py-12 sm:py-16 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-6 space-y-1">
+          {/* Decluttered Clean Section Header with Blue Accent Bars */}
+          <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
             <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-              <span>Two Core Divisions</span>
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block shrink-0" />
+              <span>Printing, Garments Accessories &amp; Packaging</span>
+              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block shrink-0" />
             </h2>
-            <p className="text-xs text-slate-500 font-normal">
-              Specialized B2B manufacturing and high-precision print solutions tailored to your brand scale.
+            <p className="text-xs sm:text-sm text-slate-500 font-medium">
+              Design &bull; Develop &bull; Produce &bull; Pack &bull; Deliver &bull; ONE PARTNER. MULTIPLE SOLUTIONS.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 items-stretch">
-            {/* Division 01: Private Jobs */}
-            <div className="bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] overflow-hidden flex flex-col justify-between shadow-sm transition-all duration-200">
-              <div>
-                <Link href="/services/private-jobs" className="relative aspect-[16/9] w-full overflow-hidden block bg-slate-100 group">
-                  <Image
-                    src="/images/divisions/private-jobs.jpg"
-                    alt="Private Jobs Apparel Accessories & Packaging"
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </Link>
-
-                <div className="p-5 sm:p-6 space-y-2.5">
-                  <Link href="/services/private-jobs">
-                    <h3 className="text-base sm:text-lg font-heading font-bold uppercase text-[#0A2540] hover:text-[#0066CC] transition-colors">
-                      Apparel Accessories &amp; Packaging
-                    </h3>
-                  </Link>
-                  <p className="text-xs text-[#0066CC] font-heading font-semibold">
-                    &ldquo;One Partner. Multiple Solutions.&rdquo;
-                  </p>
-                  <ul className="space-y-1.5 text-xs text-[#0A2540] pt-2 border-t border-slate-100">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
-                      <span>Labels, Hangtags, Trims &amp; Tapes, Cords &amp; Drawstrings</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
-                      <span>Zippers, Buttons &amp; Buckles, Patches &amp; Badges</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
-                      <span>Poly Bags, Paper Bags, Boxes &amp; Cartons, Tissue Wrapping</span>
-                    </li>
-                  </ul>
+          {/* 6 Beautiful Cards: 3 per row on desktop (2 rows) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* 1. Commercial Printing */}
+            <div className="bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 p-6 group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] flex items-center justify-center font-bold">
+                  <Printer className="w-5 h-5" />
                 </div>
+                <Link href="/work/commercial-printing">
+                  <h3 className="text-base font-heading font-black uppercase text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-snug">
+                    Commercial Printing
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  Business cards, stationery, leaflets, brochures, catalogues, diaries, calendars, posters, banners, and corporate publications.
+                </p>
               </div>
-
-              <div className="p-5 sm:p-6 pt-0">
+              <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
                 <Link
-                  href="/services/private-jobs"
-                  className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
+                  href="/work/commercial-printing"
+                  className="text-xs font-heading font-bold text-[#0066CC] group-hover:underline inline-flex items-center gap-1.5"
                 >
-                  <span>Explore Private Jobs</span>
+                  <span>Explore Products</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             </div>
 
-            {/* Division 02: Commercial Jobs */}
-            <div className="bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] overflow-hidden flex flex-col justify-between shadow-sm transition-all duration-200">
-              <div>
-                <Link href="/services/commercial-jobs" className="relative aspect-[16/9] w-full overflow-hidden block bg-slate-100 group">
-                  <Image
-                    src="/images/divisions/commercial-jobs.jpg"
-                    alt="Commercial Printing & Promotional Products"
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </Link>
-
-                <div className="p-5 sm:p-6 space-y-2.5">
-                  <Link href="/services/commercial-jobs">
-                    <h3 className="text-base sm:text-lg font-heading font-bold uppercase text-[#0A2540] hover:text-[#0066CC] transition-colors">
-                      Commercial Printing &amp; Promotion
-                    </h3>
-                  </Link>
-                  <p className="text-xs text-[#0066CC] font-heading font-semibold">
-                    &ldquo;One Partner. Multiple Print Solutions.&rdquo;
-                  </p>
-                  <ul className="space-y-1.5 text-xs text-[#0A2540] pt-2 border-t border-slate-100">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
-                      <span>Brochures, Catalogues, Leaflets &amp; Flyers</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
-                      <span>Business Cards &amp; Stationery, Diaries &amp; Notebooks</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-3.5 h-3.5 text-[#0066CC] flex-shrink-0" />
-                      <span>Wall &amp; Desk Calendars, Posters, Banners, Rigid Gift Boxes</span>
-                    </li>
-                  </ul>
+            {/* 2. Garments Accessories */}
+            <div className="bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 p-6 group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] flex items-center justify-center font-bold">
+                  <Shirt className="w-5 h-5" />
                 </div>
+                <Link href="/work/garments-accessories">
+                  <h3 className="text-base font-heading font-black uppercase text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-snug">
+                    Garments Accessories
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  Woven labels, hangtags, price tags, barcode stickers, heat transfers, leather &amp; PU patches, drawstrings, and metal buttons.
+                </p>
               </div>
-
-              <div className="p-5 sm:p-6 pt-0">
+              <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
                 <Link
-                  href="/services/commercial-jobs"
-                  className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1"
+                  href="/work/garments-accessories"
+                  className="text-xs font-heading font-bold text-[#0066CC] group-hover:underline inline-flex items-center gap-1.5"
                 >
-                  <span>Explore Commercial Jobs</span>
+                  <span>Explore Accessories</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 3. Packaging */}
+            <div className="bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 p-6 group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] flex items-center justify-center font-bold">
+                  <Package className="w-5 h-5" />
+                </div>
+                <Link href="/work/packaging">
+                  <h3 className="text-base font-heading font-black uppercase text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-snug">
+                    Packaging
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  Kraft paper bags, folding product boxes, luxury rigid gift boxes, printed poly bags, self-adhesive bags, seals, and tissue paper.
+                </p>
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/work/packaging"
+                  className="text-xs font-heading font-bold text-[#0066CC] group-hover:underline inline-flex items-center gap-1.5"
+                >
+                  <span>Explore Packaging</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 4. Promotional Products */}
+            <div className="bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 p-6 group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] flex items-center justify-center font-bold">
+                  <Gift className="w-5 h-5" />
+                </div>
+                <Link href="/work/promotional-products">
+                  <h3 className="text-base font-heading font-black uppercase text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-snug">
+                    Promotional Products
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  Branded corporate pens, customized notebooks, diaries, calendars, ceramic mugs, lanyards, ID cards, t-shirts, caps, and gifts.
+                </p>
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/work/promotional-products"
+                  className="text-xs font-heading font-bold text-[#0066CC] group-hover:underline inline-flex items-center gap-1.5"
+                >
+                  <span>Explore Promotional</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 5. Corporate Projects */}
+            <div className="bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 p-6 group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] flex items-center justify-center font-bold">
+                  <Briefcase className="w-5 h-5" />
+                </div>
+                <Link href="/work/corporate-projects">
+                  <h3 className="text-base font-heading font-black uppercase text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-snug">
+                    Corporate Projects
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  Annual reports &amp; publications, corporate identity suites, presentation folders, press kits, event collateral, and VIP portfolios.
+                </p>
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/work/corporate-projects"
+                  className="text-xs font-heading font-bold text-[#0066CC] group-hover:underline inline-flex items-center gap-1.5"
+                >
+                  <span>Explore Corporate</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 6. Apparel Projects */}
+            <div className="bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl overflow-hidden flex flex-col justify-between shadow-xs hover:shadow-md transition-all duration-200 p-6 group">
+              <div className="space-y-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] flex items-center justify-center font-bold">
+                  <Scissors className="w-5 h-5" />
+                </div>
+                <Link href="/work/apparel-projects">
+                  <h3 className="text-base font-heading font-black uppercase text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-snug">
+                    Apparel Projects
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
+                  Complete denim trim packages, outerwear 3D badges &amp; pullers, sportswear heat transfers, sustainable yarn labels, and poly bags.
+                </p>
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href="/work/apparel-projects"
+                  className="text-xs font-heading font-bold text-[#0066CC] group-hover:underline inline-flex items-center gap-1.5"
+                >
+                  <span>Explore Apparel</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -735,6 +726,17 @@ export default function HomePage() {
                 On-time Delivery Every Time
               </p>
             </div>
+          </div>
+
+          {/* Capabilities Deep-Dive Link */}
+          <div className="mt-6 text-center pt-4 border-t border-blue-100">
+            <Link
+              href="/capabilities"
+              className="inline-flex items-center gap-2 text-xs font-heading font-bold uppercase tracking-wider text-[#0066CC] hover:text-[#0052CC] hover:underline"
+            >
+              <span>Explore All 11 Manufacturing Capabilities &amp; Technical Dielines</span>
+              <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -841,39 +843,6 @@ export default function HomePage() {
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* =================================================================
-          9. "LET'S GROW TOGETHER" BANNER
-          ================================================================= */}
-      <section className="py-6 sm:py-8 bg-gradient-to-r from-[#003B73] via-[#0056B3] to-[#002D59] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 rounded-[4px] bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0 text-white">
-                <Shirt className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-lg sm:text-xl font-heading font-bold text-white tracking-tight">
-                  Let&apos;s Grow Together
-                </h2>
-                <p className="text-slate-200 text-xs font-light mt-0.5">
-                  Partner with Texpart for your garment accessories and sourcing needs.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex-shrink-0">
-              <button
-                onClick={openGeneralQuote}
-                className="bg-white hover:bg-slate-100 text-[#0056B3] px-5 py-2.5 rounded-[4px] font-heading text-xs font-bold inline-flex items-center gap-1.5 shadow-md transition-all"
-              >
-                <span>Contact Us Today</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
         </div>
       </section>
     </div>

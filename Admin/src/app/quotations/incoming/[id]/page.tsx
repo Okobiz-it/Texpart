@@ -320,6 +320,17 @@ export default function IncomingQuotationDetailsPage() {
                     <span className="text-slate-400">Not provided</span>
                   )}
                 </div>
+
+                {inquiry.designation && (
+                  <div className="space-y-1 bg-slate-50/70 p-3 rounded-[4px] border border-slate-100 sm:col-span-2">
+                    <span className="text-[10.5px] font-heading font-bold uppercase tracking-wider text-slate-400 block">
+                      Client Designation / Role
+                    </span>
+                    <span className="font-bold text-[#0A2540] text-sm block">
+                      {inquiry.designation}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -357,7 +368,43 @@ export default function IncomingQuotationDetailsPage() {
                     {inquiry.moqQuantity || "Flexible / Not Specified"}
                   </span>
                 </div>
+
+                {inquiry.requiredDeliveryDate && (
+                  <div className="p-3 rounded-[4px] bg-slate-50/70 border border-slate-100 space-y-1 sm:col-span-2">
+                    <span className="text-[10.5px] font-heading font-bold uppercase tracking-wider text-slate-400 block">
+                      Required Delivery Date
+                    </span>
+                    <span className="font-mono font-bold text-[#0A2540] text-sm block">
+                      {inquiry.requiredDeliveryDate}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {/* Uploaded Artwork / Specification File */}
+              {inquiry.artworkUrl && (
+                <div className="p-4 rounded-[4px] bg-blue-50/60 border border-blue-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-[#0066CC] block">
+                      Client Uploaded Artwork / Specification
+                    </span>
+                    <span className="text-[10.5px] text-slate-500 font-mono">
+                      {inquiry.artworkName || "Specification Attachment"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href={inquiry.artworkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0066CC] hover:bg-blue-700 text-white rounded-[4px] text-xs font-heading font-bold transition-colors shadow-xs"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Open / Download Artwork</span>
+                    </a>
+                  </div>
+                </div>
+              )}
 
               {/* Detailed Notes / Client Request Message */}
               <div className="space-y-1.5 pt-2">

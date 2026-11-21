@@ -10,10 +10,33 @@ import { Loader2 } from "lucide-react";
 function ProductNewContent() {
   const searchParams = useSearchParams();
   const rawDivision = searchParams.get("division");
-  const initialDivision: JobDivision =
-    rawDivision === "commercial-jobs" ? "commercial-jobs" : "private-jobs";
 
-  return <ProductForm initialDivision={initialDivision} />;
+  const validDivisions: JobDivision[] = [
+    "commercial-printing",
+    "garments-accessories",
+    "packaging-solutions",
+    "promotional-products",
+    "corporate-projects",
+    "apparel-projects",
+    "private-jobs",
+    "commercial-jobs",
+  ];
+
+  const initialDivision: JobDivision =
+    rawDivision && validDivisions.includes(rawDivision as JobDivision)
+      ? (rawDivision as JobDivision)
+      : "commercial-printing";
+
+  const isDivisionLocked = Boolean(
+    rawDivision && rawDivision !== "all" && validDivisions.includes(rawDivision as JobDivision)
+  );
+
+  return (
+    <ProductForm
+      initialDivision={initialDivision}
+      isDivisionLocked={isDivisionLocked}
+    />
+  );
 }
 
 export default function NewProductPage() {

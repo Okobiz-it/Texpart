@@ -14,6 +14,7 @@ import {
   Package,
   Layers,
   Sparkles,
+  Lock,
 } from "lucide-react";
 import { ProductItem, JobDivision } from "@/types";
 import { slugify } from "@/lib/slugify";
@@ -22,11 +23,118 @@ import AdminRichTextEditor from "@/components/AdminRichTextEditor";
 
 interface ProductFormProps {
   initialDivision?: JobDivision;
+  isDivisionLocked?: boolean;
   productId?: string;
 }
 
+// Category recommendations per division
+const DIVISION_CATEGORIES: Record<string, string[]> = {
+  "commercial-printing": [
+    "Business Cards & Stationery",
+    "Leaflets & Flyers",
+    "Brochures & Catalogues",
+    "Diaries & Notebooks",
+    "Wall & Desk Calendars",
+    "Posters & Banners",
+    "Stickers & Labels",
+    "Forms, Pads & Office Materials",
+    "Corporate Printing",
+    "Printing & Publication",
+  ],
+  "garments-accessories": [
+    "Woven Labels / Printed Labels / Care Labels / Size Labels",
+    "Hangtags / Price Tags / Barcode Tags & Stickers",
+    "Heat Transfer Labels / Screen Print Labels",
+    "Patches & Badges / Leather & PU Patches / Silicone / Rubber Badges",
+    "Cords & Drawstrings / Twill & Cotton Tapes / Polyester Tapes / Elastic / Hanger Loops",
+    "Buttons & Rivets",
+    "Buckles, Loops & D-Rings",
+    "Neck & Back Boards",
+    "Photo Cards",
+    "Poly Bags",
+    "Other Garment Trims",
+  ],
+  "packaging-solutions": [
+    "Paper Bags",
+    "Printed Boxes",
+    "Product Boxes",
+    "Premium Gift Boxes",
+    "Printed Poly Bags",
+    "Self-Adhesive Bags",
+    "Stickers & Seals",
+    "Tissue Paper",
+    "Packaging Labels",
+    "Retail Packaging",
+    "Garment Packaging",
+    "Customized Packaging",
+  ],
+  "promotional-products": [
+    "Promotional Pens",
+    "Notebooks",
+    "Diaries",
+    "Calendars",
+    "Mugs",
+    "Key Rings",
+    "Lanyards",
+    "ID Cards & Holders",
+    "T-Shirts",
+    "Caps",
+    "Bags",
+    "Event Materials",
+    "Corporate Gifts",
+    "Premium Gift Items",
+    "Customized Promotional Products",
+  ],
+  "corporate-projects": [
+    "Annual Reports & Publications",
+    "Corporate Identity & Stationery",
+    "Presentation Folders & Press Kits",
+    "Event Backdrops & Banners",
+    "Boardroom Portfolios & Folders",
+    "Commemorative Gift Sets",
+  ],
+  "apparel-projects": [
+    "Complete Denim Trim Packages",
+    "Outerwear 3D Badges & Pullers",
+    "Sportswear Stretch Heat Transfers",
+    "Sustainable Recycled Yarn Labels",
+    "Export Barcode & Variable Runs",
+    "Garment Poly Packaging",
+  ],
+  "private-jobs": [
+    "Labels",
+    "Hangtags",
+    "Trims & Tapes",
+    "Cords & Drawstrings",
+    "Zippers",
+    "Buttons & Buckles",
+    "Patches & Badges",
+    "Boxes & Cartons",
+  ],
+  "commercial-jobs": [
+    "Brochures & Catalogues",
+    "Leaflets & Flyers",
+    "Business Cards & Stationery",
+    "Diaries & Notebooks",
+    "Wall & Desk Calendars",
+    "Gift Boxes & Packaging",
+  ],
+};
+
+const DIVISION_LABELS: Record<string, string> = {
+  "commercial-printing": "Commercial Printing",
+  "garments-accessories": "Garments Accessories",
+  "packaging-solutions": "Packaging Solutions",
+  "promotional-products": "Promotional Products",
+  "corporate-projects": "Corporate Projects",
+  "apparel-projects": "Apparel Projects",
+  "private-jobs": "Private Jobs (Apparel Trims)",
+  "commercial-jobs": "Commercial Jobs (Print & Promo)",
+};
+
 export default function ProductForm({
-  initialDivision = "private-jobs",
+  initialDivision = "commercial-printing",
+  isDivisionLocked = false,
   productId,
 }: ProductFormProps) {
   const router = useRouter();
@@ -43,22 +151,30 @@ export default function ProductForm({
   const [frontImage, setFrontImage] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isFeatured, setIsFeatured] = useState(false);
+  const [dbCategories, setDbCategories] = useState<string[]>([]);
+
+  // Keep division in sync with initialDivision
+  useEffect(() => {
+    if (initialDivision) {
+      setDivision(initialDivision);
+    }
+  }, [initialDivision]);
+
+  // Fetch dynamic categories for current division
+  useEffect(() => {
+    fetch(`/api/categories?division=${division}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && Array.isArray(d.categories)) {
+          setDbCategories(d.categories.map((c: any) => c.name));
+        }
+      })
+      .catch(() => {});
+  }, [division]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  // Initial notification of active division for side nav
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.setItem("texpart_active_division", initialDivision);
-        window.dispatchEvent(
-          new CustomEvent("texpart_active_division", { detail: initialDivision })
-        );
-      } catch (_) {}
-    }
-  }, [initialDivision]);
 
   // If in edit mode, fetch product details
   useEffect(() => {
@@ -83,22 +199,13 @@ export default function ProductForm({
           setFrontImage(prod.frontImage || "");
           setImages(prod.images || (prod.frontImage ? [prod.frontImage] : []));
           setIsFeatured(Boolean(prod.isFeatured));
-
-          if (typeof window !== "undefined") {
-            try {
-              sessionStorage.setItem("texpart_active_division", prodDiv);
-              window.dispatchEvent(
-                new CustomEvent("texpart_active_division", { detail: prodDiv })
-              );
-            } catch (_) {}
-          }
         } else {
           setProductNotFound(true);
         }
       })
       .catch((err) => {
         console.error("Failed to load product details", err);
-        if (isMounted) setProductNotFound(true);
+        setProductNotFound(true);
       })
       .finally(() => {
         if (isMounted) setIsLoadingProduct(false);
@@ -109,7 +216,6 @@ export default function ProductForm({
     };
   }, [productId, initialDivision]);
 
-  // Handle product name change and auto-generate slug
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newName = e.target.value;
     setName(newName);
@@ -120,33 +226,28 @@ export default function ProductForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name.trim()) {
-      setErrorMessage("Please enter a product name.");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    if (images.length === 0 && !frontImage) {
-      setErrorMessage("Please upload at least one product image.");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    const finalSlug = slug.trim() ? slugify(slug) : slugify(name);
-    const finalFront = frontImage || images[0] || "";
-
-    setIsSubmitting(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
+    if (!name.trim()) {
+      setErrorMessage("Please enter a product name.");
+      return;
+    }
+
+    if (!frontImage && images.length === 0) {
+      setErrorMessage("Please upload at least one image and select a front cover.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
     const payload = {
       name: name.trim(),
-      slug: finalSlug,
+      slug: slugify(slug || name),
       division,
       category: category.trim() || "General",
       description,
-      frontImage: finalFront,
+      frontImage: frontImage || images[0] || "",
       images,
       isFeatured,
     };
@@ -172,9 +273,8 @@ export default function ProductForm({
           : `Product "${name}" created successfully.`
       );
 
-      // Short delay so the user sees success feedback, then redirect back to catalog
       setTimeout(() => {
-        router.push(`/products/${division}`);
+        router.push(`/products`);
       }, 1200);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to save product to database.");
@@ -184,7 +284,15 @@ export default function ProductForm({
     }
   };
 
-  const backUrl = `/products/${division}`;
+  const staticCategories = DIVISION_CATEGORIES[division] || [];
+  const currentCategorySuggestions = Array.from(new Set([...dbCategories, ...staticCategories]));
+
+  // Automatically select the first child category if not set or when division changes
+  useEffect(() => {
+    if (currentCategorySuggestions.length > 0 && (!category || !currentCategorySuggestions.includes(category))) {
+      setCategory(currentCategorySuggestions[0]);
+    }
+  }, [division, dbCategories]);
 
   if (isLoadingProduct) {
     return (
@@ -227,7 +335,7 @@ export default function ProductForm({
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
             <Link
-              href={backUrl}
+              href="/products"
               className="inline-flex items-center gap-1.5 text-slate-500 hover:text-[#0066CC] transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -247,15 +355,15 @@ export default function ProductForm({
         {/* Top Action Buttons */}
         <div className="flex items-center gap-2.5 flex-shrink-0">
           <Link
-            href={backUrl}
-            className="px-4 py-2 text-xs font-heading font-bold uppercase text-slate-600 hover:text-[#0A2540] border border-slate-200 rounded-[4px] hover:bg-slate-100 transition-colors"
+            href="/products"
+            className="px-4 py-2 text-xs font-heading font-bold uppercase text-slate-600 hover:text-[#0A2540] border border-slate-200 rounded-[4px] hover:bg-slate-50 transition-colors"
           >
             Cancel
           </Link>
 
           {isEditMode && slug && (
             <a
-              href={`http://localhost:3000/products/${slug}`}
+              href={`/products/${slug}`}
               target="_blank"
               rel="noreferrer"
               className="px-3 py-2 text-xs font-heading font-bold text-slate-600 hover:text-[#0066CC] border border-slate-200 rounded-[4px] hover:bg-blue-50/50 inline-flex items-center gap-1.5 transition-colors"
@@ -270,7 +378,7 @@ export default function ProductForm({
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-5 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase rounded-[4px] shadow-sm inline-flex items-center gap-2 transition-colors disabled:opacity-60"
+            className="px-5 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase rounded-[4px] shadow-sm inline-flex items-center gap-2 transition-colors disabled:opacity-60 cursor-pointer"
           >
             {isSubmitting ? (
               <>
@@ -302,28 +410,29 @@ export default function ProductForm({
         </div>
       )}
 
-      {/* Main Form Form Body */}
+      {/* Main Form Body */}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column (2 Cols): Basic Info & Description */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Card 1: Basic Identification */}
+            {/* Card 1: Basic Identification & Division Assignment */}
             <div className="bg-white p-5 sm:p-6 rounded-[4px] border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
                   <Package className="w-4 h-4 text-[#0066CC]" />
                   <h3 className="text-xs font-heading font-black uppercase tracking-wider text-[#0A2540]">
-                    1. Basic Identification
+                    1. Basic Identification &amp; Division
                   </h3>
                 </div>
                 <span className="text-[11px] text-slate-400 font-mono">
-                  General Attributes
+                  Catalog Assignment
                 </span>
               </div>
 
+              {/* Row 1: 1. Product Name & 2. Division (Fixed) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Product Name */}
-                <div className="sm:col-span-1">
+                {/* 1. Product Name */}
+                <div>
                   <label className="block text-xs font-heading font-bold uppercase text-[#0A2540] mb-1.5">
                     Product Name <span className="text-[#0066CC]">*</span>
                   </label>
@@ -332,13 +441,89 @@ export default function ProductForm({
                     required
                     value={name}
                     onChange={handleNameChange}
-                    placeholder="e.g. Boxes & Cartons, Woven Labels"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
+                    placeholder="e.g. Luxury Rigid Gift Box, Damask Woven Label"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] font-medium focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
                   />
                 </div>
 
-                {/* Slug */}
-                <div className="sm:col-span-1">
+                {/* 2. Division (Fixed / Can't Change for every menu) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-heading font-bold uppercase text-[#0A2540]">
+                      Division <span className="text-[#0066CC]">*</span>
+                    </label>
+                    {isDivisionLocked && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">
+                        <Lock className="w-2.5 h-2.5" />
+                        Fixed for this section
+                      </span>
+                    )}
+                  </div>
+
+                  {isDivisionLocked ? (
+                    <div className="w-full px-3.5 py-2.5 bg-slate-100/90 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] font-bold flex items-center justify-between select-none">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-[#0066CC]" />
+                        <span>{DIVISION_LABELS[division] || division}</span>
+                      </div>
+                      <Lock className="w-3.5 h-3.5 text-slate-400" />
+                    </div>
+                  ) : (
+                    <select
+                      value={division}
+                      onChange={(e) => {
+                        const newDiv = e.target.value as JobDivision;
+                        setDivision(newDiv);
+                      }}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] font-semibold focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all cursor-pointer"
+                    >
+                      <option value="commercial-printing">Commercial Printing</option>
+                      <option value="garments-accessories">Garments Accessories</option>
+                      <option value="packaging-solutions">Packaging</option>
+                      <option value="promotional-products">Promotional Products</option>
+                      <option value="corporate-projects">Corporate Projects</option>
+                      <option value="apparel-projects">Apparel Projects</option>
+                      <option value="private-jobs">Private Jobs (Legacy)</option>
+                      <option value="commercial-jobs">Commercial Jobs (Legacy)</option>
+                    </select>
+                  )}
+                </div>
+              </div>
+
+              {/* Row 2: 3. Child Category & 4. Slug */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                {/* 3. Child Category Select */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-heading font-bold uppercase text-[#0A2540]">
+                      Child Category <span className="text-[#0066CC]">*</span>
+                    </label>
+                    <Link
+                      href={`/categories?division=${division}`}
+                      target="_blank"
+                      className="text-[10px] text-[#0066CC] hover:underline font-bold inline-flex items-center gap-0.5"
+                    >
+                      <span>Manage Categories</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </Link>
+                  </div>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] font-semibold focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all cursor-pointer"
+                    required
+                  >
+                    <option value="">Select Child Category...</option>
+                    {currentCategorySuggestions.map((catName) => (
+                      <option key={catName} value={catName}>
+                        {catName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 4. Slug */}
+                <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-heading font-bold uppercase text-[#0A2540]">
                       Slug <span className="text-[#0066CC]">*</span>
@@ -351,12 +536,12 @@ export default function ProductForm({
                     type="text"
                     required
                     value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
+                    onChange={(e) => setSlug(slugify(e.target.value))}
                     placeholder="product-slug"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs font-mono text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] font-mono focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all"
                   />
                   <p className="text-[10px] text-slate-400 mt-1 font-mono">
-                    Live URL: /products/{slug || "slug"}
+                    Live URI: /products/{slug || "slug"}
                   </p>
                 </div>
               </div>
@@ -450,7 +635,13 @@ export default function ProductForm({
                 <div className="flex justify-between">
                   <span className="text-slate-400">Division:</span>
                   <span className="font-bold text-[#0A2540]">
-                    {division === "private-jobs" ? "Private Jobs" : "Commercial Jobs"}
+                    {DIVISION_LABELS[division] || division}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Category:</span>
+                  <span className="font-medium text-[#0A2540]">
+                    {category || "General"}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -461,41 +652,10 @@ export default function ProductForm({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Homepage Featured:</span>
-                  <span
-                    className={`font-bold ${
-                      isFeatured ? "text-amber-600" : "text-slate-400"
-                    }`}
-                  >
+                  <span className={`font-bold ${isFeatured ? "text-amber-600" : "text-slate-400"}`}>
                     {isFeatured ? "Yes (Featured)" : "No"}
                   </span>
                 </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-2.5 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase rounded-[4px] shadow-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Saving to Catalog...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-3.5 h-3.5" />
-                      <span>{isEditMode ? "Update Product" : "Save Product"}</span>
-                    </>
-                  )}
-                </button>
-
-                <Link
-                  href={backUrl}
-                  className="w-full py-2 text-center text-xs font-heading font-bold uppercase text-slate-500 hover:text-slate-800 border border-slate-200 rounded-[4px] hover:bg-slate-50 transition-colors"
-                >
-                  Cancel &amp; Discard
-                </Link>
               </div>
             </div>
           </div>

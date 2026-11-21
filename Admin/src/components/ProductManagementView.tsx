@@ -22,15 +22,20 @@ import {
   LayoutGrid,
   List,
   CheckCircle2,
+  X,
+  Filter,
+  FolderTree,
 } from "lucide-react";
 import { ProductItem, JobDivision } from "@/types";
+import { ADMIN_DIVISIONS } from "@/data/divisions";
 import AdminPagination from "@/components/AdminPagination";
 
 interface ProductManagementViewProps {
-  division: JobDivision;
+  division: JobDivision | "all";
   title: string;
   subtitle: string;
-  icon: "shirt" | "printer";
+  icon?: string;
+  initialCategory?: string;
 }
 
 export default function ProductManagementView({
@@ -38,11 +43,13 @@ export default function ProductManagementView({
   title,
   subtitle,
   icon,
+  initialCategory,
 }: ProductManagementViewProps) {
   const router = useRouter();
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || "");
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 10;
@@ -52,10 +59,19 @@ export default function ProductManagementView({
     text: string;
   } | null>(null);
 
+  // Sync initialCategory when it changes
+  useEffect(() => {
+    if (initialCategory !== undefined) {
+      setSelectedCategory(initialCategory);
+      setCurrentPage(1);
+    }
+  }, [initialCategory]);
+
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/products?division=${division}`);
+      const url = division === "all" ? `/api/products` : `/api/products?division=${division}`;
+      const res = await fetch(url);
       const data = await res.json();
       if (data.success && Array.isArray(data.products)) {
         setProducts(data.products);
@@ -133,18 +149,42 @@ export default function ProductManagementView({
     }
   };
 
+  const [dbCategories, setDbCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/categories?division=${division}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && Array.isArray(d.categories)) {
+          setDbCategories(d.categories.map((c: any) => c.name));
+        }
+      })
+      .catch(() => {});
+  }, [division]);
+
   // Filtered products
+  const currentDivConfig = ADMIN_DIVISIONS.find((d) => d.id === division);
+  const staticCategories = currentDivConfig ? currentDivConfig.items.map((i) => i.name) : [];
+  const divisionCategories = Array.from(new Set([...dbCategories, ...staticCategories]));
+
   const filteredProducts = products.filter((p) => {
     const matchSearch =
       !searchQuery.trim() ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-      p.slug.toLowerCase().includes(searchQuery.toLowerCase().trim());
-    return matchSearch;
+      p.slug.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+      (p.category && p.category.toLowerCase().includes(searchQuery.toLowerCase().trim()));
+
+    const matchCategory =
+      !selectedCategory ||
+      (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase()) ||
+      (p.name && p.name.toLowerCase().includes(selectedCategory.toLowerCase()));
+
+    return matchSearch && matchCategory;
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, selectedCategory]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -170,13 +210,23 @@ export default function ProductManagementView({
           <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
         </div>
 
-        <Link
-          href={`/products/new?division=${division}`}
-          className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase rounded-[4px] inline-flex items-center gap-1.5 shadow-xs transition-colors flex-shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Product</span>
-        </Link>
+        <div className="flex items-center gap-2.5 flex-shrink-0">
+          <Link
+            href={`/categories?division=${division === "all" ? "commercial-printing" : division}`}
+            className="px-3.5 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-heading font-bold rounded-[4px] shadow-xs inline-flex items-center gap-1.5 transition-colors"
+          >
+            <FolderTree className="w-3.5 h-3.5 text-slate-500" />
+            <span>Manage Categories</span>
+          </Link>
+
+          <Link
+            href={`/products/new?division=${division}`}
+            className="px-4 py-2 bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase rounded-[4px] inline-flex items-center gap-1.5 shadow-xs transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Product</span>
+          </Link>
+        </div>
       </div>
 
       {/* Floating Alert / Toast Message */}
@@ -211,6 +261,31 @@ export default function ProductManagementView({
           />
         </div>
 
+        {/* Category Dropdown Filter */}
+        {divisionCategories.length > 0 && (
+          <div className="w-full sm:w-64 flex-shrink-0">
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all cursor-pointer"
+            >
+              <option value="">All Categories ({products.length})</option>
+              {divisionCategories.map((catName) => {
+                const count = products.filter(
+                  (p) =>
+                    p.category?.toLowerCase() === catName.toLowerCase() ||
+                    p.name?.toLowerCase().includes(catName.toLowerCase())
+                ).length;
+                return (
+                  <option key={catName} value={catName}>
+                    {catName} {count > 0 ? `(${count})` : ""}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        )}
+
         {/* View Toggle (Table / Grid) */}
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-[4px] flex-shrink-0">
           <button
@@ -239,6 +314,34 @@ export default function ProductManagementView({
           </button>
         </div>
       </div>
+
+      {/* Active Category Filter Indicator */}
+      {selectedCategory && (
+        <div className="flex items-center gap-2 px-1">
+          <span className="text-xs text-slate-500 font-medium">Filtered by category:</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] bg-blue-50 text-[#0066CC] text-xs font-bold border border-blue-200">
+            <span>{selectedCategory}</span>
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("")}
+              className="p-0.5 hover:bg-blue-100 rounded text-blue-600 hover:text-blue-900 transition-colors"
+              title="Clear category filter"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategory("");
+              setSearchQuery("");
+            }}
+            className="text-xs text-slate-400 hover:text-[#0066CC] underline ml-2"
+          >
+            Reset all filters
+          </button>
+        </div>
+      )}
 
       {/* Main Content: Table or Grid */}
       {viewMode === "table" ? (

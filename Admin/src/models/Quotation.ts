@@ -37,9 +37,13 @@ export interface IQuotation extends Document {
   // Storefront Lead Compatibility
   fullName?: string;
   companyName?: string;
+  designation?: string;
   productName?: string;
   moqQuantity?: string;
   noteContent?: string;
+  requiredDeliveryDate?: string;
+  artworkUrl?: string;
+  artworkName?: string;
   adminNotes?: string;
 
   createdAt: Date;

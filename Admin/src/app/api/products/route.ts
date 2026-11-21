@@ -13,7 +13,43 @@ export async function GET(req: NextRequest) {
 
     const query: any = {};
     if (division) {
-      query.division = division;
+      if (division === "commercial-printing") {
+        query.$or = [
+          { division: "commercial-printing" },
+          { division: "commercial-jobs" },
+        ];
+      } else if (division === "garments-accessories") {
+        query.$or = [
+          { division: "garments-accessories" },
+          { division: "private-jobs" },
+        ];
+      } else if (division === "packaging-solutions" || division === "packaging") {
+        query.$or = [
+          { division: "packaging-solutions" },
+          { division: "packaging" },
+          { category: { $regex: /packaging|box|bag|carton/i } },
+        ];
+      } else if (division === "promotional-products") {
+        query.$or = [
+          { division: "promotional-products" },
+          { category: { $regex: /gift|promotional|calendar|diary/i } },
+        ];
+      } else if (division === "corporate-projects") {
+        query.$or = [
+          { division: "corporate-projects" },
+          { division: "commercial-printing" },
+          { category: { $regex: /corporate|annual|report|folder|stationery/i } },
+        ];
+      } else if (division === "apparel-projects") {
+        query.$or = [
+          { division: "apparel-projects" },
+          { division: "garments-accessories" },
+          { division: "private-jobs" },
+          { category: { $regex: /apparel|denim|patch|zipper|label/i } },
+        ];
+      } else {
+        query.division = division;
+      }
     }
     if (featured === "true") {
       query.isFeatured = true;
@@ -54,18 +90,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check max 5 featured products constraint per division if setting as featured
     if (isFeatured) {
       const currentFeaturedCount = await Product.countDocuments({
         division,
         isFeatured: true,
       });
       if (currentFeaturedCount >= 5) {
-        const divisionTitle =
-          division === "private-jobs" ? "Private Jobs" : "Commercial Jobs";
         return NextResponse.json(
           {
-            error: `Maximum 5 featured products allowed for ${divisionTitle}. Please unfeature an existing ${divisionTitle} product first.`,
+            error: `Maximum 5 featured products allowed for this division. Please unfeature an existing product first.`,
           },
           { status: 400 }
         );
@@ -73,46 +106,37 @@ export async function POST(req: NextRequest) {
     }
 
     let baseSlug = slugify(name);
-    let finalSlug = baseSlug;
+    let uniqueSlug = baseSlug;
     let counter = 1;
-    while (await Product.findOne({ slug: finalSlug })) {
-      finalSlug = `${baseSlug}-${counter++}`;
+    while (await Product.findOne({ slug: uniqueSlug })) {
+      uniqueSlug = `${baseSlug}-${counter}`;
+      counter++;
     }
 
-    const imageList =
-      Array.isArray(images) && images.length > 0
-        ? images
-        : frontImage
-        ? [frontImage]
-        : [];
-    const mainFrontImage = frontImage || imageList[0] || "";
-
-    const newDoc = await Product.create({
-      name,
-      slug: finalSlug,
+    const newProduct = await Product.create({
+      name: name.trim(),
+      slug: uniqueSlug,
       division,
-      category: category || "General",
+      category: category?.trim() || "General",
       description: description || "",
-      frontImage: mainFrontImage,
-      images: imageList,
+      frontImage: frontImage || images?.[0] || "",
+      images: images || [],
       isFeatured: !!isFeatured,
     });
 
     return NextResponse.json(
       {
         success: true,
+        message: "Product created successfully",
         product: {
-          id: newDoc._id.toString(),
-          slug: newDoc.slug,
-          name: newDoc.name,
-          division: newDoc.division,
-          category: newDoc.category,
-          description: newDoc.description,
-          frontImage: newDoc.frontImage,
-          images: newDoc.images,
-          isFeatured: newDoc.isFeatured,
-          createdAt: newDoc.createdAt.toISOString(),
-          updatedAt: newDoc.updatedAt.toISOString(),
+          id: newProduct._id.toString(),
+          slug: newProduct.slug,
+          name: newProduct.name,
+          division: newProduct.division,
+          category: newProduct.category,
+          frontImage: newProduct.frontImage,
+          images: newProduct.images,
+          isFeatured: newProduct.isFeatured,
         },
       },
       { status: 201 }

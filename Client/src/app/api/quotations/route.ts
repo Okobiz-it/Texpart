@@ -12,11 +12,15 @@ export async function POST(req: NextRequest) {
     const {
       fullName,
       companyName,
+      designation,
       email,
       phone,
       productName,
       moqQuantity,
       noteContent,
+      requiredDeliveryDate,
+      artworkUrl,
+      artworkName,
     } = body;
 
     if (!fullName || !companyName || !email || !phone) {
@@ -29,11 +33,15 @@ export async function POST(req: NextRequest) {
     const newQuotation = await Quotation.create({
       fullName,
       companyName,
+      designation: designation || "",
       email,
       phone,
       productName: productName || "General Production",
       moqQuantity: moqQuantity || "5,000 pcs",
       noteContent: noteContent || "",
+      requiredDeliveryDate: requiredDeliveryDate || "",
+      artworkUrl: artworkUrl || "",
+      artworkName: artworkName || "",
       doc_type: "INQUIRY",
       status: "NEW",
     });

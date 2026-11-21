@@ -3,7 +3,13 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IProduct extends Document {
   name: string;
   slug: string;
-  division: "private-jobs" | "commercial-jobs";
+  division:
+    | "commercial-printing"
+    | "garments-accessories"
+    | "packaging-solutions"
+    | "promotional-products"
+    | "private-jobs"
+    | "commercial-jobs";
   category: string;
   description: string;
   frontImage: string;
@@ -20,7 +26,14 @@ const ProductSchema = new Schema<IProduct>(
     division: {
       type: String,
       required: true,
-      enum: ["private-jobs", "commercial-jobs"],
+      enum: [
+        "commercial-printing",
+        "garments-accessories",
+        "packaging-solutions",
+        "promotional-products",
+        "private-jobs",
+        "commercial-jobs",
+      ],
     },
     category: { type: String, default: "General", trim: true },
     description: { type: String, default: "" },

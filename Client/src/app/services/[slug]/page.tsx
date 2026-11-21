@@ -5,6 +5,10 @@ import ServiceDetailClient from "./ServiceDetailClient";
 
 export function generateStaticParams() {
   return [
+    { slug: "commercial-printing" },
+    { slug: "garments-accessories" },
+    { slug: "packaging-solutions" },
+    { slug: "promotional-products" },
     { slug: "private-jobs" },
     { slug: "commercial-jobs" },
   ];
@@ -25,7 +29,7 @@ export function generateMetadata({ params }: ServicePageProps) {
   }
 
   return {
-    title: `${service.title} — Texpart`,
+    title: `${service.title} — Texpart Design & Accessories`,
     description: service.description,
   };
 }
@@ -39,4 +43,3 @@ export default function ServiceDetailPage({ params }: ServicePageProps) {
 
   return <ServiceDetailClient service={service} />;
 }
-

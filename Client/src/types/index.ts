@@ -1,20 +1,36 @@
+export type JobDivision =
+  | "commercial-printing"
+  | "garments-accessories"
+  | "packaging-solutions"
+  | "packaging"
+  | "promotional-products"
+  | "corporate-projects"
+  | "apparel-projects"
+  | "private-jobs"
+  | "commercial-jobs";
+
 export interface Product {
   id: string;
   name: string;
-  collection: string;
-  collectionId: 'accessories' | 'commercial';
+  slug?: string;
+  division?: JobDivision;
+  collection?: string;
+  collectionId?: 'accessories' | 'commercial';
   category: string;
-  brochureRef: string;
+  brochureRef?: string;
   heroBadge?: string;
-  shortDesc: string;
-  fullDesc: string;
-  subItems: string[];
-  materials: string[];
-  finishes: string[];
-  specifications: Record<string, string>;
+  shortDesc?: string;
+  fullDesc?: string;
+  subItems?: string[];
+  materials?: string[];
+  finishes?: string[];
+  specifications?: Record<string, string>;
   image: string;
-  galleryImages: string[];
+  frontImage?: string;
+  images?: string[];
+  galleryImages?: string[];
   featured?: boolean;
+  isFeatured?: boolean;
 }
 
 export type GalleryCategory = 
@@ -36,4 +52,3 @@ export interface GalleryItem {
   location: string;
   meta: string;
 }
-

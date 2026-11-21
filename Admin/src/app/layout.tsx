@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import AdminSidebar from "@/components/AdminSidebar";
 
@@ -32,7 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <body className="flex flex-col lg:flex-row min-h-screen bg-slate-50 text-[#0A2540] font-sans antialiased">
-        <AdminSidebar />
+        <Suspense fallback={<div className="w-64 bg-white border-r border-slate-200 hidden lg:block" />}>
+          <AdminSidebar />
+        </Suspense>
         <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
           {children}
         </main>
