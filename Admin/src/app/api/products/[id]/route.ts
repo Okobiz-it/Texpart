@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Product from "@/models/Product";
 import { slugify } from "@/lib/slugify";
 import mongoose from "mongoose";
+import { deleteMultipleFromCloudinary } from "@/lib/cloudinary";
 
 interface RouteParams {
   params: {
@@ -77,6 +78,19 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
       }
     }
 
+    // If images are being updated, identify any removed images and delete them from Cloudinary
+    if (body.images !== undefined && Array.isArray(existing.images)) {
+      const removedImages = existing.images.filter(
+        (img: string) => !body.images.includes(img)
+      );
+      if (removedImages.length > 0) {
+        // Fire and forget or await Cloudinary deletion of removed images
+        deleteMultipleFromCloudinary(removedImages).catch((err) =>
+          console.warn("Failed to delete removed product images from Cloudinary:", err)
+        );
+      }
+    }
+
     if (body.name && body.name !== existing.name && !body.slug) {
       existing.slug = slugify(body.name);
     }
@@ -124,7 +138,16 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, message: "Product deleted" });
+    // Automatically delete all product images from Cloudinary
+    const imagesToDelete: string[] = [];
+    if (result.frontImage) imagesToDelete.push(result.frontImage);
+    if (Array.isArray(result.images)) imagesToDelete.push(...result.images);
+
+    if (imagesToDelete.length > 0) {
+      await deleteMultipleFromCloudinary(imagesToDelete);
+    }
+
+    return NextResponse.json({ success: true, message: "Product and associated cloud images deleted successfully" });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

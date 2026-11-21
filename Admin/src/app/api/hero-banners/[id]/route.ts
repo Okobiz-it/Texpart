@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import HeroBanner from "@/models/HeroBanner";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function PATCH(
   req: NextRequest,
@@ -62,7 +63,12 @@ export async function DELETE(
       );
     }
 
-    return NextResponse.json({ success: true, message: "Hero banner deleted" });
+    // Automatically delete banner image from Cloudinary
+    if (deleted.imageUrl) {
+      await deleteFromCloudinary(deleted.imageUrl);
+    }
+
+    return NextResponse.json({ success: true, message: "Hero banner and cloud image deleted" });
   } catch (error: any) {
     console.error("DELETE /api/hero-banners/[id] error:", error);
     return NextResponse.json(

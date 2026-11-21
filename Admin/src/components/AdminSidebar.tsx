@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { formatBadgeCount } from "@/lib/formatNumber";
 import {
   LayoutDashboard,
@@ -29,10 +29,23 @@ import {
 
 export default function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [productsOpen, setProductsOpen] = useState(true);
   const [quotationsOpen, setQuotationsOpen] = useState(true);
+
+  const handleLogout = async () => {
+    if (confirm("Are you sure you want to sign out of the Admin Portal?")) {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+        router.push("/login");
+        router.refresh();
+      } catch (err) {
+        window.location.href = "/login";
+      }
+    }
+  };
 
   const [counts, setCounts] = useState<{
     products?: number;
@@ -215,7 +228,7 @@ export default function AdminSidebar() {
           </div>
         </Link>
 
-        {/* 3. Products (Parent Menu with Submenus: Custom Jobs & Commercial Jobs) */}
+        {/* 3. Products (Parent Menu with Submenus: Private Jobs & Commercial Jobs) */}
         <div className="pt-0.5">
           <button
             type="button"
@@ -243,7 +256,7 @@ export default function AdminSidebar() {
 
           {productsOpen && (
             <div className="ml-4 pl-3 border-l-2 border-slate-100 mt-1 space-y-1">
-              {/* Submenu 1: Custom Jobs (Private Jobs) */}
+              {/* Submenu 1: Private Jobs */}
               <Link
                 href="/products/private-jobs"
                 className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] text-[13px] font-medium transition-colors ${
@@ -253,7 +266,7 @@ export default function AdminSidebar() {
                 }`}
               >
                 <Shirt className={`w-4 h-4 ${isPrivateJobs ? "text-white" : "text-slate-400"}`} />
-                <span>Custom Jobs</span>
+                <span>Private Jobs</span>
               </Link>
 
               {/* Submenu 2: Commercial Jobs */}
@@ -440,15 +453,16 @@ export default function AdminSidebar() {
               <span className="font-heading font-bold text-xs text-[#0A2540] truncate block leading-tight">
                 Super Admin
               </span>
-              <span className="text-[11px] text-slate-400 truncate block leading-tight">
-                admin@texpart.com
+              <span className="text-[11px] text-slate-400 truncate block leading-tight font-mono">
+                texpartdesign@gmail.com
               </span>
             </div>
           </div>
           <button
             type="button"
-            title="Sign Out"
-            className="p-1.5 text-slate-400 hover:text-red-600 rounded-[4px] hover:bg-slate-100 transition-colors"
+            onClick={handleLogout}
+            title="Sign Out (Log out of Admin Portal)"
+            className="p-1.5 text-slate-400 hover:text-red-600 rounded-[4px] hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -614,15 +628,21 @@ export default function AdminSidebar() {
 
       {/* Collapsed bottom profile icon */}
       <div className="p-3 border-t border-slate-100 flex items-center justify-center w-full">
-        <div
-          className="w-9 h-9 rounded-[4px] bg-[#0066CC] text-white flex items-center justify-center shadow-xs cursor-pointer"
-          title="Super Admin (admin@texpart.com)"
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="w-9 h-9 rounded-[4px] bg-[#0066CC] hover:bg-red-600 text-white flex items-center justify-center shadow-xs cursor-pointer transition-colors"
+          title="Sign Out: Super Admin (texpartdesign@gmail.com)"
         >
-          <ShieldCheck className="w-4.5 h-4.5" />
-        </div>
+          <LogOut className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
+
+  if (pathname === "/login") {
+    return null;
+  }
 
   return (
     <>

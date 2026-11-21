@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { uploadToCloudinary, deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function POST(req: NextRequest) {
   try {
@@ -49,6 +49,34 @@ export async function POST(req: NextRequest) {
     console.error("Cloudinary upload error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to upload image to Cloudinary" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { url, public_id } = body;
+    const target = url || public_id;
+
+    if (!target) {
+      return NextResponse.json(
+        { error: "No image URL or public_id provided for deletion" },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteFromCloudinary(target);
+    return NextResponse.json({
+      success: result.success,
+      result: result.result,
+      error: result.error,
+    });
+  } catch (error: any) {
+    console.error("Cloudinary delete error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to delete image from Cloudinary" },
       { status: 500 }
     );
   }

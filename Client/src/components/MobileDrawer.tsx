@@ -111,7 +111,7 @@ export default function MobileDrawer() {
                       href="/services/private-jobs"
                       onClick={closeMobileDrawer}
                       className={`block py-1 text-xs tracking-wide uppercase transition-colors ${
-                        pathname === "/services/private-jobs"
+                        pathname.startsWith("/services/private-jobs")
                           ? "text-blue-400 font-bold"
                           : "text-slate-300 hover:text-white"
                       }`}
@@ -122,7 +122,7 @@ export default function MobileDrawer() {
                       href="/services/commercial-jobs"
                       onClick={closeMobileDrawer}
                       className={`block py-1 text-xs tracking-wide uppercase transition-colors ${
-                        pathname === "/services/commercial-jobs"
+                        pathname.startsWith("/services/commercial-jobs")
                           ? "text-blue-400 font-bold"
                           : "text-slate-300 hover:text-white"
                       }`}

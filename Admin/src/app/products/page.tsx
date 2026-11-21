@@ -23,7 +23,7 @@ export default function ProductsPage() {
                 : "border-transparent text-slate-500 hover:text-[#0A2540]"
             }`}
           >
-            Custom Jobs (Apparel Accessories &amp; Packaging)
+            Private Jobs (Apparel Accessories &amp; Packaging)
           </button>
           <button
             type="button"
@@ -42,7 +42,7 @@ export default function ProductsPage() {
       {selectedDivision === "private-jobs" ? (
         <ProductManagementView
           division="private-jobs"
-          title="Custom Jobs (Apparel Accessories & Packaging)"
+          title="Private Jobs (Apparel Accessories & Packaging)"
           subtitle="Create, update, and manage garment trims, labels, zippers, packaging cartons, and accessories."
           icon="shirt"
         />

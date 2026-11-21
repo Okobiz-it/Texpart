@@ -119,18 +119,26 @@ export default function Header() {
                     : "opacity-0 invisible pointer-events-none -translate-y-1"
                 }`}
               >
-                <div className="bg-white border border-slate-200 rounded-[4px] shadow-xl py-2.5 text-sm">
+                <div className="bg-white border border-slate-200 rounded-[4px] shadow-xl py-2 text-sm overflow-hidden">
                   <Link
                     href="/services/private-jobs"
                     onClick={() => setIsServicesOpen(false)}
-                    className="block px-4 py-2.5 hover:bg-slate-50 hover:text-[#0066CC] transition-colors"
+                    className={`block px-4 py-2.5 transition-colors ${
+                      pathname.startsWith("/services/private-jobs")
+                        ? "bg-blue-50 text-[#0066CC] font-bold border-l-[3px] border-[#0066CC]"
+                        : "text-[#0A2540] hover:bg-slate-50 hover:text-[#0066CC]"
+                    }`}
                   >
                     Private Jobs (Apparel Development)
                   </Link>
                   <Link
                     href="/services/commercial-jobs"
                     onClick={() => setIsServicesOpen(false)}
-                    className="block px-4 py-2.5 hover:bg-slate-50 hover:text-[#0066CC] transition-colors"
+                    className={`block px-4 py-2.5 transition-colors ${
+                      pathname.startsWith("/services/commercial-jobs")
+                        ? "bg-blue-50 text-[#0066CC] font-bold border-l-[3px] border-[#0066CC]"
+                        : "text-[#0A2540] hover:bg-slate-50 hover:text-[#0066CC]"
+                    }`}
                   >
                     Commercial Jobs (Printing &amp; Packaging)
                   </Link>

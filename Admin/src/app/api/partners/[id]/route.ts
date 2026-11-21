@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Partner from "@/models/Partner";
 import mongoose from "mongoose";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 interface RouteParams {
   params: {
@@ -20,7 +21,13 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     if (!result) {
       return NextResponse.json({ error: "Partner not found" }, { status: 404 });
     }
-    return NextResponse.json({ success: true, message: "Partner deleted" });
+
+    // Automatically delete logo / certification badge from Cloudinary
+    if (result.logoUrl) {
+      await deleteFromCloudinary(result.logoUrl);
+    }
+
+    return NextResponse.json({ success: true, message: "Partner and cloud logo deleted" });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -407,6 +407,7 @@ export default function ProductForm({
                 frontImage={frontImage}
                 onImagesChange={setImages}
                 onFrontImageChange={setFrontImage}
+                layout="sidebar"
               />
             </div>
 
@@ -449,7 +450,7 @@ export default function ProductForm({
                 <div className="flex justify-between">
                   <span className="text-slate-400">Division:</span>
                   <span className="font-bold text-[#0A2540]">
-                    {division === "private-jobs" ? "Custom Jobs" : "Commercial Jobs"}
+                    {division === "private-jobs" ? "Private Jobs" : "Commercial Jobs"}
                   </span>
                 </div>
                 <div className="flex justify-between">

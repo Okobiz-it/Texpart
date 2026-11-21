@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import GalleryItem from "@/models/GalleryItem";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function PATCH(
   req: NextRequest,
@@ -64,7 +65,12 @@ export async function DELETE(
       );
     }
 
-    return NextResponse.json({ success: true, message: "Gallery item deleted" });
+    // Automatically delete photo from Cloudinary
+    if (deleted.image) {
+      await deleteFromCloudinary(deleted.image);
+    }
+
+    return NextResponse.json({ success: true, message: "Gallery item and cloud image deleted" });
   } catch (error: any) {
     console.error("DELETE /api/gallery/[id] error:", error);
     return NextResponse.json(

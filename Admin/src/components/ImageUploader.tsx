@@ -16,6 +16,7 @@ interface ImageUploaderProps {
   frontImage: string;
   onImagesChange: (images: string[]) => void;
   onFrontImageChange: (url: string) => void;
+  layout?: "sidebar" | "standard";
 }
 
 export default function ImageUploader({
@@ -23,6 +24,7 @@ export default function ImageUploader({
   frontImage,
   onImagesChange,
   onFrontImageChange,
+  layout = "sidebar",
 }: ImageUploaderProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -71,13 +73,26 @@ export default function ImageUploader({
     e.target.value = "";
   };
 
-  const handleRemoveImage = (indexToRemove: number) => {
+  const handleRemoveImage = async (indexToRemove: number) => {
     const removedUrl = images[indexToRemove];
     const updated = images.filter((_, idx) => idx !== indexToRemove);
     onImagesChange(updated);
 
     if (frontImage === removedUrl) {
       onFrontImageChange(updated.length > 0 ? updated[0] : "");
+    }
+
+    // Automatically delete from Cloudinary cloud storage
+    if (removedUrl) {
+      try {
+        await fetch("/api/upload", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: removedUrl }),
+        });
+      } catch (err) {
+        console.warn("Failed to delete removed image from Cloudinary:", err);
+      }
     }
   };
 
@@ -132,25 +147,41 @@ export default function ImageUploader({
 
       {/* Image Gallery with "Select as front" */}
       {images.length > 0 && (
-        <div className="space-y-2 pt-2">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span className="font-medium">
-              Uploaded Images ({images.length}) &mdash; Click &ldquo;Select as front&rdquo; to choose thumbnail:
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center justify-between text-xs text-slate-600 border-b border-slate-100 pb-2">
+            <span className="font-heading font-bold text-[#0A2540] flex items-center gap-1.5">
+              <ImageIcon className="w-3.5 h-3.5 text-[#0066CC]" />
+              Uploaded Images ({images.length})
             </span>
             {frontImage && (
-              <span className="text-[11px] font-mono text-[#0066CC] font-bold">
-                Front Image Selected
+              <span className="text-[11px] font-mono text-[#0066CC] font-bold flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-[4px] border border-blue-100">
+                <CheckCircle className="w-3 h-3 text-[#0066CC]" />
+                Front Selected
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {images.length > 1 && (
+            <p className="text-[11px] text-slate-500">
+              Click &ldquo;Select as front&rdquo; to choose primary catalog thumbnail.
+            </p>
+          )}
+
+          <div
+            className={`grid gap-3.5 ${
+              images.length === 1
+                ? "grid-cols-1 w-full max-w-[320px] mx-auto sm:mx-0"
+                : layout === "sidebar"
+                  ? "grid-cols-2"
+                  : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+            }`}
+          >
             {images.map((imgUrl, idx) => {
               const isFront = frontImage === imgUrl;
               return (
                 <div
                   key={idx}
-                  className={`relative aspect-square w-full bg-white border rounded-[4px] overflow-hidden shadow-sm transition-all group ${
+                  className={`relative aspect-square w-full bg-slate-50 border rounded-[4px] overflow-hidden shadow-sm transition-all group ${
                     isFront
                       ? "border-[#0066CC] ring-2 ring-[#0066CC]/30"
                       : "border-slate-200 hover:border-slate-300"
@@ -161,31 +192,34 @@ export default function ImageUploader({
                     alt={`Product image ${idx + 1}`}
                     fill
                     className="object-cover"
-                    sizes="200px"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 350px"
                   />
 
-                  {/* Front Badge */}
-                  {isFront && (
-                    <div className="absolute top-1.5 left-1.5 bg-[#0066CC] text-white px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-md z-10">
-                      <Star className="w-2.5 h-2.5 fill-current" />
-                      <span>Front</span>
-                    </div>
-                  )}
+                  {/* Top Bar: Front Badge & Remove Button */}
+                  <div className="absolute top-2 inset-x-2 flex items-center justify-between pointer-events-none z-10">
+                    {isFront ? (
+                      <div className="bg-[#0066CC] text-white px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 shadow-md">
+                        <Star className="w-2.5 h-2.5 fill-current" />
+                        <span>Front</span>
+                      </div>
+                    ) : (
+                      <span />
+                    )}
 
-                  {/* Remove Button */}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(idx)}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 rounded-[4px] bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center transition-colors shadow-md z-10 cursor-pointer"
-                    title="Remove image"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(idx)}
+                      className="pointer-events-auto w-6 h-6 rounded-[4px] bg-red-600/90 hover:bg-red-700 text-white flex items-center justify-center transition-all shadow-md cursor-pointer hover:scale-105"
+                      title="Remove image"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
 
                   {/* Bottom Bar: Current Front Badge or Select as Front Button */}
                   <div className="absolute bottom-0 inset-x-0 z-10">
                     {isFront ? (
-                      <div className="py-1 px-1.5 bg-[#0066CC]/95 backdrop-blur-xs text-white text-[10.5px] font-heading font-bold flex items-center justify-center gap-1 shadow-sm">
+                      <div className="py-1.5 px-2 bg-[#0066CC]/95 backdrop-blur-xs text-white text-[10.5px] font-heading font-bold flex items-center justify-center gap-1 shadow-sm">
                         <CheckCircle className="w-3 h-3 text-white" />
                         <span>Current Front</span>
                       </div>
@@ -193,7 +227,7 @@ export default function ImageUploader({
                       <button
                         type="button"
                         onClick={() => handleSelectFront(imgUrl)}
-                        className="w-full py-1 px-1.5 bg-black/60 hover:bg-[#0066CC] backdrop-blur-xs text-white text-[10.5px] font-heading font-bold flex items-center justify-center transition-colors cursor-pointer"
+                        className="w-full py-1.5 px-2 bg-slate-900/80 hover:bg-[#0066CC] backdrop-blur-xs text-white text-[10.5px] font-heading font-bold flex items-center justify-center transition-colors cursor-pointer"
                       >
                         Select as front
                       </button>
