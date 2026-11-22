@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ServiceDetail } from "@/data/services";
 import { PRODUCTS } from "@/data/products";
+import { getCategorySlug, getCategoryNameFromSlug } from "@/data/siteNavigation";
 import ProductCard from "@/components/ProductCard";
 import { useQuote } from "@/context/QuoteContext";
 import {
@@ -31,6 +32,18 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Categories list: built from official sub-items + categories present in products
+  const categoryOptions = React.useMemo(() => {
+    const set = new Set<string>();
+    if (service.categoryItems && service.categoryItems.length > 0) {
+      service.categoryItems.forEach((item) => set.add(item.name));
+    }
+    products.forEach((p) => {
+      if (p.category && p.category !== "General") set.add(p.category);
+    });
+    return ["All", ...Array.from(set)];
+  }, [service.categoryItems, products]);
+
   // Sync category from URL search params on client mount and when URL changes
   useEffect(() => {
     const syncFromUrl = () => {
@@ -38,8 +51,20 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
         const params = new URLSearchParams(window.location.search);
         const cat = params.get("category");
         if (cat) {
-          setSelectedCategory(cat.toLowerCase() === "all" ? "All" : cat);
+          const candidatePool = [
+            ...(service.categoryItems || []),
+            ...categoryOptions.filter((c) => c !== "All"),
+          ];
+          const resolvedName = getCategoryNameFromSlug(cat, candidatePool);
+          setSelectedCategory(resolvedName);
           setCurrentPage(1);
+          // Standardize address bar using slugify
+          const cleanSlug = getCategorySlug(resolvedName);
+          if (cleanSlug === "all") {
+            window.history.replaceState(null, "", window.location.pathname);
+          } else if (cat !== cleanSlug) {
+            window.history.replaceState(null, "", `${window.location.pathname}?category=${cleanSlug}`);
+          }
         } else {
           setSelectedCategory("All");
           setCurrentPage(1);
@@ -50,7 +75,7 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
     syncFromUrl();
     window.addEventListener("popstate", syncFromUrl);
     return () => window.removeEventListener("popstate", syncFromUrl);
-  }, []);
+  }, [service.categoryItems, categoryOptions]);
 
   useEffect(() => {
     let isMounted = true;
@@ -108,17 +133,6 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
     };
   }, [service.slug]);
 
-  // Categories list: built from official sub-items + categories present in products
-  const categoryOptions = React.useMemo(() => {
-    const set = new Set<string>();
-    if (service.categoryItems && service.categoryItems.length > 0) {
-      service.categoryItems.forEach((item) => set.add(item.name));
-    }
-    products.forEach((p) => {
-      if (p.category && p.category !== "General") set.add(p.category);
-    });
-    return ["All", ...Array.from(set)];
-  }, [service.categoryItems, products]);
 
   // Filter products by category and search query
   const filteredProducts = products.filter((p) => {
@@ -159,10 +173,28 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
     }
   };
 
+  const handleCategorySelect = (cat: string) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+    if (typeof window !== "undefined") {
+      const cleanSlug = getCategorySlug(cat);
+      const newUrl =
+        cleanSlug === "all"
+          ? window.location.pathname
+          : `${window.location.pathname}?category=${cleanSlug}`;
+      window.history.replaceState(null, "", newUrl);
+      window.dispatchEvent(new Event("popstate"));
+    }
+  };
+
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategory("All");
     setCurrentPage(1);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", window.location.pathname);
+      window.dispatchEvent(new Event("popstate"));
+    }
   };
 
   return (
@@ -259,10 +291,7 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
                     <button
                       key={cat}
                       type="button"
-                      onClick={() => {
-                        setSelectedCategory(cat);
-                        setCurrentPage(1);
-                      }}
+                      onClick={() => handleCategorySelect(cat)}
                       className={`px-3 py-1.5 rounded-[4px] text-xs font-heading font-semibold transition-all cursor-pointer ${
                         isActive
                           ? "bg-[#0066CC] text-white shadow-xs"

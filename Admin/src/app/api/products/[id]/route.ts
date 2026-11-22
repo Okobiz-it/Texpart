@@ -58,20 +58,16 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Check max 5 featured constraint per division if setting or toggling to featured = true
-    const targetDivision = body.division || existing.division;
+    // Check max 10 featured constraint across all products if setting or toggling to featured = true
     if (body.isFeatured === true && !existing.isFeatured) {
       const currentFeaturedCount = await Product.countDocuments({
-        division: targetDivision,
         isFeatured: true,
         _id: { $ne: existing._id },
       });
-      if (currentFeaturedCount >= 5) {
-        const divisionTitle =
-          targetDivision === "private-jobs" ? "Private Jobs" : "Commercial Jobs";
+      if (currentFeaturedCount >= 10) {
         return NextResponse.json(
           {
-            error: `Maximum 5 featured products allowed for ${divisionTitle}. Please unfeature an existing ${divisionTitle} product first.`,
+            error: "Maximum 10 featured products allowed in total across all products. Please unfeature an existing product first.",
           },
           { status: 400 }
         );

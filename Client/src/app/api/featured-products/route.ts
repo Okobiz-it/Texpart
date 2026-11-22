@@ -8,10 +8,10 @@ export async function GET() {
   try {
     await connectToDatabase();
 
-    const [privateDocs, commercialDocs] = await Promise.all([
-      Product.find({ division: "private-jobs", isFeatured: true }).limit(5).lean(),
-      Product.find({ division: "commercial-jobs", isFeatured: true }).limit(5).lean(),
-    ]);
+    const featuredDocs = await Product.find({ isFeatured: true })
+      .sort({ updatedAt: -1 })
+      .limit(10)
+      .lean();
 
     const formatProduct = (doc: any) => ({
       id: doc.slug || doc._id.toString(),
@@ -28,10 +28,13 @@ export async function GET() {
       href: `/products/${doc.slug || doc._id.toString()}`,
     });
 
+    const featuredProducts = featuredDocs.map(formatProduct);
+
     return NextResponse.json({
       success: true,
-      privateFeatured: privateDocs.map(formatProduct),
-      commercialFeatured: commercialDocs.map(formatProduct),
+      featuredProducts,
+      privateFeatured: featuredProducts.slice(0, 5),
+      commercialFeatured: featuredProducts.slice(5, 10),
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

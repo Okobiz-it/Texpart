@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Product } from "@/types";
 import { useQuote } from "@/context/QuoteContext";
 import ProductCard from "@/components/ProductCard";
+import RichTextContent from "@/components/RichTextContent";
 import {
   ArrowLeft,
   ArrowRight,
@@ -162,16 +163,12 @@ export default function ProductDetailView({
                 </h1>
               </div>
 
-              {/* Pure Text Description (No tables, no tags, no ticks - strictly text) */}
+              {/* Pure Text Description (Formatted Rich HTML or Plain Text) */}
               <div className="py-2 text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-                {product.fullDesc && product.fullDesc.includes("<") ? (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: product.fullDesc }}
-                    className="prose prose-sm max-w-none text-slate-600"
-                  />
-                ) : (
-                  <p>{product.fullDesc || product.shortDesc}</p>
-                )}
+                <RichTextContent
+                  content={product.fullDesc || product.shortDesc}
+                  fallbackText="No description available for this product."
+                />
               </div>
             </div>
 

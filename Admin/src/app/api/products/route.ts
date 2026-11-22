@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
     }
 
     const docs = await Product.find(query).sort({ createdAt: -1 }).lean();
+    const totalFeaturedCount = await Product.countDocuments({ isFeatured: true });
 
     const products = docs.map((doc: any) => ({
       id: doc._id.toString(),
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
       updatedAt: doc.updatedAt?.toISOString?.() || new Date(doc.updatedAt).toISOString(),
     }));
 
-    return NextResponse.json({ success: true, products });
+    return NextResponse.json({ success: true, products, totalFeaturedCount });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -92,13 +93,12 @@ export async function POST(req: NextRequest) {
 
     if (isFeatured) {
       const currentFeaturedCount = await Product.countDocuments({
-        division,
         isFeatured: true,
       });
-      if (currentFeaturedCount >= 5) {
+      if (currentFeaturedCount >= 10) {
         return NextResponse.json(
           {
-            error: `Maximum 5 featured products allowed for this division. Please unfeature an existing product first.`,
+            error: "Maximum 10 featured products allowed in total across all products. Please unfeature an existing product first.",
           },
           { status: 400 }
         );

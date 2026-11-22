@@ -289,10 +289,16 @@ export default function ProductForm({
 
   // Automatically select the first child category if not set or when division changes
   useEffect(() => {
-    if (currentCategorySuggestions.length > 0 && (!category || !currentCategorySuggestions.includes(category))) {
-      setCategory(currentCategorySuggestions[0]);
+    if (isEditMode) {
+      if (!category && currentCategorySuggestions.length > 0) {
+        setCategory(currentCategorySuggestions[0]);
+      }
+    } else {
+      if (currentCategorySuggestions.length > 0 && (!category || !currentCategorySuggestions.includes(category))) {
+        setCategory(currentCategorySuggestions[0]);
+      }
     }
-  }, [division, dbCategories]);
+  }, [division, dbCategories, isEditMode]);
 
   if (isLoadingProduct) {
     return (
@@ -619,7 +625,7 @@ export default function ProductForm({
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 mt-0.5">
-                    Maximum 5 items per division. Highlighted on the Homepage Featured Products grid.
+                    Maximum 10 items in total across all products. Highlighted on the Homepage Featured Products grid.
                   </p>
                 </div>
               </label>

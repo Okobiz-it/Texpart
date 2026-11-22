@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQuote } from "@/context/QuoteContext";
 import { X, Check, ArrowRight, ExternalLink } from "lucide-react";
+import RichTextContent from "@/components/RichTextContent";
 
 export default function ProductDetailsModal() {
   const { isProductModalOpen, closeProductModal, selectedProduct, openQuote } = useQuote();
@@ -122,10 +123,11 @@ export default function ProductDetailsModal() {
           </div>
 
           {/* Detailed Description */}
-          <div className="py-4">
-            <p className="text-sm text-grey-dark leading-relaxed">
-              {selectedProduct.fullDesc || selectedProduct.shortDesc}
-            </p>
+          <div className="py-4 text-sm text-grey-dark leading-relaxed">
+            <RichTextContent
+              content={selectedProduct.fullDesc || selectedProduct.shortDesc}
+              fallbackText="No description available."
+            />
           </div>
 
           {/* Sub-Items from Brochure */}

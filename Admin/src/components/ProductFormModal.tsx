@@ -207,8 +207,14 @@ export default function ProductFormModal({
                   onChange={(e) => setDivision(e.target.value as JobDivision)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-[4px] text-xs text-[#0A2540] focus:bg-white focus:outline-none focus:border-[#0066CC] transition-all cursor-pointer font-medium"
                 >
-                  <option value="private-jobs">Private Jobs (Apparel Development)</option>
-                  <option value="commercial-jobs">Commercial Jobs (Printing &amp; Packaging)</option>
+                  <option value="commercial-printing">Commercial Printing</option>
+                  <option value="garments-accessories">Garments Accessories</option>
+                  <option value="packaging-solutions">Packaging</option>
+                  <option value="promotional-products">Promotional Products</option>
+                  <option value="corporate-projects">Corporate Projects</option>
+                  <option value="apparel-projects">Apparel Projects</option>
+                  <option value="private-jobs">Private Jobs (Legacy)</option>
+                  <option value="commercial-jobs">Commercial Jobs (Legacy)</option>
                 </select>
               </div>
 
@@ -239,7 +245,7 @@ export default function ProductFormModal({
                   <div className="flex items-center gap-1.5">
                     <Star className={`w-4 h-4 ${isFeatured ? "text-amber-500 fill-amber-500" : "text-amber-400"}`} />
                     <span className="text-xs font-heading font-bold text-[#0A2540]">
-                      Feature on Home Page (Maximum 5 items allowed)
+                      Feature on Home Page (Maximum 10 items allowed across all products)
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 mt-0.5">

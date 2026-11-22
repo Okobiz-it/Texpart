@@ -166,6 +166,7 @@ export default function HomePage() {
   const [heroBanners, setHeroBanners] = useState<any[]>(HERO_BANNERS);
   const [privateFeatured, setPrivateFeatured] = useState<any[]>([]);
   const [commercialFeatured, setCommercialFeatured] = useState<any[]>([]);
+  const [featuredList, setFeaturedList] = useState<any[]>([]);
   const [dbClients, setDbClients] = useState<any[]>([]);
   const [dbCertifications, setDbCertifications] = useState<any[]>([]);
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(true);
@@ -191,6 +192,9 @@ export default function HomePage() {
         const featRes = await fetch("/api/featured-products");
         const featData = await featRes.json();
         if (isMounted && featData.success) {
+          if (Array.isArray(featData.featuredProducts)) {
+            setFeaturedList(featData.featuredProducts.slice(0, 10));
+          }
           if (Array.isArray(featData.privateFeatured)) {
             setPrivateFeatured(featData.privateFeatured.slice(0, 5));
           }
@@ -240,6 +244,8 @@ export default function HomePage() {
 
   const displayPrivate = privateFeatured;
   const displayCommercial = commercialFeatured;
+  const displayFeatured =
+    featuredList.length > 0 ? featuredList : [...privateFeatured, ...commercialFeatured];
   const displayClients = dbClients;
   const displayCertifications = dbCertifications;
 
@@ -364,13 +370,13 @@ export default function HomePage() {
                 Loading Featured Products...
               </span>
             </div>
-          ) : (displayPrivate.length === 0 && displayCommercial.length === 0) ? (
+          ) : displayFeatured.length === 0 ? (
             <div className="py-10 text-center text-xs text-slate-400 bg-slate-50 rounded-[4px]">
               No featured products selected.
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
-              {[...displayPrivate, ...displayCommercial].slice(0, 10).map((item, idx) => (
+              {displayFeatured.slice(0, 10).map((item, idx) => (
                 <Link
                   key={idx}
                   href={item.href || `/products/${item.slug || item.id}`}

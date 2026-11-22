@@ -24,6 +24,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import AdminNavbar from "@/components/AdminNavbar";
+import RichTextContent from "@/components/RichTextContent";
 import { format } from "@/lib/date";
 
 export default function IncomingQuotationDetailsPage() {
@@ -411,10 +412,11 @@ export default function IncomingQuotationDetailsPage() {
                 <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-slate-500 block">
                   Client Requirements &amp; Project Description
                 </span>
-                <div className="p-4 rounded-[4px] bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-wrap font-sans">
-                  {inquiry.noteContent || inquiry.comment || inquiry.additional_notes || (
-                    <span className="text-slate-400 italic">No additional custom notes provided by the client.</span>
-                  )}
+                <div className="p-4 rounded-[4px] bg-slate-50 border border-slate-200 text-xs text-slate-700 font-sans">
+                  <RichTextContent
+                    content={inquiry.noteContent || inquiry.comment || inquiry.additional_notes}
+                    fallbackText="No additional custom notes provided by the client."
+                  />
                 </div>
               </div>
             </div>

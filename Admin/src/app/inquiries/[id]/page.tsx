@@ -21,6 +21,7 @@ import {
   Send,
 } from "lucide-react";
 import AdminNavbar from "@/components/AdminNavbar";
+import RichTextContent from "@/components/RichTextContent";
 import { format } from "@/lib/date";
 
 export default function ContactMessageDetailsPage() {
@@ -330,10 +331,11 @@ export default function ContactMessageDetailsPage() {
                 </div>
               </div>
 
-              <div className="p-5 rounded-[4px] bg-slate-50 border border-slate-200 text-[13px] text-slate-800 leading-relaxed whitespace-pre-wrap font-sans">
-                {message.comment || message.message || (
-                  <span className="text-slate-400 italic">No message content.</span>
-                )}
+              <div className="p-5 rounded-[4px] bg-slate-50 border border-slate-200 text-[13px] text-slate-800 font-sans">
+                <RichTextContent
+                  content={message.comment || message.message}
+                  fallbackText="No message content."
+                />
               </div>
             </div>
           </div>

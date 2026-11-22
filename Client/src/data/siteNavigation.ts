@@ -1,3 +1,5 @@
+import { slugify } from "@/lib/slugify";
+
 export interface DropdownItem {
   name: string;
   slug: string;
@@ -35,68 +37,75 @@ export const BRAND_INFO = {
   },
 };
 
+// Helper that automatically creates clean URL slugs for any category name using slugify
+export const makeCategoryItem = (name: string, description?: string): DropdownItem => ({
+  name,
+  slug: slugify(name),
+  description,
+});
+
 // 1. COMMERCIAL PRINTING (10 items)
 export const COMMERCIAL_PRINTING_ITEMS: DropdownItem[] = [
-  { name: "Business Cards & Stationery", slug: "business-cards-stationery" },
-  { name: "Leaflets & Flyers", slug: "leaflets-flyers" },
-  { name: "Brochures & Catalogues", slug: "brochures-catalogues" },
-  { name: "Diaries & Notebooks", slug: "diaries-notebooks" },
-  { name: "Wall & Desk Calendars", slug: "wall-desk-calendars" },
-  { name: "Posters & Banners", slug: "posters-banners" },
-  { name: "Stickers & Labels", slug: "stickers-labels" },
-  { name: "Forms, Pads & Office Materials", slug: "forms-pads-office-materials" },
-  { name: "Corporate Printing", slug: "corporate-printing" },
-  { name: "Printing & Publication", slug: "printing-publication" },
+  makeCategoryItem("Business Cards & Stationery"),
+  makeCategoryItem("Leaflets & Flyers"),
+  makeCategoryItem("Brochures & Catalogues"),
+  makeCategoryItem("Diaries & Notebooks"),
+  makeCategoryItem("Wall & Desk Calendars"),
+  makeCategoryItem("Posters & Banners"),
+  makeCategoryItem("Stickers & Labels"),
+  makeCategoryItem("Forms, Pads & Office Materials"),
+  makeCategoryItem("Corporate Printing"),
+  makeCategoryItem("Printing & Publication"),
 ];
 
 // 2. GARMENTS ACCESSORIES (11 items)
 export const GARMENTS_ACCESSORIES_ITEMS: DropdownItem[] = [
-  { name: "Woven Labels / Printed Labels / Care Labels / Size Labels", slug: "woven-printed-care-size-labels" },
-  { name: "Hangtags / Price Tags / Barcode Tags & Stickers", slug: "hangtags-price-barcode-tags" },
-  { name: "Heat Transfer Labels / Screen Print Labels", slug: "heat-transfer-screen-print-labels" },
-  { name: "Patches & Badges / Leather & PU Patches / Silicone / Rubber Badges", slug: "patches-leather-pu-silicone-badges" },
-  { name: "Cords & Drawstrings / Twill & Cotton Tapes / Polyester Tapes / Elastic / Hanger Loops", slug: "cords-drawstrings-tapes-elastics" },
-  { name: "Buttons & Rivets", slug: "buttons-rivets" },
-  { name: "Buckles, Loops & D-Rings", slug: "buckles-loops-d-rings" },
-  { name: "Neck & Back Boards", slug: "neck-back-boards" },
-  { name: "Photo Cards", slug: "photo-cards" },
-  { name: "Poly Bags", slug: "poly-bags-garments" },
-  { name: "Other Garment Trims", slug: "other-garment-trims" },
+  makeCategoryItem("Woven Labels / Printed Labels / Care Labels / Size Labels"),
+  makeCategoryItem("Hangtags / Price Tags / Barcode Tags & Stickers"),
+  makeCategoryItem("Heat Transfer Labels / Screen Print Labels"),
+  makeCategoryItem("Patches & Badges / Leather & PU Patches / Silicone / Rubber Badges"),
+  makeCategoryItem("Cords & Drawstrings / Twill & Cotton Tapes / Polyester Tapes / Elastic / Hanger Loops"),
+  makeCategoryItem("Buttons & Rivets"),
+  makeCategoryItem("Buckles, Loops & D-Rings"),
+  makeCategoryItem("Neck & Back Boards"),
+  makeCategoryItem("Photo Cards"),
+  makeCategoryItem("Poly Bags"),
+  makeCategoryItem("Other Garment Trims"),
 ];
 
 // 3. PACKAGING SOLUTIONS (12 items)
 export const PACKAGING_SOLUTIONS_ITEMS: DropdownItem[] = [
-  { name: "Paper Bags", slug: "paper-bags" },
-  { name: "Printed Boxes", slug: "printed-boxes" },
-  { name: "Product Boxes", slug: "product-boxes" },
-  { name: "Premium Gift Boxes", slug: "premium-gift-boxes" },
-  { name: "Printed Poly Bags", slug: "printed-poly-bags" },
-  { name: "Self-Adhesive Bags", slug: "self-adhesive-bags" },
-  { name: "Stickers & Seals", slug: "stickers-seals" },
-  { name: "Tissue Paper", slug: "tissue-paper" },
-  { name: "Packaging Labels", slug: "packaging-labels" },
-  { name: "Retail Packaging", slug: "retail-packaging" },
-  { name: "Garment Packaging", slug: "garment-packaging" },
-  { name: "Customized Packaging", slug: "customized-packaging" },
+  makeCategoryItem("Paper Bags"),
+  makeCategoryItem("Printed Boxes"),
+  makeCategoryItem("Product Boxes"),
+  makeCategoryItem("Premium Gift Boxes"),
+  makeCategoryItem("Printed Poly Bags"),
+  makeCategoryItem("Self-Adhesive Bags"),
+  makeCategoryItem("Stickers & Seals"),
+  makeCategoryItem("Tissue Paper"),
+  makeCategoryItem("Packaging Labels"),
+  makeCategoryItem("Retail Packaging"),
+  makeCategoryItem("Garment Packaging"),
+  makeCategoryItem("Customized Packaging"),
 ];
 
 // 4. PROMOTIONAL PRODUCTS (15 items)
 export const PROMOTIONAL_PRODUCTS_ITEMS: DropdownItem[] = [
-  { name: "Promotional Pens", slug: "promotional-pens" },
-  { name: "Notebooks", slug: "promotional-notebooks" },
-  { name: "Diaries", slug: "promotional-diaries" },
-  { name: "Calendars", slug: "promotional-calendars" },
-  { name: "Mugs", slug: "promotional-mugs" },
-  { name: "Key Rings", slug: "key-rings" },
-  { name: "Lanyards", slug: "lanyards" },
-  { name: "ID Cards & Holders", slug: "id-cards-holders" },
-  { name: "T-Shirts", slug: "promotional-t-shirts" },
-  { name: "Caps", slug: "caps" },
-  { name: "Bags", slug: "promotional-bags" },
-  { name: "Event Materials", slug: "event-materials" },
-  { name: "Corporate Gifts", slug: "corporate-gifts" },
-  { name: "Premium Gift Items", slug: "premium-gift-items" },
-  { name: "Customized Promotional Products", slug: "customized-promotional-products" },
+  makeCategoryItem("Promotional Pens"),
+  makeCategoryItem("Notebooks"),
+  makeCategoryItem("Diaries"),
+  makeCategoryItem("Calendars"),
+  makeCategoryItem("Mugs"),
+  makeCategoryItem("Key Rings"),
+  makeCategoryItem("Lanyards"),
+  makeCategoryItem("ID Cards & Holders"),
+  makeCategoryItem("T-Shirts"),
+  makeCategoryItem("Caps"),
+  makeCategoryItem("Bags"),
+  makeCategoryItem("Event Materials"),
+  makeCategoryItem("Corporate Gifts"),
+  makeCategoryItem("Premium Gift Items"),
+  makeCategoryItem("Customized Promotional Products"),
 ];
 
 // 4 Core Divisions Under Services
@@ -164,21 +173,21 @@ export const CAPABILITIES_ITEMS: DropdownItem[] = [
 
 // 6. OUR WORK (6 categories)
 export const CORPORATE_PROJECTS_ITEMS: DropdownItem[] = [
-  { name: "Annual Reports & Publications", slug: "annual-reports-publications" },
-  { name: "Corporate Identity & Stationery", slug: "corporate-identity-stationery" },
-  { name: "Presentation Folders & Press Kits", slug: "presentation-folders-press-kits" },
-  { name: "Event Backdrops & Banners", slug: "event-backdrops-banners" },
-  { name: "Boardroom Portfolios & Folders", slug: "boardroom-portfolios-folders" },
-  { name: "Commemorative Gift Sets", slug: "commemorative-gift-sets" },
+  makeCategoryItem("Annual Reports & Publications"),
+  makeCategoryItem("Corporate Identity & Stationery"),
+  makeCategoryItem("Presentation Folders & Press Kits"),
+  makeCategoryItem("Event Backdrops & Banners"),
+  makeCategoryItem("Boardroom Portfolios & Folders"),
+  makeCategoryItem("Commemorative Gift Sets"),
 ];
 
 export const APPAREL_PROJECTS_ITEMS: DropdownItem[] = [
-  { name: "Complete Denim Trim Packages", slug: "complete-denim-trim-packages" },
-  { name: "Outerwear 3D Badges & Pullers", slug: "outerwear-badges-pullers" },
-  { name: "Sportswear Stretch Heat Transfers", slug: "sportswear-stretch-heat-transfers" },
-  { name: "Sustainable Recycled Yarn Labels", slug: "sustainable-recycled-yarn-labels" },
-  { name: "Export Barcode & Variable Runs", slug: "export-barcode-variable-runs" },
-  { name: "Garment Poly Packaging", slug: "garment-poly-packaging" },
+  makeCategoryItem("Complete Denim Trim Packages"),
+  makeCategoryItem("Outerwear 3D Badges & Pullers"),
+  makeCategoryItem("Sportswear Stretch Heat Transfers"),
+  makeCategoryItem("Sustainable Recycled Yarn Labels"),
+  makeCategoryItem("Export Barcode & Variable Runs"),
+  makeCategoryItem("Garment Poly Packaging"),
 ];
 
 export const OUR_WORK_ITEMS: DropdownItem[] = [
@@ -263,3 +272,71 @@ export const OUR_WORK_VERTICALS: WorkVertical[] = [
     items: APPAREL_PROJECTS_ITEMS,
   },
 ];
+
+// All category items aggregated for universal slug <-> name resolution
+export const ALL_CATEGORY_ITEMS: DropdownItem[] = [
+  ...COMMERCIAL_PRINTING_ITEMS,
+  ...GARMENTS_ACCESSORIES_ITEMS,
+  ...PACKAGING_SOLUTIONS_ITEMS,
+  ...PROMOTIONAL_PRODUCTS_ITEMS,
+  ...CORPORATE_PROJECTS_ITEMS,
+  ...APPAREL_PROJECTS_ITEMS,
+];
+
+/**
+ * Automatically creates a clean, URL-friendly slug for any category name using slugify.
+ * E.g. "Printed Poly Bags" -> "printed-poly-bags"
+ */
+export function getCategorySlug(categoryName: string): string {
+  if (!categoryName || categoryName.trim().toLowerCase() === "all") return "all";
+  return slugify(categoryName);
+}
+
+/**
+ * Resolves a category slug (or legacy name) back to its human-readable display name.
+ * E.g. "printed-poly-bags" -> "Printed Poly Bags"
+ */
+export function getCategoryNameFromSlug(
+  slugOrName: string,
+  items?: (DropdownItem | string)[]
+): string {
+  if (!slugOrName || slugOrName.trim().toLowerCase() === "all") return "All";
+  const target = slugOrName.trim().toLowerCase();
+
+  const searchPool = (items && items.length > 0 ? items : ALL_CATEGORY_ITEMS).map((entry) =>
+    typeof entry === "string" ? { name: entry, slug: slugify(entry) } : entry
+  );
+
+  // 1. Direct match with slugify(item.name)
+  const matchSlugify = searchPool.find((item) => slugify(item.name) === target);
+  if (matchSlugify) return matchSlugify.name;
+
+  // 2. Direct slug property match
+  const matchSlug = searchPool.find((item) => item.slug && item.slug.toLowerCase() === target);
+  if (matchSlug) return matchSlug.name;
+
+  // 3. Fallback search across ALL_CATEGORY_ITEMS if scoped
+  if (items && items.length > 0) {
+    const allMatchSlugify = ALL_CATEGORY_ITEMS.find((item) => slugify(item.name) === target);
+    if (allMatchSlugify) return allMatchSlugify.name;
+
+    const allMatchSlug = ALL_CATEGORY_ITEMS.find((item) => item.slug && item.slug.toLowerCase() === target);
+    if (allMatchSlug) return allMatchSlug.name;
+  }
+
+  // 4. Decoded or direct name match (legacy fallback)
+  let decoded = target;
+  try {
+    decoded = decodeURIComponent(slugOrName).trim().toLowerCase();
+  } catch {
+    // ignore
+  }
+  const matchName = searchPool.find((item) => item.name.toLowerCase() === decoded);
+  if (matchName) return matchName.name;
+
+  const allMatchName = ALL_CATEGORY_ITEMS.find((item) => item.name.toLowerCase() === decoded);
+  if (allMatchName) return allMatchName.name;
+
+  return decodeURIComponent(slugOrName);
+}
+

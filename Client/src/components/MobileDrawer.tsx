@@ -166,7 +166,7 @@ export default function MobileDrawer() {
                               {vertical.items.map((item) => (
                                 <Link
                                   key={item.slug}
-                                  href={`${vertical.href}?category=${encodeURIComponent(item.name)}`}
+                                  href={`${vertical.href}?category=${item.slug}`}
                                   onClick={closeMobileDrawer}
                                   className="block py-0.5 text-[11px] text-slate-300 hover:text-blue-400 transition-colors truncate"
                                 >

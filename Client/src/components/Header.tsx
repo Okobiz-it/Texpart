@@ -22,20 +22,32 @@ import {
   FileText,
   Tag,
   Calendar,
+  Check,
 } from "lucide-react";
 import {
   BRAND_INFO,
   OUR_WORK_VERTICALS,
+  getCategorySlug,
+  getCategoryNameFromSlug,
 } from "@/data/siteNavigation";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isWorkMenuOpen, setIsWorkMenuOpen] = useState(false);
   const [selectedWorkId, setSelectedWorkId] = useState<string>("commercial-printing");
+  const [activeCategoryParam, setActiveCategoryParam] = useState<string>("");
   const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const pathname = usePathname();
   const { openGeneralQuote, openMobileDrawer } = useQuote();
+
+  // Helper to read category param directly from window.location
+  const syncFromUrl = () => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      setActiveCategoryParam(params.get("category") || "");
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,13 +58,42 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdown on route change
+  // Sync category & auto-align division on route changes
   useEffect(() => {
     setIsWorkMenuOpen(false);
+    syncFromUrl();
+
+    const matchedVertical = OUR_WORK_VERTICALS.find(
+      (v) =>
+        pathname === v.href ||
+        pathname.startsWith(v.href) ||
+        pathname === `/work/${v.id}` ||
+        pathname === `/services/${v.id}`
+    );
+    if (matchedVertical) {
+      setSelectedWorkId(matchedVertical.id);
+    }
+
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
   }, [pathname]);
 
   const handleWorkMenuEnter = () => {
     if (dropdownTimerRef.current) clearTimeout(dropdownTimerRef.current);
+    syncFromUrl();
+
+    // Align division with current route if visiting one
+    const matchedVertical = OUR_WORK_VERTICALS.find(
+      (v) =>
+        pathname === v.href ||
+        pathname.startsWith(v.href) ||
+        pathname === `/work/${v.id}` ||
+        pathname === `/services/${v.id}`
+    );
+    if (matchedVertical) {
+      setSelectedWorkId(matchedVertical.id);
+    }
+
     setIsWorkMenuOpen(true);
   };
 
@@ -71,6 +112,26 @@ export default function Header() {
   // Selected vertical in OUR WORK mega menu
   const currentWorkVertical =
     OUR_WORK_VERTICALS.find((v) => v.id === selectedWorkId) || OUR_WORK_VERTICALS[0];
+
+  const isCurrentVerticalActive = Boolean(
+    pathname === currentWorkVertical.href ||
+    pathname.startsWith(currentWorkVertical.href) ||
+    pathname === `/work/${currentWorkVertical.id}` ||
+    pathname === `/services/${currentWorkVertical.id}`
+  );
+
+  const isItemSelected = (item: { name: string; slug: string }) => {
+    if (!isCurrentVerticalActive || !activeCategoryParam) return false;
+    const cleanParam = activeCategoryParam.trim().toLowerCase();
+    if (cleanParam === "all") return false;
+    if (cleanParam === item.slug.toLowerCase()) return true;
+    const itemSlug = getCategorySlug(item.name);
+    if (cleanParam === itemSlug) return true;
+    const resolvedFromParam = getCategoryNameFromSlug(cleanParam, currentWorkVertical.items).toLowerCase();
+    if (resolvedFromParam === item.name.toLowerCase()) return true;
+    if (cleanParam === item.name.toLowerCase()) return true;
+    return false;
+  };
 
   const getWorkIcon = (iconName: string, className = "w-4.5 h-4.5") => {
     switch (iconName) {
@@ -285,6 +346,7 @@ export default function Header() {
                     <button
                       key={vertical.id}
                       type="button"
+                      onMouseEnter={() => setSelectedWorkId(vertical.id)}
                       onClick={() => setSelectedWorkId(vertical.id)}
                       className={`w-full text-left rounded-xl p-3 transition-all duration-150 flex items-center gap-3 cursor-pointer ${
                         isSelected
@@ -327,34 +389,61 @@ export default function Header() {
                     </span>
 
                     <Link
-                      href={`${currentWorkVertical.href}?category=All`}
+                      href={currentWorkVertical.href}
                       onClick={() => setIsWorkMenuOpen(false)}
-                      className="text-xs font-heading font-bold text-[#0066CC] hover:underline inline-flex items-center gap-1 shrink-0"
+                      className={`text-xs font-heading font-bold inline-flex items-center gap-1 shrink-0 transition-colors ${
+                        isCurrentVerticalActive && (!activeCategoryParam || activeCategoryParam.toLowerCase() === "all")
+                          ? "text-[#0066CC] underline bg-blue-50/80 px-2 py-0.5 rounded"
+                          : "text-[#0066CC] hover:underline"
+                      }`}
                     >
                       <span>View All Products</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
 
-                  {/* Subcategories Grid with Sleek, Refined Indicators & Larger Text */}
+                  {/* Subcategories Grid with Clear Active & Hover Distinction */}
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                    {currentWorkVertical.items.map((item) => (
-                      <Link
-                        key={item.slug}
-                        href={`${currentWorkVertical.href}?category=${encodeURIComponent(
-                          item.name
-                        )}`}
-                        onClick={() => setIsWorkMenuOpen(false)}
-                        className="group flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-blue-50/70 transition-all"
-                      >
-                        <div className="w-6 h-6 rounded-full bg-blue-50 text-[#0066CC] group-hover:bg-[#0066CC] group-hover:text-white flex items-center justify-center shrink-0 transition-all duration-200 shadow-2xs">
-                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                        </div>
-                        <span className="font-semibold text-[#0A2540] group-hover:text-[#0066CC] transition-colors truncate text-[13.5px] sm:text-[14px] leading-snug">
-                          {item.name}
-                        </span>
-                      </Link>
-                    ))}
+                    {currentWorkVertical.items.map((item) => {
+                      const isSelected = isItemSelected(item);
+                      return (
+                        <Link
+                          key={item.slug}
+                          href={`${currentWorkVertical.href}?category=${getCategorySlug(item.name)}`}
+                          onClick={() => setIsWorkMenuOpen(false)}
+                          className={`group flex items-center justify-between gap-2.5 py-2 px-3 rounded-lg transition-all ${
+                            isSelected
+                              ? "bg-blue-50/90 border border-blue-200/90 text-[#0066CC] font-bold shadow-2xs hover:bg-blue-100/70"
+                              : "hover:bg-slate-50/90 text-slate-700 hover:text-[#0066CC] border border-transparent"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 shadow-2xs ${
+                                isSelected
+                                  ? "bg-[#0066CC] text-white"
+                                  : "bg-blue-50 text-[#0066CC] group-hover:bg-[#0066CC] group-hover:text-white"
+                              }`}
+                            >
+                              {isSelected ? (
+                                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                              ) : (
+                                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                              )}
+                            </div>
+                            <span
+                              className={`truncate text-[13.5px] sm:text-[14px] leading-snug transition-colors ${
+                                isSelected
+                                  ? "text-[#0066CC] font-bold"
+                                  : "text-[#0A2540] font-semibold group-hover:text-[#0066CC]"
+                              }`}
+                            >
+                              {item.name}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
 

@@ -47,6 +47,7 @@ export default function ProductManagementView({
 }: ProductManagementViewProps) {
   const router = useRouter();
   const [products, setProducts] = useState<ProductItem[]>([]);
+  const [totalFeaturedCount, setTotalFeaturedCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || "");
@@ -75,6 +76,11 @@ export default function ProductManagementView({
       const data = await res.json();
       if (data.success && Array.isArray(data.products)) {
         setProducts(data.products);
+        if (typeof data.totalFeaturedCount === "number") {
+          setTotalFeaturedCount(data.totalFeaturedCount);
+        } else {
+          setTotalFeaturedCount(data.products.filter((p: any) => p.isFeatured).length);
+        }
       }
     } catch (err) {
       console.error("Failed to load products", err);
@@ -87,8 +93,8 @@ export default function ProductManagementView({
     fetchProducts();
   }, [division]);
 
-  // Featured count for this division
-  const featuredCount = products.filter((p) => p.isFeatured).length;
+  // Featured count across all products
+  const featuredCount = totalFeaturedCount;
 
   const handleToggleFeatured = async (prod: ProductItem) => {
     setTogglingId(prod.id);
@@ -107,7 +113,7 @@ export default function ProductManagementView({
           type: "error",
           text:
             data.error ||
-            "Maximum 5 featured products allowed for this division. Unfeature another product first.",
+            "Maximum 10 featured products allowed in total across all products. Unfeature another product first.",
         });
         setTimeout(() => setFeedbackMessage(null), 5000);
       } else {
@@ -204,7 +210,7 @@ export default function ProductManagementView({
             </h1>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-[10px] font-mono font-bold uppercase bg-amber-50 text-amber-800 border border-amber-200">
               <Star className="w-2.5 h-2.5 text-amber-500 fill-amber-500" />
-              Featured: {featuredCount}/5
+              Featured: {featuredCount}/10
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
@@ -366,7 +372,7 @@ export default function ProductManagementView({
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-heading uppercase text-[11px] tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Product Name &amp; Cover</th>
-                  <th className="px-4 py-3 text-center">Home Featured (Max 5)</th>
+                  <th className="px-4 py-3 text-center">Home Featured (Max 10)</th>
                   <th className="px-4 py-3">Images</th>
                   <th className="px-4 py-3">Slug Preview</th>
                   <th className="px-4 py-3 text-right">Actions</th>
@@ -449,7 +455,7 @@ export default function ProductManagementView({
                             title={
                               prod.isFeatured
                                 ? "Click to remove from Home Featured"
-                                : "Click to feature on Home Page (Max 5 allowed)"
+                                : "Click to feature on Home Page (Max 10 allowed)"
                             }
                           >
                             {isToggling ? (
@@ -579,6 +585,11 @@ export default function ProductManagementView({
                     e.stopPropagation();
                     handleToggleFeatured(prod);
                   }}
+                  title={
+                    prod.isFeatured
+                      ? "Click to remove from Home Featured"
+                      : "Click to feature on Home Page (Max 10 allowed)"
+                  }
                   className={`text-[10px] font-heading font-bold px-2 py-1 rounded-[4px] transition-colors ${
                     prod.isFeatured
                       ? "bg-amber-50 text-amber-700 border border-amber-200"
