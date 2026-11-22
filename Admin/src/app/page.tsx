@@ -31,6 +31,52 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Storefront Section Visibility Settings State
+  const [sectionSettings, setSectionSettings] = useState<{
+    show_certifications_section: boolean;
+    show_clients_section: boolean;
+  }>({
+    show_certifications_section: true,
+    show_clients_section: true,
+  });
+  const [isUpdatingSetting, setIsUpdatingSetting] = useState(false);
+
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch("/api/settings");
+      const data = await res.json();
+      if (data.success && data.settings) {
+        setSectionSettings({
+          show_certifications_section: data.settings.show_certifications_section ?? true,
+          show_clients_section: data.settings.show_clients_section ?? true,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to load settings in dashboard", err);
+    }
+  };
+
+  const handleToggleSetting = async (key: "show_certifications_section" | "show_clients_section") => {
+    const nextVal = !sectionSettings[key];
+    setSectionSettings((prev) => ({ ...prev, [key]: nextVal }));
+    setIsUpdatingSetting(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [key]: nextVal }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setSectionSettings((prev) => ({ ...prev, [key]: !nextVal }));
+      }
+    } catch (err) {
+      setSectionSettings((prev) => ({ ...prev, [key]: !nextVal }));
+    } finally {
+      setIsUpdatingSetting(false);
+    }
+  };
+
   const fetchStats = async () => {
     try {
       const res = await fetch("/api/stats");
@@ -78,6 +124,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchStats();
+    fetchSettings();
   }, []);
 
   return (
@@ -141,6 +188,83 @@ export default function DashboardPage() {
                 <ImageIcon className="w-3.5 h-3.5" />
                 <span>Upload Media</span>
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Storefront Section Visibility Controls (Global Toggle Bar) */}
+        <div className="bg-white border border-slate-200 rounded-[4px] p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center shrink-0 border border-blue-200">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-heading font-black text-[#0A2540] uppercase tracking-wider">
+                Storefront Section Visibility
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Instant toggles to show or hide global sections across Home and About pages.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+            {/* Toggle 1: We Are Certified By */}
+            <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-200/80 rounded-[4px] px-3 py-1.5">
+              <Award className="w-4 h-4 text-purple-600 shrink-0" />
+              <div className="text-left">
+                <span className="text-[11px] font-heading font-bold text-[#0A2540] block leading-tight">
+                  We Are Certified By
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono block leading-tight">
+                  {sectionSettings.show_certifications_section ? "Visible" : "Hidden"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleToggleSetting("show_certifications_section")}
+                disabled={isUpdatingSetting}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ml-1 ${
+                  sectionSettings.show_certifications_section ? "bg-[#0066CC]" : "bg-slate-300"
+                }`}
+                title="Toggle Certifications Section Visibility"
+                aria-label="Toggle Certifications Section"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                    sectionSettings.show_certifications_section ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Toggle 2: Our Clients */}
+            <div className="flex items-center gap-2.5 bg-slate-50 border border-slate-200/80 rounded-[4px] px-3 py-1.5">
+              <Users className="w-4 h-4 text-indigo-600 shrink-0" />
+              <div className="text-left">
+                <span className="text-[11px] font-heading font-bold text-[#0A2540] block leading-tight">
+                  Our Clients
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono block leading-tight">
+                  {sectionSettings.show_clients_section ? "Visible" : "Hidden"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleToggleSetting("show_clients_section")}
+                disabled={isUpdatingSetting}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ml-1 ${
+                  sectionSettings.show_clients_section ? "bg-[#0066CC]" : "bg-slate-300"
+                }`}
+                title="Toggle Clients Section Visibility"
+                aria-label="Toggle Clients Section"
+              >
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                    sectionSettings.show_clients_section ? "translate-x-4" : "translate-x-0"
+                  }`}
+                />
+              </button>
             </div>
           </div>
         </div>

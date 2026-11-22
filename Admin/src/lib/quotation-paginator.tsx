@@ -4,14 +4,16 @@ import { flushSync } from "react-dom";
 import {
   QuotationPrintData,
   QuotationPageModel,
-  QuotationPageShell,
-  QUOTATION_CSS,
   AtomicBlock,
+} from "@/components/quotation/print/quotationPrintTypes";
+import {
   tokenizeHtmlBlocks,
   assembleBlocks,
   compileNarrativeText,
   formatPrice,
-} from "@/components/quotation/quotation-print-sheet";
+} from "@/components/quotation/print/quotationPrintEstimator";
+import { QuotationPageShell } from "@/components/quotation/print/QuotationPageComponents";
+import { QUOTATION_CSS } from "@/components/quotation/print/quotationPrintCss";
 import { format } from "@/lib/date";
 import { numberToWords } from "@/lib/number-to-words";
 

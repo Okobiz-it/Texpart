@@ -21,6 +21,10 @@ export default function ClientPartnersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Storefront Section Visibility Toggle State
+  const [showSection, setShowSection] = useState<boolean>(true);
+  const [isUpdatingSetting, setIsUpdatingSetting] = useState(false);
+
   // Form State
   const [partnerName, setPartnerName] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -45,9 +49,43 @@ export default function ClientPartnersPage() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch("/api/settings");
+      const data = await res.json();
+      if (data.success && data.settings) {
+        setShowSection(data.settings.show_clients_section ?? true);
+      }
+    } catch (err) {
+      console.error("Failed to load site settings", err);
+    }
+  };
+
   useEffect(() => {
     fetchPartners();
+    fetchSettings();
   }, []);
+
+  const handleToggleSectionVisibility = async () => {
+    const nextVal = !showSection;
+    setShowSection(nextVal);
+    setIsUpdatingSetting(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ show_clients_section: nextVal }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setShowSection(!nextVal);
+      }
+    } catch (err) {
+      setShowSection(!nextVal);
+    } finally {
+      setIsUpdatingSetting(false);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -165,6 +203,60 @@ export default function ClientPartnersPage() {
             <p className="text-xs text-slate-500 mt-0.5">
               Manage client brand logos displayed in the &ldquo;Our Clients&rdquo; section on the website.
             </p>
+          </div>
+        </div>
+
+        {/* Storefront Section Visibility Toggle Card */}
+        <div className="bg-white border border-slate-200 rounded-[4px] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-10 h-10 rounded-[4px] flex items-center justify-center shrink-0 transition-colors ${
+                showSection ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-100 text-slate-400 border border-slate-200"
+              }`}
+            >
+              <Users className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-heading font-bold text-[#0A2540]">
+                  &ldquo;Our Clients&rdquo; Section Visibility
+                </span>
+                <span
+                  className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-[4px] uppercase tracking-wider ${
+                    showSection
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-slate-100 text-slate-600 border border-slate-200"
+                  }`}
+                >
+                  {showSection ? "● Visible on Website" : "○ Hidden from Website"}
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Toggle whether the &ldquo;Our Clients&rdquo; partner logo grid appears on the Home page, About page, and across the storefront.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <span className="text-xs font-semibold text-slate-600">
+              {showSection ? "Enabled" : "Disabled"}
+            </span>
+            <button
+              type="button"
+              onClick={handleToggleSectionVisibility}
+              disabled={isUpdatingSetting}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                showSection ? "bg-[#0066CC]" : "bg-slate-300"
+              }`}
+              title={showSection ? "Click to hide from storefront" : "Click to show on storefront"}
+              aria-label="Toggle storefront section visibility"
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                  showSection ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
           </div>
         </div>
 

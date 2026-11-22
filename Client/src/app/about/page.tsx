@@ -83,36 +83,41 @@ export default function AboutPage() {
   const [dbCertifications, setDbCertifications] = useState<any[]>([]);
   const [isLoadingPartners, setIsLoadingPartners] = useState(true);
   const [isLoadingCertifications, setIsLoadingCertifications] = useState(true);
+  const [showCertifications, setShowCertifications] = useState(false);
+  const [showClients, setShowClients] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     async function loadData() {
       try {
-        const clientRes = await fetch("/api/partners?category=client");
-        const clientData = await clientRes.json();
-        if (isMounted) {
-          if (clientData.success && Array.isArray(clientData.partners)) {
-            setDbClients(clientData.partners);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load client partners from database", err);
-      } finally {
-        if (isMounted) setIsLoadingPartners(false);
-      }
+        const [settingsRes, clientRes, certRes] = await Promise.all([
+          fetch("/api/settings").then((r) => r.json()).catch(() => ({})),
+          fetch("/api/partners?category=client").then((r) => r.json()).catch(() => ({})),
+          fetch("/api/partners?category=certification").then((r) => r.json()).catch(() => ({})),
+        ]);
 
-      try {
-        const certRes = await fetch("/api/partners?category=certification");
-        const certData = await certRes.json();
-        if (isMounted) {
-          if (certData.success && Array.isArray(certData.partners)) {
-            setDbCertifications(certData.partners);
-          }
+        if (!isMounted) return;
+
+        const isCertsEnabled = settingsRes?.settings?.show_certifications_section !== false;
+        const isClientsEnabled = settingsRes?.settings?.show_clients_section !== false;
+
+        setShowCertifications(isCertsEnabled);
+        setShowClients(isClientsEnabled);
+
+        if (clientRes && clientRes.success && Array.isArray(clientRes.partners)) {
+          setDbClients(clientRes.partners);
+        }
+
+        if (certRes && certRes.success && Array.isArray(certRes.partners)) {
+          setDbCertifications(certRes.partners);
         }
       } catch (err) {
-        console.error("Failed to load certifications from database", err);
+        console.error("Failed to load about page partner data", err);
       } finally {
-        if (isMounted) setIsLoadingCertifications(false);
+        if (isMounted) {
+          setIsLoadingPartners(false);
+          setIsLoadingCertifications(false);
+        }
       }
     }
     loadData();
@@ -240,94 +245,98 @@ export default function AboutPage() {
       </section>
 
       {/* 4. WE ARE CERTIFIED BY */}
-      <section className="py-6 sm:py-8 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-5 space-y-1">
-            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-              <span>We Are Certified By</span>
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-            </h2>
-            <p className="text-xs text-slate-500 font-normal">
-              Internationally recognized environmental, recycled material, and chemical safety standards
-            </p>
-          </div>
+      {showCertifications && (
+        <section className="py-6 sm:py-8 bg-white border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-5 space-y-1">
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+                <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+                <span>We Are Certified By</span>
+                <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              </h2>
+              <p className="text-xs text-slate-500 font-normal">
+                Internationally recognized environmental, recycled material, and chemical safety standards
+              </p>
+            </div>
 
-          {isLoadingCertifications ? (
-            <div className="py-8 flex flex-col items-center justify-center space-y-2">
-              <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
-              <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
-                Loading Certifications...
-              </span>
-            </div>
-          ) : displayCertifications.length === 0 ? (
-            <div className="py-6 text-center text-xs text-slate-400 font-heading">
-              No certifications registered yet.
-            </div>
-          ) : (
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-              {displayCertifications.map((cert, idx) => (
-                <div
-                  key={cert.id || idx}
-                  className="w-24 sm:w-28 h-24 sm:h-28 bg-white border border-slate-200 rounded-[4px] p-2.5 flex items-center justify-center shadow-sm hover:border-[#0066CC] transition-colors"
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={cert.logoUrl || cert.image}
-                      alt={cert.name || "Certification"}
-                      fill
-                      className="object-contain"
-                    />
+            {isLoadingCertifications ? (
+              <div className="py-8 flex flex-col items-center justify-center space-y-2">
+                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+                <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
+                  Loading Certifications...
+                </span>
+              </div>
+            ) : displayCertifications.length === 0 ? (
+              <div className="py-6 text-center text-xs text-slate-400 font-heading">
+                No certifications registered yet.
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+                {displayCertifications.map((cert, idx) => (
+                  <div
+                    key={cert.id || idx}
+                    className="w-24 sm:w-28 h-24 sm:h-28 bg-white border border-slate-200 rounded-[4px] p-2.5 flex items-center justify-center shadow-sm hover:border-[#0066CC] transition-colors"
+                  >
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={cert.logoUrl || cert.image}
+                        alt={cert.name || "Certification"}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* 5. OUR CLIENTS (BORROWED FROM HOME PAGE PER REQUEST) */}
-      <section className="py-8 sm:py-12 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 space-y-1">
-            <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-              <span>Our Clients</span>
-              <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
-            </h2>
-            <p className="text-xs text-slate-500 font-normal">
-              Trusted apparel accessories and packaging manufacturing partner for global fashion brands
-            </p>
-          </div>
+      {showClients && (
+        <section className="py-8 sm:py-12 bg-slate-50 border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 space-y-1">
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
+                <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+                <span>Our Clients</span>
+                <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block" />
+              </h2>
+              <p className="text-xs text-slate-500 font-normal">
+                Trusted apparel accessories and packaging manufacturing partner for global fashion brands
+              </p>
+            </div>
 
-          {isLoadingPartners ? (
-            <div className="py-12 flex flex-col items-center justify-center space-y-2">
-              <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
-              <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
-                Loading client brands...
-              </span>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 max-w-5xl mx-auto">
-              {displayClients.map((client, idx) => (
-                <div
-                  key={idx}
-                  className="aspect-square sm:aspect-[4/3] bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] p-3 sm:p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all group cursor-pointer"
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={client.logoUrl || client.image}
-                      alt={client.name || "Client"}
-                      fill
-                      className="object-contain p-1 group-hover:scale-105 transition-transform duration-200"
-                    />
+            {isLoadingPartners ? (
+              <div className="py-12 flex flex-col items-center justify-center space-y-2">
+                <Loader2 className="w-6 h-6 text-[#0066CC] animate-spin" />
+                <span className="text-xs font-heading text-slate-400 uppercase tracking-wider">
+                  Loading client brands...
+                </span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 max-w-5xl mx-auto">
+                {displayClients.map((client, idx) => (
+                  <div
+                    key={idx}
+                    className="aspect-square sm:aspect-[4/3] bg-white border border-slate-200 hover:border-[#0066CC] rounded-[4px] p-3 sm:p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                  >
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={client.logoUrl || client.image || "/placeholder.jpg"}
+                        alt={client.name || "Client"}
+                        fill
+                        className="object-contain p-1 group-hover:scale-105 transition-transform duration-200"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

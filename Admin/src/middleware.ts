@@ -28,7 +28,7 @@ export function middleware(req: NextRequest) {
   // 2. Allow public auth endpoints and public catalog read APIs
   if (
     PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(path + "/")) ||
-    (req.method === "GET" && (pathname.startsWith("/api/categories") || pathname.startsWith("/api/products") || pathname.startsWith("/api/hero-banners") || pathname.startsWith("/api/gallery")))
+    (req.method === "GET" && (pathname.startsWith("/api/categories") || pathname.startsWith("/api/products") || pathname.startsWith("/api/hero-banners") || pathname.startsWith("/api/gallery") || pathname.startsWith("/api/settings")))
   ) {
     // If user is already logged in and visits /login, redirect to dashboard
     if (pathname === "/login") {
