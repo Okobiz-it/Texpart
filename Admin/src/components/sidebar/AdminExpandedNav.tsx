@@ -197,7 +197,11 @@ export default function AdminExpandedNav({
                     : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
                 }`}
               >
-                <Package className="w-4 h-4 shrink-0" />
+                <Package className={`w-4 h-4 shrink-0 ${
+                  pathname === "/products" && (!currentDivisionParam || currentDivisionParam === "all")
+                    ? "text-white"
+                    : "text-slate-400"
+                }`} />
                 <span>All Products</span>
               </Link>
 
@@ -214,13 +218,15 @@ export default function AdminExpandedNav({
                   <Link
                     key={div.id}
                     href={`/products?division=${div.id}`}
-                    className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[12.5px] font-medium transition-colors ${
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[13px] font-semibold transition-colors ${
                       isDivActive
-                        ? "bg-blue-50/90 text-[#0066CC] font-bold"
-                        : "hover:bg-slate-50 text-slate-700"
+                        ? "bg-[#0066CC] text-white font-bold shadow-xs"
+                        : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
                     }`}
                   >
-                    {getDivisionIcon(div.icon)}
+                    <span className={isDivActive ? "text-white" : "text-slate-400"}>
+                      {getDivisionIcon(div.icon)}
+                    </span>
                     <span className="truncate uppercase tracking-wide">
                       {div.label}
                     </span>
@@ -231,15 +237,15 @@ export default function AdminExpandedNav({
               {/* Category Manager Link */}
               <Link
                 href="/categories"
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[12.5px] font-medium transition-colors ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-[4px] text-[13px] font-semibold transition-colors ${
                   pathname === "/categories"
-                    ? "bg-blue-50/90 text-[#0066CC] font-bold"
-                    : "hover:bg-slate-50 text-slate-700"
+                    ? "bg-[#0066CC] text-white font-bold shadow-xs"
+                    : "text-slate-600 hover:text-[#0A2540] hover:bg-slate-50"
                 }`}
               >
                 <FolderTree
-                  className={`w-3.5 h-3.5 shrink-0 ${
-                    pathname === "/categories" ? "text-[#0066CC]" : "text-slate-400"
+                  className={`w-4 h-4 shrink-0 ${
+                    pathname === "/categories" ? "text-white" : "text-slate-400"
                   }`}
                 />
                 <span className="truncate">Manage Categories</span>

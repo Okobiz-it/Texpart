@@ -170,13 +170,15 @@ export default function AdminCollapsedRail({
                 <Link
                   key={div.id}
                   href={`/products?division=${div.id}`}
-                  className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] text-xs transition-colors ${
+                  className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] text-xs font-semibold transition-colors ${
                     isActive
-                      ? "bg-blue-50 text-[#0066CC] font-bold"
+                      ? "bg-[#0066CC] text-white font-bold shadow-xs"
                       : "text-slate-700 hover:bg-slate-50 hover:text-[#0066CC]"
                   }`}
                 >
-                  {getDivisionIcon(div.icon)}
+                  <span className={isActive ? "text-white" : "text-slate-400"}>
+                    {getDivisionIcon(div.icon)}
+                  </span>
                   <span className="truncate">{div.label}</span>
                 </Link>
               );
@@ -185,13 +187,13 @@ export default function AdminCollapsedRail({
             <div className="pt-1 border-t border-slate-100 mt-1">
               <Link
                 href="/categories"
-                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] text-xs font-medium transition-colors ${
+                className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-[4px] text-xs font-semibold transition-colors ${
                   pathname === "/categories"
-                    ? "bg-blue-50 text-[#0066CC] font-bold"
+                    ? "bg-[#0066CC] text-white font-bold shadow-xs"
                     : "text-slate-700 hover:bg-slate-50 hover:text-[#0066CC]"
                 }`}
               >
-                <FolderTree className="w-3.5 h-3.5 shrink-0 text-[#0066CC]" />
+                <FolderTree className={`w-3.5 h-3.5 shrink-0 ${pathname === "/categories" ? "text-white" : "text-slate-400"}`} />
                 <span className="truncate">Manage Categories</span>
               </Link>
             </div>
