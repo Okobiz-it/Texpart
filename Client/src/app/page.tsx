@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import HeroSlider from "@/components/home/HeroSlider";
 import ProductRangeSection from "@/components/home/ProductRangeSection";
 import WhyTexpartSection from "@/components/home/WhyTexpartSection";
+import ThreeICommitmentSection from "@/components/about/ThreeICommitmentSection";
 import CoreDivisionsSection from "@/components/home/CoreDivisionsSection";
 import DesignApproachSection from "@/components/home/DesignApproachSection";
 import QualityPhilosophySection from "@/components/home/QualityPhilosophySection";
@@ -35,19 +36,22 @@ export default function HomePage() {
       {/* 5. Our Design & Development Approach (5 Stages: Design, Develop, Produce, Pack, Deliver) */}
       <DesignApproachSection />
 
-      {/* 6. Quality & Service Philosophy (7 Key Consideration Steps) */}
+      {/* 6. Our 3I Commitment (Integrity, Innovation, In-Depth) */}
+      <ThreeICommitmentSection />
+
+      {/* 7. Quality & Service Philosophy (7 Key Consideration Steps) */}
       <QualityPhilosophySection />
 
-      {/* 7. Our Customer Approach (7 Consultative Stages: 01 to 07) */}
+      {/* 8. Our Customer Approach (7 Consultative Stages: 01 to 07) */}
       <CustomerApproachSection />
 
-      {/* 8. Our Promise (Your Requirement. Our Responsibility.) */}
+      {/* 9. Our Promise (Your Requirement. Our Responsibility.) */}
       <OurPromiseSection />
 
-      {/* 9. Global Quality Certifications Marquee */}
+      {/* 10. Global Quality Certifications Marquee */}
       <CertificationsSection />
 
-      {/* 10. Global Client Partners Grid */}
+      {/* 11. Global Client Partners Grid */}
       <ClientsSection />
     </div>
   );

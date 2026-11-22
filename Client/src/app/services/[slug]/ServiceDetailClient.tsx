@@ -13,7 +13,6 @@ import {
   Search,
   X,
   Loader2,
-  Sparkles,
   Layers,
 } from "lucide-react";
 
@@ -200,7 +199,7 @@ export default function ServiceDetailClient({ service }: ServiceDetailClientProp
   return (
     <div className="bg-white min-h-screen text-[#0A2540]">
       {/* 1. HERO BANNER */}
-      <section className="pt-24 sm:pt-28 pb-12 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white border-b border-white/10">
+      <section className="pt-32 sm:pt-36 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb Navigation */}
           <nav className="flex items-center gap-2 text-xs font-heading font-medium text-slate-300 mb-3 uppercase tracking-wider">

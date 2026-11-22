@@ -17,7 +17,6 @@ import {
   Scissors,
   Layers,
   ChevronRight,
-  Sparkles,
   Phone,
   FileText,
   Tag,
@@ -188,7 +187,7 @@ export default function Header() {
     if (name.includes("gift") || name.includes("mug") || name.includes("pen") || name.includes("key")) {
       return <Gift className={className} />;
     }
-    return <Sparkles className={className} />;
+    return <Layers className={className} />;
   };
 
   return (
@@ -269,7 +268,7 @@ export default function Header() {
                     : "text-[#0A2540] hover:text-[#0066CC] hover:bg-slate-50"
                 }`}
               >
-                <span>OUR WORK</span>
+                <span>OUR SERVICES</span>
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform duration-200 ${
                     isWorkMenuOpen ? "rotate-180 text-[#0066CC]" : "text-slate-400"
@@ -346,7 +345,6 @@ export default function Header() {
                     <button
                       key={vertical.id}
                       type="button"
-                      onMouseEnter={() => setSelectedWorkId(vertical.id)}
                       onClick={() => setSelectedWorkId(vertical.id)}
                       className={`w-full text-left rounded-xl p-3 transition-all duration-150 flex items-center gap-3 cursor-pointer ${
                         isSelected
@@ -403,7 +401,7 @@ export default function Header() {
                   </div>
 
                   {/* Subcategories Grid with Clear Active & Hover Distinction */}
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 max-h-[440px] overflow-y-auto pr-1">
                     {currentWorkVertical.items.map((item) => {
                       const isSelected = isItemSelected(item);
                       return (

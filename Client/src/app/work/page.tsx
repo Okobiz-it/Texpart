@@ -2,23 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useQuote } from "@/context/QuoteContext";
 import {
-  Briefcase,
   ArrowRight,
   CheckCircle2,
-  ExternalLink,
-  Layers,
-  Sparkles,
   Printer,
   Shirt,
   Package,
   Gift,
-  Scissors,
   ChevronRight,
 } from "lucide-react";
-import { OUR_WORK_ITEMS, BRAND_INFO } from "@/data/siteNavigation";
 
 const WORK_DISCIPLINES = [
   {
@@ -65,38 +58,15 @@ const WORK_DISCIPLINES = [
       "Screen print, UV print & laser engraving",
     ],
   },
-  {
-    id: "corporate-projects",
-    name: "Corporate Projects",
-    href: "/corporate-projects",
-    icon: Briefcase,
-    desc: "Annual reports & publications, corporate identity suites, presentation folders, press kits, event collateral, and VIP portfolios.",
-    bullets: [
-      "Foil stamping, embossing & spot UV finishing",
-      "Strict confidentiality & brand guideline fidelity",
-    ],
-  },
-  {
-    id: "apparel-projects",
-    name: "Apparel Projects",
-    href: "/apparel-projects",
-    icon: Scissors,
-    desc: "Complete denim trim packages, outerwear 3D badges, stretch heat transfers, sustainable recycled labels, and export cartons.",
-    bullets: [
-      "Full vertical integration under one single roof",
-      "Direct dispatch to factory floors across EPZs",
-    ],
-  },
 ];
 
 export default function WorkPage() {
   const { openGeneralQuote } = useQuote();
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
 
   return (
     <div className="bg-[#F8FAFC] text-[#0A2540] min-h-screen">
       {/* Hero Banner */}
-      <section className="pt-24 sm:pt-28 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white overflow-hidden border-b border-white/10">
+      <section className="pt-32 sm:pt-36 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white overflow-hidden border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-3">
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black uppercase tracking-tight text-white leading-tight">
@@ -104,7 +74,7 @@ export default function WorkPage() {
               <span className="text-blue-400">Delivered Portfolio</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light">
-              DESIGN &bull; DEVELOP &bull; PRODUCE &bull; PACK &bull; DELIVER &mdash; Explore our delivered programs across Commercial Printing, Garments Accessories, Packaging, Promotional Products, Corporate Projects, and Apparel trim packages.
+              DESIGN &bull; DEVELOP &bull; PRODUCE &bull; PACK &bull; DELIVER &mdash; Explore our delivered programs across Commercial Printing, Garments Accessories, Packaging, and Promotional Products.
             </p>
             <div className="pt-2 flex flex-wrap gap-3">
               <button
@@ -125,13 +95,13 @@ export default function WorkPage() {
         </div>
       </section>
 
-      {/* 6 Work Divisions Showcase */}
+      {/* 4 Work Divisions Showcase */}
       <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 text-center max-w-2xl mx-auto space-y-2">
             <h2 className="text-xl sm:text-2xl font-heading font-bold text-[#0066CC] flex items-center justify-center gap-3">
               <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block shrink-0" />
-              <span>6 Core Project Disciplines</span>
+              <span>4 Core Project Disciplines</span>
               <span className="w-8 sm:w-16 h-[2px] bg-[#0066CC] inline-block shrink-0" />
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
@@ -139,7 +109,7 @@ export default function WorkPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {WORK_DISCIPLINES.map((item) => {
               const IconComp = item.icon;
               return (

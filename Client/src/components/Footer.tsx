@@ -14,6 +14,7 @@ import {
   ArrowRight,
   MessageSquare,
   Shirt,
+  Globe,
 } from "lucide-react";
 import { BRAND_INFO } from "@/data/siteNavigation";
 
@@ -116,7 +117,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/garments-accessories" className="hover:text-blue-400 transition-colors block py-0.5">
-                  Garments Accessories &amp; Trims
+                  Garments Accessories
                 </Link>
               </li>
               <li>
@@ -127,16 +128,6 @@ export default function Footer() {
               <li>
                 <Link href="/promotional-products" className="hover:text-blue-400 transition-colors block py-0.5">
                   Promotional Products
-                </Link>
-              </li>
-              <li>
-                <Link href="/capabilities" className="hover:text-blue-400 transition-colors block py-0.5">
-                  Our Capabilities (Workflow)
-                </Link>
-              </li>
-              <li>
-                <Link href="/work" className="hover:text-blue-400 transition-colors block py-0.5">
-                  Our Work &amp; Portfolio
                 </Link>
               </li>
             </ul>
@@ -156,6 +147,16 @@ export default function Footer() {
               <li>
                 <Link href="/about" className="hover:text-blue-400 transition-colors block py-0.5">
                   About Texpart
+                </Link>
+              </li>
+              <li>
+                <Link href="/capabilities" className="hover:text-blue-400 transition-colors block py-0.5">
+                  Our Capabilities
+                </Link>
+              </li>
+              <li>
+                <Link href="/work" className="hover:text-blue-400 transition-colors block py-0.5">
+                  Our Services
                 </Link>
               </li>
               <li>
@@ -179,43 +180,50 @@ export default function Footer() {
           {/* Col 4: Corporate Coordinates (3 cols) */}
           <div className="lg:col-span-3">
             <h4 className="font-heading text-xs uppercase tracking-wider font-bold text-white mb-3">
-              Office Coordinates
+              Office / Factory Coordinates
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-300">
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
-                <span>{BRAND_INFO.contact.address}</span>
+                <div>
+                  <span className="block font-medium text-white">Office / Factory:</span>
+                  <span>119, Arambagh, Motijheel</span>
+                  <span className="block text-slate-400">Dhaka-1000, Bangladesh</span>
+                </div>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                <a href={`tel:${BRAND_INFO.contact.mobile.replace(/[^+\d]/g, '')}`} className="hover:text-blue-400 transition-colors">
-                  {BRAND_INFO.contact.mobile}
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                <a href={`tel:${BRAND_INFO.contact.mobileSecondary.replace(/[^+\d]/g, '')}`} className="hover:text-blue-400 transition-colors">
-                  {BRAND_INFO.contact.mobileSecondary}
+                <a href="tel:+8801973084465" className="hover:text-blue-400 transition-colors font-mono">
+                  Mobile: +880 197 308 4465
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <MessageSquare className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                 <a
-                  href={BRAND_INFO.contact.whatsappLink}
+                  href="https://wa.me/8801713084465"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:underline text-blue-300 font-medium"
+                  className="hover:underline text-blue-300 font-medium font-mono"
                 >
-                  WhatsApp: {BRAND_INFO.contact.whatsapp}
+                  WhatsApp: +880 171 308 4465
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                <span>{BRAND_INFO.contact.emailSecondary}</span>
+                <a href="mailto:info@texpartdesign.com" className="hover:text-blue-400 transition-colors">
+                  Email: info@texpartdesign.com
+                </a>
               </li>
-              <li className="flex items-start gap-2">
-                <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
-                <span>{BRAND_INFO.contact.businessHours}</span>
+              <li className="flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                <a
+                  href="https://www.texpartdesign.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Website: www.texpartdesign.com
+                </a>
               </li>
             </ul>
           </div>

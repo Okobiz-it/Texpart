@@ -117,7 +117,7 @@ export default function MobileDrawer() {
                       pathname.startsWith("/work") ? "text-blue-400" : "text-white hover:text-blue-400"
                     }`}
                   >
-                    Our Work
+                    Our Services
                   </Link>
                   <button
                     type="button"

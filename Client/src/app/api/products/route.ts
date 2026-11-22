@@ -39,19 +39,6 @@ export async function GET(req: NextRequest) {
           { category: { $regex: /gift|promotional|calendar|diary|mug|t-shirt/i } },
           { name: { $regex: /gift|promotional|calendar|diary|mug|pen|t-shirt/i } },
         ];
-      } else if (division === "corporate-projects") {
-        query.$or = [
-          { division: "corporate-projects" },
-          { division: "commercial-printing" },
-          { category: { $regex: /corporate|annual|report|folder|stationery/i } },
-        ];
-      } else if (division === "apparel-projects") {
-        query.$or = [
-          { division: "apparel-projects" },
-          { division: "garments-accessories" },
-          { division: "private-jobs" },
-          { category: { $regex: /apparel|denim|patch|zipper|label/i } },
-        ];
       } else {
         query.division = division;
       }

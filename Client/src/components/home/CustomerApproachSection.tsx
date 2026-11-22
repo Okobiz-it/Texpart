@@ -68,13 +68,15 @@ export default function CustomerApproachSection() {
           <p className="text-sm sm:text-base font-heading font-bold text-[#0A2540]">
             Every customer has different requirements.
           </p>
-          <p className="text-xs sm:text-sm text-slate-500 font-normal">
-            Therefore, we follow a consultative approach:
-          </p>
+          <div className="pt-1">
+            <span className="inline-block text-[11px] font-heading font-extrabold uppercase tracking-widest text-[#0066CC] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              Therefore, we follow a consultative approach:
+            </span>
+          </div>
         </div>
 
         {/* 7 Consultative Stages in a Clean Staggered Grid (Senior UI/UX Card Design) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {APPROACH_STAGES.slice(0, 4).map((stage) => {
             const Icon = stage.icon;
             return (
@@ -96,7 +98,7 @@ export default function CustomerApproachSection() {
                     {stage.title}
                   </h3>
 
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal text-left">
                     {stage.description}
                   </p>
                 </div>
@@ -105,8 +107,8 @@ export default function CustomerApproachSection() {
           })}
         </div>
 
-        {/* Remaining 3 Stages Centered on Desktop with Equal Card Widths */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mt-4 sm:mt-5 max-w-5xl mx-auto">
+        {/* Bottom Row: Stages 05 to 07 (3 Columns Centered) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-5 max-w-4xl mx-auto">
           {APPROACH_STAGES.slice(4).map((stage) => {
             const Icon = stage.icon;
             return (
@@ -128,7 +130,7 @@ export default function CustomerApproachSection() {
                     {stage.title}
                   </h3>
 
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal text-left">
                     {stage.description}
                   </p>
                 </div>

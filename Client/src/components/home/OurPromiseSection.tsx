@@ -1,7 +1,7 @@
 import React from "react";
 import {
   ShieldCheck,
-  Sparkles,
+  Lightbulb,
   CheckCircle2,
   Tag,
   Award,
@@ -9,7 +9,7 @@ import {
 
 const PILLARS = [
   { name: "Quality", icon: ShieldCheck },
-  { name: "Innovation", icon: Sparkles },
+  { name: "Innovation", icon: Lightbulb },
   { name: "Reliability", icon: CheckCircle2 },
   { name: "Competitive Pricing", icon: Tag },
   { name: "Professional Service", icon: Award },

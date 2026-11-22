@@ -3,8 +3,6 @@ import {
   GARMENTS_ACCESSORIES_ITEMS,
   PACKAGING_SOLUTIONS_ITEMS,
   PROMOTIONAL_PRODUCTS_ITEMS,
-  CORPORATE_PROJECTS_ITEMS,
-  APPAREL_PROJECTS_ITEMS,
   DropdownItem,
 } from "./siteNavigation";
 
@@ -90,37 +88,11 @@ export const SERVICES_DATA: Record<string, ServiceDetail> = {
     title: "Packaging Solutions",
     subtitle: "Luxury Rigid Boxes, Paper Shopping Bags & Cartons",
     headline: "Smart, Secure & Sustainable Packaging Solutions.",
-    divisionLabel: "PROJECTS &bull; PACKAGING",
+    divisionLabel: "SERVICES &bull; PACKAGING",
     badge: "Structural Dieline Engineering",
     heroImage: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=2000&q=85",
     description: "Kraft paper shopping bags, printed folding cartons, product boxes, luxury rigid gift boxes, poly bags, and customized retail packaging.",
     categoryItems: PACKAGING_SOLUTIONS_ITEMS,
-  },
-
-  "corporate-projects": {
-    slug: "corporate-projects",
-    id: "corporate-projects",
-    title: "Corporate Projects",
-    subtitle: "Integrated Branding Programs, Annual Reports & Event Collateral",
-    headline: "Distinctive Branding for Forward-Thinking Enterprises.",
-    divisionLabel: "PROJECTS &bull; CORPORATE",
-    badge: "Enterprise Communications",
-    heroImage: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=2000&q=85",
-    description: "Annual reports, corporate identity suites, presentation folders, exhibition backdrops, executive boardroom folders, and milestone commemorative gifts.",
-    categoryItems: CORPORATE_PROJECTS_ITEMS,
-  },
-
-  "apparel-projects": {
-    slug: "apparel-projects",
-    id: "apparel-projects",
-    title: "Apparel Projects",
-    subtitle: "Comprehensive Brand Trim Packages for Global Export Fashion",
-    headline: "Engineered For The World's Leading Fashion Houses.",
-    divisionLabel: "PROJECTS &bull; APPAREL",
-    badge: "Export Apparel Programs",
-    heroImage: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=2000&q=85",
-    description: "Denim trim suites, outerwear molded badges, sportswear stretch transfers, sustainable recycled labels, export barcode ticketing, and garment packaging.",
-    categoryItems: APPAREL_PROJECTS_ITEMS,
   },
 
   // Legacy mappings for backwards compatibility

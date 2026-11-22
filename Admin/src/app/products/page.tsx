@@ -19,8 +19,6 @@ function ProductsPageContent() {
       "garments-accessories",
       "packaging-solutions",
       "promotional-products",
-      "corporate-projects",
-      "apparel-projects",
       "private-jobs",
       "commercial-jobs",
     ].includes(divParam)
@@ -70,20 +68,6 @@ function ProductsPageContent() {
       title: "Promotional Products & Merchandise",
       subtitle: "Manage promotional pens, branded notebooks, diaries, calendars, mugs, key rings, and corporate gifts.",
       icon: "gift",
-    },
-    {
-      id: "corporate-projects",
-      label: "Corporate Projects",
-      title: "Corporate Projects & Branding",
-      subtitle: "Manage annual reports, corporate identity suites, presentation folders, and event collateral.",
-      icon: "briefcase",
-    },
-    {
-      id: "apparel-projects",
-      label: "Apparel Projects",
-      title: "Apparel Projects & Trims",
-      subtitle: "Manage complete denim trim packages, outerwear badges, heat transfers, and export trims.",
-      icon: "scissors",
     },
     {
       id: "private-jobs",

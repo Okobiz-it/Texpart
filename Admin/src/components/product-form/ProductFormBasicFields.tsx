@@ -11,8 +11,6 @@ const DIVISION_LABELS: Record<string, string> = {
   "garments-accessories": "Garments Accessories",
   "packaging-solutions": "Packaging",
   "promotional-products": "Promotional Products",
-  "corporate-projects": "Corporate Projects",
-  "apparel-projects": "Apparel Projects",
   "private-jobs": "Private Jobs",
   "commercial-jobs": "Commercial Jobs",
 };
@@ -118,8 +116,6 @@ export default function ProductFormBasicFields({
               <option value="garments-accessories">Garments Accessories</option>
               <option value="packaging-solutions">Packaging</option>
               <option value="promotional-products">Promotional Products</option>
-              <option value="corporate-projects">Corporate Projects</option>
-              <option value="apparel-projects">Apparel Projects</option>
               <option value="private-jobs">Private Jobs (Legacy)</option>
               <option value="commercial-jobs">Commercial Jobs (Legacy)</option>
             </select>

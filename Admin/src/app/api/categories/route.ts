@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
         const isDivMatch =
           pDiv === catDiv ||
           (catDiv === "commercial-printing" && (pDiv === "commercial-jobs" || pDiv === "commercial-printing")) ||
-          (["garments-accessories", "packaging-solutions", "promotional-products", "apparel-projects"].includes(catDiv) &&
+          (["garments-accessories", "packaging-solutions", "promotional-products"].includes(catDiv) &&
             (pDiv === "private-jobs" || pDiv === catDiv));
 
         // Category/Name/Slug check

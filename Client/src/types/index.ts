@@ -4,8 +4,6 @@ export type JobDivision =
   | "packaging-solutions"
   | "packaging"
   | "promotional-products"
-  | "corporate-projects"
-  | "apparel-projects"
   | "private-jobs"
   | "commercial-jobs";
 

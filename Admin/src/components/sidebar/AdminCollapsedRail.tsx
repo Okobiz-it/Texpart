@@ -164,8 +164,6 @@ export default function AdminCollapsedRail({
               { id: "garments-accessories", label: "Garments Accessories", icon: "shirt" },
               { id: "packaging-solutions", label: "Packaging", icon: "package" },
               { id: "promotional-products", label: "Promotional Products", icon: "gift" },
-              { id: "corporate-projects", label: "Corporate Projects", icon: "briefcase" },
-              { id: "apparel-projects", label: "Apparel Projects", icon: "scissors" },
             ].map((div) => {
               const isActive = currentDivisionParam === div.id;
               return (

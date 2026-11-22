@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Search,
-  Sparkles,
 } from "lucide-react";
 import AdminNavbar from "@/components/AdminNavbar";
 import { PartnerItem } from "@/types";

@@ -13,6 +13,7 @@ import {
   MessageSquare,
   ShieldCheck,
   Package,
+  Globe,
 } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
 import { BRAND_INFO } from "@/data/siteNavigation";
@@ -68,7 +69,7 @@ export default function ContactPage() {
   return (
     <div className="bg-[#F8FAFC] text-[#0A2540] min-h-screen">
       {/* Header Banner */}
-      <section className="pt-24 sm:pt-28 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white overflow-hidden border-b border-white/10">
+      <section className="pt-32 sm:pt-36 pb-14 sm:pb-16 bg-gradient-to-r from-[#061730] via-[#0A2540] to-[#003B73] text-white overflow-hidden border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-3">
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-black uppercase tracking-tight text-white leading-tight">
@@ -221,33 +222,45 @@ export default function ContactPage() {
               <div className="bg-white border border-slate-200 p-6 sm:p-7 rounded-[4px] shadow-sm space-y-6">
                 {/* Header */}
                 <div className="border-b border-slate-100 pb-4">
-                  <span className="text-[11px] font-heading font-bold uppercase tracking-widest text-[#0066CC] block mb-1">
-                    Direct Merchandising Desk
-                  </span>
                   <h3 className="text-lg sm:text-xl font-heading font-black uppercase text-[#0A2540]">
-                    Contact Coordinates
+                    &ldquo;texpart design &amp; accessories&rdquo;
                   </h3>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Get in direct touch with our Dhaka headquarters and merchandising team.
+                  <p className="text-[11px] font-semibold text-slate-500 mt-1 leading-snug">
+                    Commercial Printing | Garments Accessories | Packaging Solutions | Promotional Products
                   </p>
                 </div>
 
-                {/* 5 Coordinates Items */}
+                {/* Key Leadership / Proprietor Card */}
+                <div className="bg-slate-50 border border-slate-200/80 rounded-[4px] p-3 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block font-semibold">
+                      Key Contact
+                    </span>
+                    <h4 className="text-sm font-heading font-black text-[#0A2540] uppercase tracking-wide">
+                      Tarkik HASAN
+                    </h4>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-[4px] bg-blue-100/70 text-[#0066CC] text-[11px] font-heading font-bold uppercase tracking-wider border border-blue-200/60">
+                    Proprietor
+                  </span>
+                </div>
+
+                {/* Coordinates Items */}
                 <div className="space-y-4 text-xs text-slate-600">
-                  {/* 1. Office Address */}
+                  {/* 1. Office / Factory Address */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center shrink-0 mt-0.5">
                       <MapPin className="w-4 h-4" />
                     </div>
                     <div>
                       <strong className="text-[#0A2540] block font-heading font-bold uppercase text-[11px] tracking-wider mb-0.5">
-                        Office Address
+                        Office / Factory
                       </strong>
-                      <span className="leading-relaxed">
-                        {BRAND_INFO.contact.address}
+                      <span className="leading-relaxed block">
+                        119, Arambagh, Motijheel
                       </span>
-                      <span className="block text-[11px] text-slate-400 mt-0.5">
-                        Production: Fakirapool &amp; Tejgaon Industrial Area, Dhaka
+                      <span className="leading-relaxed block text-slate-500">
+                        Dhaka-1000, Bangladesh
                       </span>
                     </div>
                   </div>
@@ -261,15 +274,9 @@ export default function ContactPage() {
                       <strong className="text-[#0A2540] block font-heading font-bold uppercase text-[11px] tracking-wider mb-0.5">
                         Mobile
                       </strong>
-                      <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs">
-                        <a href="tel:+8801711234567" className="text-[#0066CC] hover:underline font-semibold">
-                          +880 1711-234567
-                        </a>
-                        <span className="text-slate-300">|</span>
-                        <a href="tel:+8801613084465" className="text-[#0066CC] hover:underline font-semibold">
-                          +880 1613-084465
-                        </a>
-                      </div>
+                      <a href="tel:+8801973084465" className="text-[#0066CC] hover:underline font-semibold font-mono text-xs">
+                        +880 197 308 4465
+                      </a>
                     </div>
                   </div>
 
@@ -283,12 +290,12 @@ export default function ContactPage() {
                         WhatsApp
                       </strong>
                       <a
-                        href={BRAND_INFO.contact.whatsappLink}
+                        href="https://wa.me/8801713084465"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs text-[#0066CC] hover:underline font-semibold font-mono"
                       >
-                        <span>+880 1711-234567</span>
+                        <span>+880 171 308 4465</span>
                       </a>
                     </div>
                   </div>
@@ -302,19 +309,33 @@ export default function ContactPage() {
                       <strong className="text-[#0A2540] block font-heading font-bold uppercase text-[11px] tracking-wider mb-0.5">
                         Email
                       </strong>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-x-3 gap-y-1">
-                        <a href={`mailto:${BRAND_INFO.contact.email}`} className="text-[#0066CC] hover:underline font-medium">
-                          {BRAND_INFO.contact.email}
-                        </a>
-                        <span className="hidden sm:inline text-slate-300">|</span>
-                        <a href={`mailto:${BRAND_INFO.contact.emailSecondary}`} className="text-[#0066CC] hover:underline font-medium">
-                          {BRAND_INFO.contact.emailSecondary}
-                        </a>
-                      </div>
+                      <a href="mailto:info@texpartdesign.com" className="text-[#0066CC] hover:underline font-medium">
+                        info@texpartdesign.com
+                      </a>
                     </div>
                   </div>
 
-                  {/* 5. Business Hours */}
+                  {/* 5. Website */}
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center shrink-0 mt-0.5">
+                      <Globe className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <strong className="text-[#0A2540] block font-heading font-bold uppercase text-[11px] tracking-wider mb-0.5">
+                        Website
+                      </strong>
+                      <a
+                        href="https://www.texpartdesign.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#0066CC] hover:underline font-medium"
+                      >
+                        www.texpartdesign.com
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* 6. Business Hours */}
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center shrink-0 mt-0.5">
                       <Clock className="w-4 h-4" />
@@ -333,7 +354,7 @@ export default function ContactPage() {
                 {/* WhatsApp Chat CTA Button */}
                 <div className="pt-2 border-t border-slate-100">
                   <a
-                    href={BRAND_INFO.contact.whatsappLink}
+                    href="https://wa.me/8801713084465"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-[4px] bg-[#0066CC] hover:bg-[#0052CC] text-white text-xs font-heading font-bold uppercase tracking-wider transition-colors shadow-sm"
@@ -352,11 +373,11 @@ export default function ContactPage() {
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#0066CC]" />
                 <span className="font-heading font-bold text-xs uppercase tracking-wider text-[#0A2540]">
-                  Google Map Location &bull; 263 Fakirapool, Motijheel, Dhaka
+                  Google Map Location &bull; 119 Arambagh, Motijheel, Dhaka
                 </span>
               </div>
               <a
-                href="https://maps.google.com/?q=263+Fakirapool+Motijheel+Dhaka"
+                href="https://maps.google.com/?q=119+Arambagh+Motijheel+Dhaka"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-[#0066CC] hover:underline font-semibold"

@@ -14,7 +14,6 @@ import {
   ArrowRight,
   ExternalLink,
   Clock,
-  Sparkles,
   ArrowUpRight,
   CheckCircle2,
   AlertCircle,
@@ -196,7 +195,7 @@ export default function DashboardPage() {
         <div className="bg-white border border-slate-200 rounded-[4px] p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-[4px] bg-blue-50 text-[#0066CC] flex items-center justify-center shrink-0 border border-blue-200">
-              <Sparkles className="w-4 h-4" />
+              <Eye className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-xs font-heading font-black text-[#0A2540] uppercase tracking-wider">

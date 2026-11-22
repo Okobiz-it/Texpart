@@ -16,8 +16,6 @@ function ProductNewContent() {
     "garments-accessories",
     "packaging-solutions",
     "promotional-products",
-    "corporate-projects",
-    "apparel-projects",
     "private-jobs",
     "commercial-jobs",
   ];

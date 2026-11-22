@@ -5,7 +5,7 @@ import { ProductItem, JobDivision } from "@/types";
 import { slugify } from "@/lib/slugify";
 import ImageUploader from "@/components/ImageUploader";
 import AdminRichTextEditor from "@/components/AdminRichTextEditor";
-import { X, Loader2, Save, Sparkles, Star } from "lucide-react";
+import { X, Loader2, Save, Package, Star } from "lucide-react";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -137,7 +137,7 @@ export default function ProductFormModal({
         {/* Header */}
         <div className="bg-[#0066CC] text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-blue-200" />
+            <Package className="w-5 h-5 text-blue-200" />
             <div>
               <h3 className="text-base font-heading font-black uppercase tracking-wide">
                 {editingProduct ? `Edit Product: ${editingProduct.name}` : "Create New Product"}
@@ -211,8 +211,6 @@ export default function ProductFormModal({
                   <option value="garments-accessories">Garments Accessories</option>
                   <option value="packaging-solutions">Packaging</option>
                   <option value="promotional-products">Promotional Products</option>
-                  <option value="corporate-projects">Corporate Projects</option>
-                  <option value="apparel-projects">Apparel Projects</option>
                   <option value="private-jobs">Private Jobs (Legacy)</option>
                   <option value="commercial-jobs">Commercial Jobs (Legacy)</option>
                 </select>

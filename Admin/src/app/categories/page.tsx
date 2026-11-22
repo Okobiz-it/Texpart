@@ -41,8 +41,6 @@ const DIVISIONS: { id: JobDivision; label: string; icon: any }[] = [
   { id: "garments-accessories", label: "Garments Accessories", icon: Shirt },
   { id: "packaging-solutions", label: "Packaging", icon: Package },
   { id: "promotional-products", label: "Promotional Products", icon: Gift },
-  { id: "corporate-projects", label: "Corporate Projects", icon: Briefcase },
-  { id: "apparel-projects", label: "Apparel Projects", icon: Scissors },
 ];
 
 function CategoriesContent() {

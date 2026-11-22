@@ -34,9 +34,6 @@ export default function QualityPhilosophySection() {
           <p className="text-sm sm:text-base font-heading font-bold text-[#0A2540]">
             Quality is not limited to the finished product.
           </p>
-          <p className="text-xs sm:text-sm text-slate-500 font-normal">
-            For us, quality begins with understanding the requirement correctly.
-          </p>
           <div className="pt-1">
             <span className="inline-block text-[11px] font-heading font-extrabold uppercase tracking-widest text-[#0066CC] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
               Our approach considers:
@@ -44,38 +41,34 @@ export default function QualityPhilosophySection() {
           </div>
         </div>
 
-        {/* 7-Step Sequential Quality Flow */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4 items-stretch">
-          {PHILOSOPHY_POINTS.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.step}
-                className="bg-slate-50 hover:bg-blue-50/60 border border-slate-200/90 hover:border-[#0066CC] rounded-xl p-4 text-center transition-all duration-200 flex flex-col justify-between items-center group relative shadow-2xs"
-              >
-                <div className="w-full flex flex-col items-center">
-                  <span className="text-[10px] font-heading font-black text-slate-400 group-hover:text-[#0066CC] transition-colors mb-2">
-                    STEP {item.step}
+        {/* 7-Step Sequential Quality Pipeline */}
+        <div className="relative">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 relative z-10">
+            {PHILOSOPHY_POINTS.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.title}
+                  className="bg-slate-50/70 hover:bg-white border border-slate-200/90 hover:border-[#0066CC] rounded-xl p-3.5 sm:p-4 transition-all duration-200 flex flex-col items-center text-center shadow-xs hover:shadow-md group relative overflow-hidden"
+                >
+                  {/* Step Sequence Badge (Positioned at Top-Left) */}
+                  <span className="self-start inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-blue-50/80 border border-blue-100 group-hover:bg-[#0066CC] group-hover:border-[#0066CC] text-[#0066CC] group-hover:text-white font-mono font-black text-xs sm:text-[13px] tracking-wide transition-all mb-2 shadow-2xs">
+                    {item.step}
                   </span>
 
-                  <div className="w-11 h-11 rounded-full bg-white text-[#0066CC] border border-slate-200 group-hover:bg-[#0066CC] group-hover:text-white group-hover:border-[#0066CC] flex items-center justify-center transition-all duration-200 shadow-2xs mb-3">
+                  {/* Icon */}
+                  <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0066CC] group-hover:bg-[#0066CC] group-hover:text-white transition-colors flex items-center justify-center mb-2.5 shadow-2xs">
                     <Icon className="w-5 h-5" />
                   </div>
 
+                  {/* Title */}
                   <h3 className="text-xs font-heading font-bold text-[#0A2540] group-hover:text-[#0066CC] transition-colors leading-tight">
                     {item.title}
                   </h3>
                 </div>
-
-                {/* Connecting Arrow for Desktop */}
-                {idx < PHILOSOPHY_POINTS.length - 1 && (
-                  <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-slate-300">
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

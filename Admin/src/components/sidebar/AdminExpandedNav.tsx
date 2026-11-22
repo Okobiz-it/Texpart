@@ -201,14 +201,12 @@ export default function AdminExpandedNav({
                 <span>All Products</span>
               </Link>
 
-              {/* 6 Core Divisions (No grandchild subcategories) */}
+              {/* 4 Core Divisions (No grandchild subcategories) */}
               {[
                 { id: "commercial-printing", label: "Commercial Printing", icon: "printer" },
                 { id: "garments-accessories", label: "Garments Accessories", icon: "shirt" },
                 { id: "packaging-solutions", label: "Packaging", icon: "package" },
                 { id: "promotional-products", label: "Promotional Products", icon: "gift" },
-                { id: "corporate-projects", label: "Corporate Projects", icon: "briefcase" },
-                { id: "apparel-projects", label: "Apparel Projects", icon: "scissors" },
               ].map((div) => {
                 const isDivActive = currentDivisionParam === div.id;
 

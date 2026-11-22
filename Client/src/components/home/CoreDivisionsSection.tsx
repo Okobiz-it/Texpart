@@ -76,7 +76,7 @@ export default function CoreDivisionsSection() {
                         {division.title}
                       </h3>
                     </Link>
-                    <p className="text-xs text-slate-600 leading-relaxed font-normal mt-2.5">
+                    <p className="text-xs text-slate-600 leading-relaxed font-normal mt-2.5 text-left">
                       {division.description}
                     </p>
                   </div>

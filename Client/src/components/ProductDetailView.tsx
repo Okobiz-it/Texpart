@@ -31,7 +31,7 @@ export default function ProductDetailView({
     : [product.image];
 
   return (
-    <div className="pt-28 sm:pt-32 pb-12 sm:pb-16 bg-white text-[#0A2540]">
+    <div className="pt-32 sm:pt-36 pb-14 sm:pb-16 bg-white text-[#0A2540]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
         <div className="py-2.5 flex items-center gap-2 text-xs text-slate-500 border-b border-slate-200 mb-6">
